@@ -1,0 +1,53 @@
+/**
+ * Small additions for election views. Core look comes from `landing-theme`
+ * (Bootstrap + main.css). Hero countdown reuses `.hero .hero-showcase .stats-overlay`.
+ */
+
+/* Portaled confirm modal: above header, mobile nav, and scroll-top (99999). */
+.confirm-vote-dialog {
+  --bs-modal-zindex: 100000;
+}
+
+.election-countdown-stand {
+  position: relative !important;
+  left: auto !important;
+  bottom: auto !important;
+  transform: none !important;
+  width: 100% !important;
+  margin-top: 1.5rem;
+}
+
+.election-page .election-countdown-stand .row > div:last-child .stat-card::after {
+  display: none;
+}
+
+.services .offering-icon-wrap img.election-cand-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* Disabled Vote should still read as a button (Bootstrap can wash out accent). */
+.election-page .services .btn.btn-accent:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.election-results .result-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--default-color), transparent 90%);
+  overflow: hidden;
+}
+
+.election-results .result-bar > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--accent-color),
+    color-mix(in srgb, var(--accent-color), var(--heading-color) 35%)
+  );
+}
