@@ -1,8 +1,84 @@
+"use client";
+
 import { landingImage } from "@/lib/landing-assets";
 
 import { TeamLeadersSwiper } from "./TeamLeadersSwiper";
+import { fetchTalents, type PublicTalent } from "@/lib/public-graphql";
+import { useEffect, useMemo, useState } from "react";
 
 export function TeamSection() {
+  const [talents, setTalents] = useState<PublicTalent[] | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetchTalents()
+      .then((rows) => {
+        if (!alive) return;
+        setTalents(rows.length ? rows : []);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setTalents([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const memberCards = useMemo(() => {
+    if (talents == null || talents.length === 0) {
+      return [
+        {
+          img: "person/person-f-7.webp",
+          name: "Liya Solomon",
+          role: "Fashion and portrait photographer",
+          delay: 200,
+        },
+        {
+          img: "person/person-m-2.webp",
+          name: "Biniam Alemayehu",
+          role: "Commercial cinematographer",
+          delay: 250,
+        },
+        {
+          img: "person/person-f-11.webp",
+          name: "Rahel Demissie",
+          role: "Wedding photo and film",
+          delay: 300,
+        },
+        {
+          img: "person/person-m-8.webp",
+          name: "Samuel Tesfaye",
+          role: "Documentary director / DP",
+          delay: 350,
+        },
+      ];
+    }
+
+    return talents.slice(0, 4).map((t, idx) => {
+      const role =
+        t.headline ??
+        (() => {
+          try {
+            const parsed = t.specialties ? (JSON.parse(t.specialties) as unknown) : null;
+            if (Array.isArray(parsed)) {
+              const first = parsed.find((x) => typeof x === "string") as string | undefined;
+              if (first) return first;
+            }
+          } catch {
+            // ignore invalid JSON
+          }
+          return "Creative member";
+        })();
+      return {
+        img: t.avatar_url ?? "person/person-m-2.webp",
+        name: t.user.full_name,
+        role: t.city ? `${role} · ${t.city}` : role,
+        delay: 200 + idx * 50,
+      };
+    });
+  }, [talents]);
+
   return (
     <section id="team" className="team section">
       <div className="container section-title" data-aos="fade-up">
@@ -44,72 +120,7 @@ export function TeamSection() {
         </div>
 
         <div className="row g-4 mt-4">
-          {[
-            {
-              img: "person/person-f-7.webp",
-              name: "Liya Solomon",
-              role: "Fashion and portrait photographer",
-              social: (
-                <>
-                  <a href="#" aria-label="Instagram">
-                    <i className="bi bi-instagram" />
-                  </a>
-                  <a href="#" aria-label="Showcase gallery">
-                    <i className="bi bi-camera" />
-                  </a>
-                </>
-              ),
-              delay: 200,
-            },
-            {
-              img: "person/person-m-2.webp",
-              name: "Biniam Alemayehu",
-              role: "Commercial cinematographer",
-              social: (
-                <>
-                  <a href="#" aria-label="Vimeo">
-                    <i className="bi bi-film" />
-                  </a>
-                  <a href="#" aria-label="LinkedIn">
-                    <i className="bi bi-linkedin" />
-                  </a>
-                </>
-              ),
-              delay: 250,
-            },
-            {
-              img: "person/person-f-11.webp",
-              name: "Rahel Demissie",
-              role: "Wedding photo and film",
-              social: (
-                <>
-                  <a href="#" aria-label="Instagram">
-                    <i className="bi bi-instagram" />
-                  </a>
-                  <a href="#" aria-label="Telegram">
-                    <i className="bi bi-telegram" />
-                  </a>
-                </>
-              ),
-              delay: 300,
-            },
-            {
-              img: "person/person-m-8.webp",
-              name: "Samuel Tesfaye",
-              role: "Documentary director / DP",
-              social: (
-                <>
-                  <a href="#" aria-label="YouTube">
-                    <i className="bi bi-youtube" />
-                  </a>
-                  <a href="#" aria-label="LinkedIn">
-                    <i className="bi bi-linkedin" />
-                  </a>
-                </>
-              ),
-              delay: 350,
-            },
-          ].map((m) => (
+          {memberCards.map((m) => (
             <div
               key={m.name}
               className="col-lg-3 col-md-6"
@@ -123,7 +134,14 @@ export function TeamSection() {
                     className="img-fluid"
                     alt="Team member"
                   />
-                  <div className="social-links">{m.social}</div>
+                  <div className="social-links">
+                    <a href="#contact" aria-label="Contact">
+                      <i className="bi bi-envelope" />
+                    </a>
+                    <a href="#services" aria-label="Opportunities">
+                      <i className="bi bi-briefcase" />
+                    </a>
+                  </div>
                 </div>
                 <div className="member-details">
                   <h5>{m.name}</h5>

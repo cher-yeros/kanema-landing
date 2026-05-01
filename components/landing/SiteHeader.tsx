@@ -1,13 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type MouseEvent } from "react";
 
 export function SiteHeader() {
   const [mobileNavActive, setMobileNavActive] = useState(false);
 
   const mobileNavToggle = useCallback(() => {
-    setMobileNavActive((v) => !v);
+    setMobileNavActive((v) => {
+      const next = !v;
+      return next;
+    });
   }, []);
 
   useEffect(() => {
@@ -20,7 +23,7 @@ export function SiteHeader() {
   }, [mobileNavActive]);
 
   const closeMobileIfHash = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>) => {
+    (e: MouseEvent<HTMLAnchorElement>) => {
       const href = e.currentTarget.getAttribute("href") ?? "";
       if (
         mobileNavActive &&
@@ -34,10 +37,7 @@ export function SiteHeader() {
   );
 
   return (
-    <header
-      id="header"
-      className="header d-flex align-items-center fixed-top"
-    >
+    <header id="header" className="header d-flex align-items-center fixed-top">
       <div className="header-container container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
         <Link
           href="/"
@@ -49,44 +49,18 @@ export function SiteHeader() {
         <nav id="navmenu" className="navmenu">
           <ul>
             <li>
-              <a href="/#hero" className="active" onClick={closeMobileIfHash}>
+              <Link
+                href="/#hero"
+                className="active"
+                onClick={closeMobileIfHash}
+              >
                 Home
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/#about" onClick={closeMobileIfHash}>
+              <Link href="/#about" onClick={closeMobileIfHash}>
                 About
-              </a>
-            </li>
-            <li>
-              <a href="/#services" onClick={closeMobileIfHash}>
-                Platform
-              </a>
-            </li>
-            <li>
-              <a href="/#showcase" onClick={closeMobileIfHash}>
-                Showcase
-              </a>
-            </li>
-            <li>
-              <a href="/#why-us" onClick={closeMobileIfHash}>
-                Why Kanema
-              </a>
-            </li>
-            <li>
-              <a href="/#testimonials" onClick={closeMobileIfHash}>
-                Voices
-              </a>
-            </li>
-            <li>
-              <a href="/#team" onClick={closeMobileIfHash}>
-                Community
-              </a>
-            </li>
-            <li>
-              <a href="/#contact" onClick={closeMobileIfHash}>
-                Contact
-              </a>
+              </Link>
             </li>
             <li>
               <Link href="/election" onClick={() => setMobileNavActive(false)}>
@@ -94,8 +68,19 @@ export function SiteHeader() {
               </Link>
             </li>
             <li>
+              <Link href="/community" onClick={() => setMobileNavActive(false)}>
+                Community
+              </Link>
+            </li>
+            <li>
               <Link href="/jobs" onClick={() => setMobileNavActive(false)}>
                 Production jobs
+              </Link>
+            </li>
+            {/* (removed) "More" dropdown — no remaining items */}
+            <li>
+              <Link href="/#contact" onClick={closeMobileIfHash}>
+                Contact
               </Link>
             </li>
           </ul>
@@ -114,9 +99,9 @@ export function SiteHeader() {
           />
         </nav>
 
-        <a className="btn-getstarted" href="/#contact">
+        <Link className="btn-getstarted" href="/community#join">
           Join the community
-        </a>
+        </Link>
       </div>
     </header>
   );

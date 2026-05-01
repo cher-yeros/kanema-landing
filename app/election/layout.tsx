@@ -5,7 +5,6 @@ import {
   SiteHeader,
 } from "@/components/landing";
 import { ScrollTop } from "@/components/landing/ScrollTop";
-import { ElectionApolloProvider } from "@/components/election/ElectionApolloProvider";
 import "./election.css";
 
 export const metadata: Metadata = {
@@ -20,12 +19,12 @@ export default function ElectionLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ElectionApolloProvider>
+    <>
       <LandingProvidersClient />
       <SiteHeader />
       <main className="main election-page">{children}</main>
       <SiteFooter />
       <ScrollTop />
-    </ElectionApolloProvider>
+    </>
   );
 }

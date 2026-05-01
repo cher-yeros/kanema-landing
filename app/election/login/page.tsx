@@ -1,21 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useApolloClient, useMutation } from "@apollo/client/react";
 import { LOGIN_MUTATION } from "@/lib/election-graphql";
 import type { LoginMutation } from "@/types/election-apollo";
-import { setStoredToken } from "@/components/election/ElectionApolloProvider";
+import { useAppDispatch } from "@/lib/store/hooks";
+import { setAuthToken } from "@/lib/store/auth-slice";
 
-export default function ElectionLoginPage() {
-  const client = useApolloClient();
+function safeRedirectPath(raw: string | null): string {
+  if (!raw?.startsWith("/") || raw.startsWith("//")) return "/election";
+  return raw;
+}
+
+function ElectionLoginInner() {
+  const dispatch = useAppDispatch();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextParam = searchParams.get("next");
+
+  const client = useApolloClient();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const [login, { loading }] = useMutation<LoginMutation>(LOGIN_MUTATION);
+
+  const registerHref =
+    nextParam && nextParam.startsWith("/") && !nextParam.startsWith("//")
+      ? `/election/register?next=${encodeURIComponent(nextParam)}`
+      : "/election/register";
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -29,9 +44,9 @@ export default function ElectionLoginPage() {
         setError(payload?.message ?? "Login failed.");
         return;
       }
-      setStoredToken(payload.token);
+      dispatch(setAuthToken(payload.token));
       await client.resetStore();
-      router.push("/election");
+      router.push(safeRedirectPath(nextParam));
       router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed.");
@@ -44,15 +59,14 @@ export default function ElectionLoginPage() {
         <h1>Member login</h1>
         <p>
           Sign in with the phone or email on your Kanema account. New members can{" "}
-          <Link href="/election/register" className="link-body-emphasis">
+          <Link href={registerHref} className="link-body-emphasis">
             register with phone only
           </Link>
           , then complete{" "}
           <Link href="/election/verify" className="link-body-emphasis">
             OTP verification
           </Link>
-          . Voting is enforced on the server: only verified members can submit a
-          ballot.
+          . The same account works for votes, production job applications, and postings.
         </p>
       </div>
 
@@ -61,12 +75,10 @@ export default function ElectionLoginPage() {
           <div className="col-lg-5">
             <div className="info-panel">
               <div className="panel-content">
-                <h3>Trust, then vote</h3>
+                <h3>Trust, then participate</h3>
                 <p>
-                  Whether you are joining as a creative, hiring talent, or taking
-                  part in community decisions, we route access carefully. After
-                  login, complete OTP verification if you have not already—then open
-                  the ballot from the election page.
+                  Whether you are joining as a creative, hiring talent, or taking part
+                  in community decisions, we route access carefully.
                 </p>
                 <div className="panel-stats" data-aos="zoom-in" data-aos-delay="200">
                   <div className="row g-3">
@@ -84,8 +96,8 @@ export default function ElectionLoginPage() {
                     </div>
                     <div className="col-4">
                       <div className="single-stat">
-                        <strong>Live</strong>
-                        <span>Results</span>
+                        <strong>Open</strong>
+                        <span>Jobs</span>
                       </div>
                     </div>
                   </div>
@@ -94,6 +106,9 @@ export default function ElectionLoginPage() {
                   <Link href="/election" className="btn btn-accent">
                     <i className="bi bi-arrow-left-circle me-2" />
                     Back to ballot
+                  </Link>
+                  <Link href="/jobs" className="btn btn-ghost">
+                    Job center
                   </Link>
                 </div>
               </div>
@@ -104,11 +119,8 @@ export default function ElectionLoginPage() {
             <div className="form-panel">
               <div className="form-intro">
                 <i className="bi bi-shield-lock" />
-                <h3>Sign in to vote</h3>
-                <p>
-                  Use your Kanema credentials. If you need access, reach the team the
-                  same way you would for membership or partnerships.
-                </p>
+                <h3>Sign in</h3>
+                <p>Use your Kanema member credentials.</p>
               </div>
 
               <form className="php-email-form" onSubmit={(e) => void onSubmit(e)}>
@@ -151,8 +163,7 @@ export default function ElectionLoginPage() {
                   <span>{loading ? "Signing in…" : "Sign in"}</span>
                 </button>
                 <p className="small text-muted mt-3 mb-0">
-                  No account yet?{" "}
-                  <Link href="/election/register">Create one with your phone</Link>.
+                  No account yet? <Link href={registerHref}>Create one with your phone</Link>.
                 </p>
               </form>
             </div>
@@ -160,5 +171,19 @@ export default function ElectionLoginPage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function ElectionLoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="contact section py-5 text-center">
+          <p className="text-muted">Loading sign-in…</p>
+        </section>
+      }
+    >
+      <ElectionLoginInner />
+    </Suspense>
   );
 }

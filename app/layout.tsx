@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+
+import { KanemaAppProviders } from "@/components/providers/KanemaAppProviders";
+
 import "./globals.css";
 
 /** Google Fonts bundle (Roboto, Poppins, Raleway) for the landing layout. */
@@ -27,7 +30,9 @@ export default function RootLayout({
         />
         <link href={GOOGLE_FONTS_URL} rel="stylesheet" />
       </head>
-      <body className="index-page">{children}</body>
+      <body className="index-page">
+        <KanemaAppProviders>{children}</KanemaAppProviders>
+      </body>
     </html>
   );
 }

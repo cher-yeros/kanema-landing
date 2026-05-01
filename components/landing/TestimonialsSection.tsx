@@ -1,8 +1,10 @@
 "use client";
 
 import { landingImage } from "@/lib/landing-assets";
+import { fetchTestimonials, type PublicTestimonial } from "@/lib/public-graphql";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useEffect, useMemo, useState } from "react";
 
 const testimonials = [
   {
@@ -38,6 +40,36 @@ const testimonials = [
 ];
 
 export function TestimonialsSection() {
+  const [remote, setRemote] = useState<PublicTestimonial[] | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetchTestimonials()
+      .then((rows) => {
+        if (!alive) return;
+        setRemote(rows.length ? rows : []);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setRemote([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const slides = useMemo(() => {
+    if (remote == null || remote.length === 0) return testimonials;
+    return remote.map((t) => ({
+      img: t.avatar_url ?? "person/person-m-9.webp",
+      name: t.author_name,
+      role:
+        [t.author_title, t.author_city].filter(Boolean).join(", ") ||
+        "Kanema community",
+      text: t.quote,
+    }));
+  }, [remote]);
+
   return (
     <section
       id="testimonials"
@@ -67,7 +99,7 @@ export function TestimonialsSection() {
             1200: { slidesPerView: 3 },
           }}
         >
-          {testimonials.map((t) => (
+          {slides.map((t) => (
             <SwiperSlide key={t.name}>
               <div className="testimonial-item">
                 <img

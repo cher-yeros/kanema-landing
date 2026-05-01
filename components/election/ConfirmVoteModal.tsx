@@ -1,7 +1,6 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { useLayoutEffect, useState } from "react";
 
 export function ConfirmVoteModal({
   open,
@@ -16,12 +15,8 @@ export function ConfirmVoteModal({
   onCancel: () => void;
   onConfirm: () => void;
 }) {
-  const [mounted, setMounted] = useState(false);
-  useLayoutEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!open || !mounted) return null;
+  if (!open) return null;
+  if (typeof document === "undefined") return null;
 
   return createPortal(
     <>

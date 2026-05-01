@@ -1,50 +1,17 @@
 import Link from "next/link";
 import { landingImage } from "@/lib/landing-assets";
+import { fetchProductionJobs } from "@/lib/public-graphql";
 
-type ProductionRole = {
-  title: string;
-  tag: string;
-  modality: string;
-  summary: string;
-  icon: string;
-};
+import { JobsMemberStrip } from "./jobs-member-strip";
 
-const OPEN_ROLES: ProductionRole[] = [
-  {
-    title: "1st Assistant Camera (commercial)",
-    tag: "On set",
-    modality: "Addis Ababa · 4-week block",
-    summary:
-      "Support principal photography on a brand campaign—lens swaps, marks, and close coordination with DP and operator. Portfolio-led shortlist; union-style safety expected on set.",
-    icon: "bi-camera-video",
-  },
-  {
-    title: "Gaffer / lighting team",
-    tag: "On set",
-    modality: "Addis Ababa · project basis",
-    summary:
-      "Rig and shape light for interview and product setups. Bring experience with LED and tungsten mixes, distro discipline, and fast turnarounds between setups.",
-    icon: "bi-lightbulb",
-  },
-  {
-    title: "Post-production coordinator",
-    tag: "Post",
-    modality: "Hybrid",
-    summary:
-      "Shepherd offline through grade and delivery—handles, versions, and notes between editor, colorist, and client. Familiarity with short-form commercial timelines preferred.",
-    icon: "bi-collection-play",
-  },
-  {
-    title: "Color assist (DaVinci)",
-    tag: "Post",
-    modality: "Remote-first",
-    summary:
-      "Prep timelines, match references, and support the colorist on documentary and branded pieces. Showreel or graded stills that demonstrate restrained, natural palettes.",
-    icon: "bi-palette",
-  },
-];
+export default async function ProductionJobsPage() {
+  let jobs: Awaited<ReturnType<typeof fetchProductionJobs>> = [];
+  try {
+    jobs = await fetchProductionJobs();
+  } catch {
+    jobs = [];
+  }
 
-export default function ProductionJobsPage() {
   return (
     <>
       <section id="jobs-hero" className="hero section">
@@ -61,33 +28,29 @@ export default function ProductionJobsPage() {
                 </div>
                 <h1>Production job center</h1>
                 <p>
-                  Ethiopia&apos;s photographers and videographers deserve
-                  visibility, structured networking, and fair access to
-                  opportunity—this board keeps the focus on{" "}
-                  <strong>production work</strong> (set, crew, and post) so
-                  serious briefs do not get lost in general chatter.
+                  Ethiopia&apos;s photographers and videographers deserve visibility,
+                  structured networking, and fair access to opportunity—this board
+                  keeps the focus on <strong>production work</strong> (set, crew, and
+                  post) so serious briefs do not get lost in general chatter.
                 </p>
                 <p className="lead mb-2">
-                  Job postings, freelance gigs, collaborations, and grants—one
-                  place to connect talent with demand across Ethiopia&apos;s
-                  creative economy. Listings here are{" "}
-                  <strong>production-only</strong>: call times, kit expectations,
-                  and deliverables you can plan a career around.
+                  Members can <strong>post production roles</strong> and browse open
+                  briefs here. Applying requires a Kanema{" "}
+                  <strong>member account</strong> (sign up with your phone, then verify
+                  with OTP)—posters stay in charge of reviewing applicants themselves.
                 </p>
                 <p className="small text-muted mb-0">
-                  Questions about membership, partnerships, or listing an
-                  opportunity? Reach the Kanema team on the contact page—we
-                  route production briefs to the same desk that supports the
-                  wider hub.
+                  Questions about moderation or spam? Reach the Kanema team on the
+                  contact page.
                 </p>
                 <div className="hero-actions mt-4">
                   <a href="#open-roles" className="btn btn-accent">
                     <i className="bi bi-briefcase me-2" />
                     Browse open roles
                   </a>
-                  <Link href="/#contact" className="btn btn-ghost">
-                    <i className="bi bi-envelope me-2" />
-                    List a production role
+                  <Link href="/jobs/new" className="btn btn-ghost">
+                    <i className="bi bi-plus-circle me-2" />
+                    Post a role
                   </Link>
                   <Link href="/" className="btn btn-ghost">
                     <i className="bi bi-house me-2" />
@@ -109,6 +72,8 @@ export default function ProductionJobsPage() {
         </div>
       </section>
 
+      <JobsMemberStrip />
+
       <section
         id="how-production-jobs-work"
         className="why-us section"
@@ -119,49 +84,44 @@ export default function ProductionJobsPage() {
             <div className="col-lg-10">
               <div className="intro-content text-center text-lg-start">
                 <h2 id="howItWorksHeading" className="h3">
-                  Why a production-only lane exists
+                  How postings and applications work
                 </h2>
                 <p className="lead">
-                  Full-time roles, freelance briefs, collaborations, and funding
-                  signals—structured so demand meets skilled visual
-                  storytellers. This lane mirrors how Kanema already surfaces{" "}
-                  <Link href="/#services">opportunities on the platform</Link>,{" "}
-                  but narrows the feed to{" "}
-                  <strong>production-shaped work</strong> so call sheets,
-                  technical roles, and post pipelines stay legible.
+                  Create an account as a Kanema member, post a structured production
+                  brief, and applicants sign in with the same hub account you use across
+                  the community. Employers see applicants—including contact channel—on
+                  a private applicant list tied to each job.
                 </p>
                 <div className="checklist">
                   <div className="check-item">
                     <i className="bi bi-arrow-right-circle-fill" />
                     <div>
-                      <h5>Connect talent with demand</h5>
+                      <h5>Poster</h5>
                       <p>
-                        From weddings to commercial campaigns, post and discover
-                        roles, freelance gigs, collaborations, and funding
-                        leads—here scoped to set, grip and electric, sound,
-                        camera, and post.
+                        Any signed-in Kanema member can publish an open brief. Closed or
+                        filled roles stay visible to you while new applicants pause.
                       </p>
                     </div>
                   </div>
                   <div className="check-item">
                     <i className="bi bi-arrow-right-circle-fill" />
                     <div>
-                      <h5>Showcase and be discovered</h5>
+                      <h5>Applicant</h5>
                       <p>
-                        Present your best work in the curated showcase so
-                        producers can move from your reel to a booked call
-                        without leaving the Kanema ecosystem.
+                        Only <strong>member</strong> accounts (not staff admin logins)
+                        can send an application—with a note and portfolio links—for each
+                        open role once.
                       </p>
                     </div>
                   </div>
                   <div className="check-item">
                     <i className="bi bi-arrow-right-circle-fill" />
                     <div>
-                      <h5>Learn, meet, and grow</h5>
+                      <h5>Transparency</h5>
                       <p>
-                        Workshops, masterclasses, exhibitions, festivals, and
-                        meetups—plus resources on craft, editing, and industry
-                        trends—support the same crews hiring through this board.
+                        Public listings show poster name counts and scope; applicant
+                        contact details are shared only with the poster and platform
+                        administrators.
                       </p>
                     </div>
                   </div>
@@ -180,38 +140,51 @@ export default function ProductionJobsPage() {
         <div className="container section-title" data-aos="fade-up">
           <h2 id="openRolesHeading">Open production roles</h2>
           <p>
-            Explore each brief the way you explore talent on the platform—read
-            the scope, note the modality, then follow up through Kanema with
-            your reel, kit list, and availability.
+            Live briefs submitted by Kanema members. Read the scope, modalility, then
+            open a role for full detail and member-only applications.
           </p>
           <p className="small text-muted mb-0">
-            Sample listings illustrate the production-only pattern; live hiring
-            will follow the same card layout when roles are published through
-            the team.
+            No active listings yet? Anyone signed in can start one from{" "}
+            <Link href="/jobs/new" className="link-body-emphasis">
+              Post a role
+            </Link>
+            .
           </p>
         </div>
 
         <div className="container" data-aos="fade-up" data-aos-delay="100">
           <div className="row gy-4">
-            {OPEN_ROLES.map((role) => (
-              <div className="col-lg-6" key={role.title}>
+            {jobs.map((role) => (
+              <div className="col-lg-6" key={role.id}>
                 <div className="offering-block">
                   <div className="offering-indicator" />
                   <div className="offering-icon-wrap">
-                    <i className={`bi ${role.icon}`} />
+                    <i className="bi bi-briefcase" />
                   </div>
                   <div className="offering-body">
                     <div className="offering-header">
                       <h4>{role.title}</h4>
-                      <span className="featured-tag">{role.tag}</span>
+                      <span className="featured-tag">
+                        {role.role_tag || "Production"}
+                      </span>
                     </div>
-                    <p className="small text-muted mb-2">{role.modality}</p>
-                    <p>{role.summary}</p>
+                    <p className="small text-muted mb-2">
+                      {[role.location, role.modality].filter(Boolean).join(" · ") ||
+                        "Modality · location TBC"}
+                      {" · "}
+                      Posted by {role.poster.full_name}
+                      {role.application_count > 0
+                        ? ` · ${role.application_count} applicant${role.application_count === 1 ? "" : "s"}`
+                        : null}
+                    </p>
+                    <p className="text-truncate-3-lines" style={{ minHeight: "4.5rem" }}>
+                      {role.description}
+                    </p>
                     <Link
-                      href="/#contact"
+                      href={`/jobs/${role.id}`}
                       className="explore-btn d-inline-flex"
                     >
-                      Apply via Kanema{" "}
+                      View role{" "}
                       <i className="bi bi-chevron-right" aria-hidden="true" />
                     </Link>
                   </div>
@@ -220,22 +193,37 @@ export default function ProductionJobsPage() {
             ))}
           </div>
 
+          {jobs.length === 0 ?
+            <div className="row mt-4">
+              <div className="col-12">
+                <div className="info-box text-center py-5">
+                  <p className="lead mb-2">No production roles listed yet.</p>
+                  <p className="text-muted mb-3">
+                    Be the first to publish a scoped brief—or check back soon.
+                  </p>
+                  <Link href="/jobs/new" className="btn btn-accent">
+                    Publish a brief
+                  </Link>
+                </div>
+              </div>
+            </div>
+          : null}
+
           <div className="row mt-5">
             <div className="col-12" data-aos="fade-up" data-aos-delay="200">
               <div className="action-banner">
                 <div className="row align-items-center">
                   <div className="col-lg-8">
-                    <h3>Ready to grow with Ethiopia&apos;s visual community?</h3>
+                    <h3>Membership unlocks applicants and postings</h3>
                     <p>
-                      Join Kanema to showcase your work, meet clients, and
-                      access opportunities, events, and resources in one trusted
-                      hub—then keep this production board on speed-dial when
-                      crews go green.
+                      Kanema ties production jobs to verified community accounts—you
+                      can register with your phone from the ballot flow if you already
+                      have not elsewhere.
                     </p>
                   </div>
                   <div className="col-lg-4 text-lg-end text-center">
-                    <Link href="/#contact" className="action-btn">
-                      Become a member
+                    <Link href="/election/register" className="action-btn">
+                      Join as member
                     </Link>
                   </div>
                 </div>

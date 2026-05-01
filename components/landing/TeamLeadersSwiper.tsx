@@ -1,8 +1,10 @@
 "use client";
 
 import { landingImage } from "@/lib/landing-assets";
+import { fetchTeamMembers, type PublicTeamMember } from "@/lib/public-graphql";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useEffect, useMemo, useState } from "react";
 
 const leaders = [
   {
@@ -32,6 +34,35 @@ const leaders = [
 ];
 
 export function TeamLeadersSwiper() {
+  const [remote, setRemote] = useState<PublicTeamMember[] | null>(null);
+
+  useEffect(() => {
+    let alive = true;
+    fetchTeamMembers()
+      .then((rows) => {
+        if (!alive) return;
+        setRemote(rows.length ? rows : []);
+      })
+      .catch(() => {
+        if (!alive) return;
+        setRemote([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const advisorSlides = useMemo(() => {
+    const rows = (remote ?? []).filter((x) => x.category === "ADVISOR");
+    if (remote == null || rows.length === 0) return leaders;
+    return rows.map((x) => ({
+      img: x.photo_url ?? "person/person-m-3.webp",
+      role: x.role_title,
+      name: x.full_name,
+      text: x.bio ?? "Industry voice supporting Kanema’s community.",
+    }));
+  }, [remote]);
+
   return (
     <Swiper
       className="leaders-carousel init-swiper"
@@ -46,7 +77,7 @@ export function TeamLeadersSwiper() {
         768: { slidesPerView: 2 },
       }}
     >
-      {leaders.map((leader) => (
+      {advisorSlides.map((leader) => (
         <SwiperSlide key={leader.name}>
           <div className="leader-panel">
             <div className="row g-0 align-items-center">

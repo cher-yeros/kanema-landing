@@ -3,11 +3,9 @@ import {
   ContactSection,
   HeroSection,
   LandingProvidersClient,
-  PortfolioSectionClient,
   ServicesSection,
   SiteFooter,
   SiteHeader,
-  TeamSectionClient,
   TestimonialsSectionClient,
   WhyUsSection,
 } from "@/components/landing";
@@ -23,11 +21,10 @@ export default function Home() {
       <main className="main">
         <HeroSection />
         <AboutSection />
-        <ServicesSection />
-        <PortfolioSectionClient />
         <WhyUsSection />
+        <ServicesSection />
+        {/* <PortfolioSectionClient /> */}
         <TestimonialsSectionClient />
-        <TeamSectionClient />
         <ContactSection />
       </main>
       <SiteFooter />

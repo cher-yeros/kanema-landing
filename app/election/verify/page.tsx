@@ -11,11 +11,13 @@ import type {
   RequestVerificationOtpMutation,
   VerifyOtpMutation,
 } from "@/types/election-apollo";
-import { getStoredToken } from "@/components/election/ElectionApolloProvider";
+import { getStoredToken } from "@/lib/store/imperative-auth";
+import { useAppSelector } from "@/lib/store/hooks";
 
 type Channel = "PHONE" | "EMAIL";
 
 export default function ElectionVerifyPage() {
+  const sessionToken = useAppSelector((s) => s.auth.token);
   const client = useApolloClient();
   const [channel, setChannel] = useState<Channel>("PHONE");
   const [identifier, setIdentifier] = useState("");
@@ -130,7 +132,7 @@ export default function ElectionVerifyPage() {
                     <Link href="/election" className="btn btn-accent btn-sm">
                       Open election
                     </Link>
-                    {!getStoredToken() ?
+                    {!sessionToken ?
                       <Link href="/election/login" className="btn btn-ghost btn-sm">
                         Sign in to continue
                       </Link>
