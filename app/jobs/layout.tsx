@@ -7,7 +7,7 @@ import {
 import { ScrollTop } from "@/components/landing/ScrollTop";
 
 export const metadata: Metadata = {
-  title: "Production job center — ካነማ",
+  title: "Production job center — ካንማ",
   description:
     "Film and commercial production roles on Kanema: crew, set, and post—structured listings so Ethiopian visual storytellers find serious production work in one hub.",
 };

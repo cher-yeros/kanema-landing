@@ -1,8 +1,8 @@
-# Kanema (ካነማ)
+# Kanema (ካንማ)
 
 ## Empowering Ethiopian Visual Storytellers
 
-Kanema (ካነማ) is the official digital hub for Ethiopian photographers, videographers, and filmmakers—connecting talent, creating opportunities, and building a stronger creative industry.
+Kanema (ካንማ) is the official digital hub for Ethiopian photographers, videographers, and filmmakers—connecting talent, creating opportunities, and building a stronger creative industry.
 
 [Join the Community] [Explore Talent]
 
@@ -10,7 +10,7 @@ Kanema (ካነማ) is the official digital hub for Ethiopian photographers, vide
 
 ## About Kanema
 
-Kanema (ካነማ) is a platform dedicated to uniting Ethiopian camera professionals under one digital ecosystem. It serves as a space where creatives can showcase their work, connect with clients, and collaborate with peers.
+Kanema (ካንማ) is a platform dedicated to uniting Ethiopian camera professionals under one digital ecosystem. It serves as a space where creatives can showcase their work, connect with clients, and collaborate with peers.
 
 ### Our Mission
 
@@ -147,6 +147,6 @@ Follow us on social media:
 
 ## Footer
 
-© 2026 Kanema (ካነማ). All rights reserved.
+© 2026 Kanema (ካንማ). All rights reserved.
 
 Empowering Ethiopian Visual Storytellers.

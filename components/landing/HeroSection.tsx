@@ -57,7 +57,7 @@ export function HeroSection() {
                 Empowering Ethiopian Visual Storytellers
               </span>
               <h1>
-                Kanema (ካነማ) — the home for Ethiopia&apos;s camera creatives
+                Kanema (ካንማ) — the home for Ethiopia&apos;s camera creatives
               </h1>
               <p>
                 The official digital hub for photographers, videographers, and

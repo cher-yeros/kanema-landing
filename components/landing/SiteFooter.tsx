@@ -7,11 +7,11 @@ export function SiteFooter() {
         <div className="row gy-4">
           <div className="col-lg-4 col-md-6 footer-about">
             <Link href="/" className="logo d-flex align-items-center">
-              <span className="sitename">ካነማ</span>
+              <span className="sitename">ካንማ</span>
             </Link>
             <p className="mt-3 small text-secondary">
-              Empowering Ethiopian visual storytellers—visibility, opportunities,
-              and professional growth in one digital hub.
+              Empowering Ethiopian visual storytellers—visibility,
+              opportunities, and professional growth in one digital hub.
             </p>
             <div className="footer-contact pt-3">
               <p>Addis Ababa, Ethiopia</p>
@@ -124,7 +124,7 @@ export function SiteFooter() {
       <div className="container copyright text-center mt-4">
         <p>
           © <span>2026</span>
-          <strong className="px-1 sitename">ካነማ</strong>
+          <strong className="px-1 sitename">ካንማ</strong>
           <span>All rights reserved.</span>
         </p>
         <div className="credits">

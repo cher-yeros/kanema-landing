@@ -1,10 +1,55 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState, type MouseEvent } from "react";
+import { usePathname } from "next/navigation";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  type MouseEvent,
+} from "react";
+
+type NavKey = "home" | "about" | "election" | "community" | "jobs" | "contact";
 
 export function SiteHeader() {
+  const pathname = usePathname();
+  const [hash, setHash] = useState("");
   const [mobileNavActive, setMobileNavActive] = useState(false);
+
+  useLayoutEffect(() => {
+    setHash(typeof window !== "undefined" ? window.location.hash : "");
+  }, [pathname]);
+
+  useEffect(() => {
+    const onHashOrPop = () =>
+      setHash(typeof window !== "undefined" ? window.location.hash : "");
+    window.addEventListener("hashchange", onHashOrPop);
+    window.addEventListener("popstate", onHashOrPop);
+    return () => {
+      window.removeEventListener("hashchange", onHashOrPop);
+      window.removeEventListener("popstate", onHashOrPop);
+    };
+  }, []);
+
+  const activeNav = useMemo((): NavKey | null => {
+    if (pathname.startsWith("/election")) return "election";
+    if (pathname.startsWith("/community")) return "community";
+    if (pathname.startsWith("/jobs")) return "jobs";
+    if (pathname === "/") {
+      if (hash === "#about") return "about";
+      if (hash === "#contact") return "contact";
+      return "home";
+    }
+    return null;
+  }, [pathname, hash]);
+
+  const syncHashFromLocation = useCallback(() => {
+    queueMicrotask(() => {
+      setHash(typeof window !== "undefined" ? window.location.hash : "");
+    });
+  }, []);
 
   const mobileNavToggle = useCallback(() => {
     setMobileNavActive((v) => {
@@ -32,9 +77,18 @@ export function SiteHeader() {
       ) {
         setMobileNavActive(false);
       }
+      syncHashFromLocation();
     },
-    [mobileNavActive],
+    [mobileNavActive, syncHashFromLocation],
   );
+
+  const closeMobileForPage = useCallback(() => {
+    setMobileNavActive(false);
+    syncHashFromLocation();
+  }, [syncHashFromLocation]);
+
+  const navClass = (key: NavKey) =>
+    activeNav === key ? "active" : undefined;
 
   return (
     <header id="header" className="header d-flex align-items-center fixed-top">
@@ -43,7 +97,7 @@ export function SiteHeader() {
           href="/"
           className="logo d-flex align-items-center me-auto me-xl-0"
         >
-          <h1 className="sitename">ካነማ</h1>
+          <h1 className="sitename">ካንማ</h1>
         </Link>
 
         <nav id="navmenu" className="navmenu">
@@ -51,35 +105,61 @@ export function SiteHeader() {
             <li>
               <Link
                 href="/#hero"
-                className="active"
+                className={navClass("home")}
+                aria-current={activeNav === "home" ? "page" : undefined}
                 onClick={closeMobileIfHash}
               >
                 Home
               </Link>
             </li>
             <li>
-              <Link href="/#about" onClick={closeMobileIfHash}>
+              <Link
+                href="/#about"
+                className={navClass("about")}
+                aria-current={activeNav === "about" ? "page" : undefined}
+                onClick={closeMobileIfHash}
+              >
                 About
               </Link>
             </li>
             <li>
-              <Link href="/election" onClick={() => setMobileNavActive(false)}>
+              <Link
+                href="/election"
+                className={navClass("election")}
+                aria-current={activeNav === "election" ? "page" : undefined}
+                onClick={closeMobileForPage}
+              >
                 Election
               </Link>
             </li>
             <li>
-              <Link href="/community" onClick={() => setMobileNavActive(false)}>
+              <Link
+                href="/community"
+                className={navClass("community")}
+                aria-current={activeNav === "community" ? "page" : undefined}
+                onClick={closeMobileForPage}
+              >
                 Community
               </Link>
             </li>
             <li>
-              <Link href="/jobs" onClick={() => setMobileNavActive(false)}>
+              <Link
+                href="/jobs"
+                className={navClass("jobs")}
+                aria-current={activeNav === "jobs" ? "page" : undefined}
+                onClick={closeMobileForPage}
+              >
                 Production jobs
               </Link>
             </li>
             {/* (removed) "More" dropdown — no remaining items */}
             <li>
-              <Link href="/#contact" onClick={closeMobileIfHash}>
+              <Link
+                href="/#contact"
+                className={navClass("contact")}
+                aria-current={activeNav === "contact" ? "page" : undefined}
+                onClick={closeMobileIfHash}
+              >
                 Contact
               </Link>
             </li>

@@ -76,12 +76,11 @@ function ElectionPageInner() {
     const envId = defaultElectionId();
     if (envId) return envId;
     if (paramId) return paramId;
-    const list =
-      electionsData?.elections?.length ?
-        electionsData.elections
-      : electionsAll?.elections ?? [];
+    const list = electionsData?.elections?.length
+      ? electionsData.elections
+      : (electionsAll?.elections ?? []);
     const active = list.find((x: { is_active: unknown }) =>
-      isTruthyFlag(x.is_active)
+      isTruthyFlag(x.is_active),
     );
     return active?.id ?? list[0]?.id ?? null;
   }, [paramId, electionsData, electionsAll]);
@@ -91,7 +90,7 @@ function ElectionPageInner() {
     {
       variables: { id: resolvedId ?? "" },
       skip: !resolvedId,
-    }
+    },
   );
 
   const { data: candData, loading: cLoading } =
@@ -105,7 +104,7 @@ function ElectionPageInner() {
     {
       variables: { election_id: resolvedId ?? "" },
       skip: !resolvedId || !meData?.me,
-    }
+    },
   );
 
   const [castVote, { loading: voteLoading }] =
@@ -129,22 +128,22 @@ function ElectionPageInner() {
   const votingOpen = election ? inVotingWindow(election) : false;
   const closedHint = election && !votingOpen ? votingClosedHint(election) : "";
 
-  const voteDisabledReason =
-    meLoading ? "Checking your session…"
-    : !me ? "Sign in with a verified member account to vote."
-    : !me.is_verified ?
-      "Your account is signed in but not verified for voting yet (complete email or phone OTP on the account you used to register)."
-    : requireAdminApproval && !me.admin_approved ?
-      "An administrator still needs to approve your account for this ballot."
-    : null;
+  const voteDisabledReason = meLoading
+    ? "Checking your session…"
+    : !me
+      ? "Sign in with a verified member account to vote."
+      : !me.is_verified
+        ? "Your account is signed in but not verified for voting yet (complete email or phone OTP on the account you used to register)."
+        : requireAdminApproval && !me.admin_approved
+          ? "An administrator still needs to approve your account for this ballot."
+          : null;
 
   async function submitVote() {
     if (!confirm || !resolvedId) {
       setBanner({
         type: "err",
-        text:
-          !resolvedId ?
-            "No election is selected. Reload the page or try again in a moment."
+        text: !resolvedId
+          ? "No election is selected. Reload the page or try again in a moment."
           : "No candidate is selected. Close the dialog and choose Vote again.",
       });
       return;
@@ -213,47 +212,49 @@ function ElectionPageInner() {
                 </span>
                 <div className="d-flex flex-wrap gap-2 mt-3 mb-2">
                   <span className="featured-tag">One member, one vote</span>
-                  {me?.is_verified ?
+                  {me?.is_verified ? (
                     <span className="featured-tag">Verified member</span>
-                  : me ?
+                  ) : me ? (
                     <span className="featured-tag">Complete OTP to vote</span>
-                  : null}
+                  ) : null}
                 </div>
                 <h1>Kanema Presidential Election 2026</h1>
                 <p>
-                  Ethiopia&apos;s photographers and videographers deserve visibility,
-                  structured participation, and fair access to leadership choices.
-                  This ballot lives inside the same Kanema (ካነማ) hub you use for
-                  community, showcase, and opportunities—recorded transparently on
-                  the server.
+                  Ethiopia&apos;s photographers and videographers deserve
+                  visibility, structured participation, and fair access to
+                  leadership choices. This ballot lives inside the same Kanema
+                  (ካንማ) hub you use for community, showcase, and
+                  opportunities—recorded transparently on the server.
                 </p>
-                {election?.title ?
+                {election?.title ? (
                   <p className="lead mb-2">{election.title}</p>
-                : null}
-                {election?.description ?
-                  <p className="small text-muted mb-0">{election.description}</p>
-                : null}
+                ) : null}
+                {election?.description ? (
+                  <p className="small text-muted mb-0">
+                    {election.description}
+                  </p>
+                ) : null}
 
-                {election ?
+                {election ? (
                   <>
                     <p className="small fw-semibold mt-4 mb-0">
                       Time until voting closes
                     </p>
                     <ElectionCountdown endIso={election.end_date} />
                   </>
-                : null}
+                ) : null}
 
-                {banner ?
+                {banner ? (
                   <div
                     className={`alert mt-4 mb-0 ${banner.type === "ok" ? "alert-success" : "alert-danger"}`}
                     role="status"
                   >
                     {banner.text}
                   </div>
-                : null}
+                ) : null}
 
                 <div className="hero-actions mt-4">
-                  {!me ?
+                  {!me ? (
                     <>
                       <Link href="/election/login" className="btn btn-accent">
                         <i className="bi bi-box-arrow-in-right me-2" />
@@ -264,7 +265,7 @@ function ElectionPageInner() {
                         Register
                       </Link>
                     </>
-                  : null}
+                  ) : null}
                   <Link href="/election/results" className="btn btn-ghost">
                     <i className="bi bi-bar-chart-line me-2" />
                     Live results
@@ -296,9 +297,10 @@ function ElectionPageInner() {
               <div className="intro-content text-center text-lg-start">
                 <h3>A centralized, trustworthy vote</h3>
                 <p className="lead">
-                  Many talented creatives already trust Kanema for portfolios and
-                  gigs. Voting uses the same discipline: verified membership, clear
-                  deadlines, and tallies you can follow live—no shadow spreadsheets.
+                  Many talented creatives already trust Kanema for portfolios
+                  and gigs. Voting uses the same discipline: verified
+                  membership, clear deadlines, and tallies you can follow
+                  live—no shadow spreadsheets.
                 </p>
                 <div className="checklist">
                   <div className="check-item">
@@ -307,9 +309,9 @@ function ElectionPageInner() {
                       <h5>Verified members</h5>
                       <p>
                         Complete email or phone OTP on the{" "}
-                        <Link href="/election/verify">verification page</Link> so we
-                        know you are a real member of the community—not a throwaway
-                        account.
+                        <Link href="/election/verify">verification page</Link>{" "}
+                        so we know you are a real member of the community—not a
+                        throwaway account.
                       </p>
                     </div>
                   </div>
@@ -318,8 +320,8 @@ function ElectionPageInner() {
                     <div>
                       <h5>One vote, locked in</h5>
                       <p>
-                        The database enforces one vote per person per election. You
-                        confirm on screen; the server makes it final.
+                        The database enforces one vote per person per election.
+                        You confirm on screen; the server makes it final.
                       </p>
                     </div>
                   </div>
@@ -328,8 +330,8 @@ function ElectionPageInner() {
                     <div>
                       <h5>Live, open results</h5>
                       <p>
-                        Follow counts as they move—aligned with how Kanema surfaces
-                        opportunities and events in the open.
+                        Follow counts as they move—aligned with how Kanema
+                        surfaces opportunities and events in the open.
                       </p>
                     </div>
                   </div>
@@ -340,18 +342,18 @@ function ElectionPageInner() {
         </div>
       </section>
 
-      {myVote ?
+      {myVote ? (
         <section className="section py-0">
           <div className="container">
             <div className="alert alert-info" role="status">
               You have already cast your vote in this election for{" "}
-              <strong>{myVote.candidate?.user?.full_name}</strong>. Like membership
-              commitments elsewhere on the hub, this choice cannot be changed after
-              submission.
+              <strong>{myVote.candidate?.user?.full_name}</strong>. Like
+              membership commitments elsewhere on the hub, this choice cannot be
+              changed after submission.
             </div>
           </div>
         </section>
-      : null}
+      ) : null}
 
       <section
         id="candidates"
@@ -361,24 +363,31 @@ function ElectionPageInner() {
         <div className="container section-title" data-aos="fade-up">
           <h2 id="candidatesHeading">Candidates on the ballot</h2>
           <p>
-            Explore each profile the way you explore talent on the platform—read the
-            manifesto, then return here to cast your vote when voting is open.
+            Explore each profile the way you explore talent on the platform—read
+            the manifesto, then return here to cast your vote when voting is
+            open.
           </p>
-          {elLoading || cLoading ?
+          {elLoading || cLoading ? (
             <p className="small text-muted mb-0">Loading candidates…</p>
-          : null}
-          {election && !votingOpen && closedHint ?
-            <div className="alert alert-warning mt-3 mb-0 text-start" role="status">
+          ) : null}
+          {election && !votingOpen && closedHint ? (
+            <div
+              className="alert alert-warning mt-3 mb-0 text-start"
+              role="status"
+            >
               {closedHint}
             </div>
-          : null}
+          ) : null}
           {votingOpen &&
           candidates.some((c) => c.approved) &&
           voteDisabledReason &&
-          !myVote ?
-            <div className="alert alert-info mt-3 mb-0 text-start" role="status">
+          !myVote ? (
+            <div
+              className="alert alert-info mt-3 mb-0 text-start"
+              role="status"
+            >
               <strong>Why Vote looks inactive:</strong> {voteDisabledReason}{" "}
-              {!me ?
+              {!me ? (
                 <>
                   <Link href="/election/login" className="alert-link">
                     Go to member login
@@ -388,9 +397,9 @@ function ElectionPageInner() {
                     Register with phone
                   </Link>
                 </>
-              : null}
+              ) : null}
             </div>
-          : null}
+          ) : null}
         </div>
 
         <div className="container" data-aos="fade-up" data-aos-delay="100">
@@ -400,26 +409,30 @@ function ElectionPageInner() {
                 <div className="offering-block">
                   <div className="offering-indicator" />
                   <div className="offering-icon-wrap">
-                    {c.image_url ?
+                    {c.image_url ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={c.image_url} alt="" className="election-cand-thumb" />
-                    : (
+                      <img
+                        src={c.image_url}
+                        alt=""
+                        className="election-cand-thumb"
+                      />
+                    ) : (
                       <i className="bi bi-person-badge" />
                     )}
                   </div>
                   <div className="offering-body">
                     <div className="offering-header">
                       <h4>{c.user.full_name}</h4>
-                      {c.approved ?
+                      {c.approved ? (
                         <span className="featured-tag">Approved candidate</span>
-                      : (
+                      ) : (
                         <span className="featured-tag">Pending review</span>
                       )}
                     </div>
                     <p>
-                      {c.bio ?
-                        `${c.bio.slice(0, 220)}${c.bio.length > 220 ? "…" : ""}`
-                      : "Profile summary coming soon."}
+                      {c.bio
+                        ? `${c.bio.slice(0, 220)}${c.bio.length > 220 ? "…" : ""}`
+                        : "Profile summary coming soon."}
                     </p>
                     <Link
                       href={`/election/candidates/${c.id}`}
@@ -428,32 +441,25 @@ function ElectionPageInner() {
                       View profile & manifesto{" "}
                       <i className="bi bi-chevron-right" />
                     </Link>
-                    {!myVote && votingOpen && c.approved ?
+                    {!myVote && votingOpen && c.approved ? (
                       <div className="mt-3">
                         <button
                           type="button"
                           className="btn btn-accent btn-sm"
-                          disabled={
-                            voteLoading ||
-                            meLoading ||
-                            !me ||
-                            !canVote
-                          }
-                          title={
-                            voteDisabledReason ?? undefined
-                          }
+                          disabled={voteLoading || meLoading || !me || !canVote}
+                          title={voteDisabledReason ?? undefined}
                           onClick={() => setConfirm(c)}
                         >
                           <i className="bi bi-check2-square me-2" />
                           Vote
                         </button>
                       </div>
-                    : null}
-                    {!votingOpen && !myVote ?
+                    ) : null}
+                    {!votingOpen && !myVote ? (
                       <p className="small text-muted mt-3 mb-0">
                         Voting is not open for this period.
                       </p>
-                    : null}
+                    ) : null}
                   </div>
                 </div>
               </div>

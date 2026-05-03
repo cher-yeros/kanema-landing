@@ -67,6 +67,16 @@ body {
   font-family: var(--default-font);
 }
 
+/* Bootstrap .text-muted targets light backgrounds; tie it to theme text instead */
+.text-muted {
+  color: color-mix(in srgb, var(--default-color), transparent 38%) !important;
+}
+
+/* Default Bootstrap modals use a light panel; keep muted text dark-on-light */
+.modal-content .text-muted {
+  color: color-mix(in srgb, #212529, transparent 40%) !important;
+}
+
 a {
   color: var(--accent-color);
   text-decoration: none;
@@ -914,13 +924,15 @@ section,
   pointer-events: none;
 }
 
+/* 100% width, intrinsic height — full frame width visible (no side crop); anchored top, vertical overflow clips below */
 .hero .hero-bg-video video {
   position: absolute;
-  inset: 0;
+  left: 0;
+  right: 0;
+  top: 0;
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+  max-width: 100%;
+  height: auto;
   display: block;
   transform: translateZ(0);
   backface-visibility: hidden;

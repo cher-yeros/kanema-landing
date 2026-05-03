@@ -14,9 +14,9 @@ export function AboutSection() {
               <span className="tag-label">About Kanema</span>
               <h2>One digital home for Ethiopia&apos;s visual industry</h2>
               <p>
-                Kanema (ካነማ) unites photographers, videographers, and
-                filmmakers in a single ecosystem—to showcase work, meet clients,
-                and collaborate with peers. Our mission is to empower Ethiopian
+                Kanema (ካንማ) unites photographers, videographers, and filmmakers
+                in a single ecosystem—to showcase work, meet clients, and
+                collaborate with peers. Our mission is to empower Ethiopian
                 visual storytellers with visibility, opportunities, and
                 professional growth. Our vision: Africa&apos;s leading platform
                 for visual creatives and storytelling.
@@ -86,7 +86,7 @@ export function AboutSection() {
                   </div>
                   <div className="experience-badge">
                     <i className="bi bi-award-fill" />
-                    <h4>ካነማ</h4>
+                    <h4>ካንማ</h4>
                     <span>Built for Ethiopia</span>
                   </div>
                 </div>

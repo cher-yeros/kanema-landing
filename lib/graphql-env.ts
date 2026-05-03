@@ -1,17 +1,19 @@
 /**
- * Kanema GraphQL (kanema-backend) HTTP/WS URLs for the landing app only.
- * Same idea as lela-platform-internet-facing: `NODE_ENV`-based defaults plus `NEXT_PUBLIC_*` overrides.
+ * Kanema GraphQL (kanema-backend) HTTP/WS URLs for the landing app.
+ * Mirrors `kanema-admin/lib/graphql-env.ts`: NODE_ENV defaults plus `KANEMA_*` / `NEXT_PUBLIC_KANEMA_*` overrides.
  *
- * Browser and RSC/server code POST directly to kanema-backend — no Next.js API proxy.
- *
- * Env:
- * - `NEXT_PUBLIC_GRAPHQL_URL` — optional explicit GraphQL HTTP URL for client + default server.
- * - `GRAPHQL_URL` — optional server-only override when RSC fetches resolve the backend differently
- *   than the browser (e.g. Docker hostname).
+ * Legacy: `NEXT_PUBLIC_GRAPHQL_URL`, `GRAPHQL_URL`, `NEXT_PUBLIC_GRAPHQL_WS_URL` are still honored if set.
  */
 
-const DEFAULT_GRAPHQL_DEV = "http://localhost:4000/graphql";
-const DEFAULT_API_ORIGIN_PROD = "https://apikanema.shevadigitals.com";
+const DEFAULT_GRAPHQL_HTTP_DEV = "http://localhost:4000/graphql";
+/** Production API host (GraphQL at `/graphql`, subscriptions at `/subscriptions`). */
+const DEFAULT_GRAPHQL_HTTP_PROD = "https://kanema.shevadigitals.com/graphql";
+
+function defaultGraphqlHttpForNodeEnv(): string {
+  return process.env.NODE_ENV === "production"
+    ? DEFAULT_GRAPHQL_HTTP_PROD
+    : DEFAULT_GRAPHQL_HTTP_DEV;
+}
 
 export function ensureGraphqlHttpPath(url: string): string {
   const u = url.trim().replace(/\/+$/, "");
@@ -19,43 +21,74 @@ export function ensureGraphqlHttpPath(url: string): string {
   return `${u}/graphql`;
 }
 
-function defaultBackendGraphqlForNodeEnv(): string {
-  if (process.env.NODE_ENV === "production") {
-    return ensureGraphqlHttpPath(DEFAULT_API_ORIGIN_PROD);
+function resolveGraphqlHttpUrl(): string {
+  if (typeof window === "undefined") {
+    const s =
+      process.env.KANEMA_GRAPHQL_URL?.trim() ||
+      process.env.NEXT_PUBLIC_KANEMA_GRAPHQL_URL?.trim() ||
+      process.env.GRAPHQL_URL?.trim() ||
+      process.env.NEXT_PUBLIC_GRAPHQL_URL?.trim();
+    if (s) return ensureGraphqlHttpPath(s);
+    return defaultGraphqlHttpForNodeEnv();
   }
-  return DEFAULT_GRAPHQL_DEV;
+  const c =
+    process.env.NEXT_PUBLIC_KANEMA_GRAPHQL_URL?.trim() ||
+    process.env.NEXT_PUBLIC_GRAPHQL_URL?.trim();
+  if (c) return ensureGraphqlHttpPath(c);
+  return defaultGraphqlHttpForNodeEnv();
 }
 
-/** Canonical GraphQL HTTP URL (backend). Used by Apollo on the client. */
+/** HTTP endpoint of the Kanema GraphQL API (backend tier), not a Next.js route. */
 export function graphqlHttpUrl(): string {
-  const fromEnv = process.env.NEXT_PUBLIC_GRAPHQL_URL?.trim();
-  if (fromEnv) return ensureGraphqlHttpPath(fromEnv);
-  return defaultBackendGraphqlForNodeEnv();
+  return resolveGraphqlHttpUrl();
 }
 
 /**
  * GraphQL HTTP URL when code runs on the Next server (RSC server fetches).
- * Prefer `GRAPHQL_URL` when the backend is only reachable privately from Node.
+ * Uses the same resolution as {@link graphqlHttpUrl} on the server (including `KANEMA_GRAPHQL_URL`).
  */
 export function graphqlHttpUrlServer(): string {
-  const fromServer = process.env.GRAPHQL_URL?.trim();
-  if (fromServer) return ensureGraphqlHttpPath(fromServer);
-  return graphqlHttpUrl();
+  return resolveGraphqlHttpUrl();
+}
+
+function defaultWsFromHttp(http: string): string {
+  if (http.startsWith("https://")) {
+    return (
+      "wss://" +
+      http
+        .slice("https://".length)
+        .replace(/\/graphql\/?$/i, "")
+        .replace(/\/$/, "") +
+      "/subscriptions"
+    );
+  }
+  if (http.startsWith("http://")) {
+    return (
+      "ws://" +
+      http
+        .slice("http://".length)
+        .replace(/\/graphql\/?$/i, "")
+        .replace(/\/$/, "") +
+      "/subscriptions"
+    );
+  }
+  return "ws://localhost:4000/subscriptions";
 }
 
 export function graphqlWsUrl(): string {
-  const explicit = process.env.NEXT_PUBLIC_GRAPHQL_WS_URL?.replace(/\/$/, "");
-  if (explicit) return explicit;
-  try {
-    const base = new URL(graphqlHttpUrl());
-    base.protocol = base.protocol === "https:" ? "wss:" : "ws:";
-    base.pathname = "/subscriptions";
-    base.search = "";
-    base.hash = "";
-    return base.toString();
-  } catch {
-    return "ws://localhost:4000/subscriptions";
+  if (typeof window === "undefined") {
+    const s =
+      process.env.KANEMA_GRAPHQL_WS_URL?.trim() ||
+      process.env.NEXT_PUBLIC_KANEMA_GRAPHQL_WS_URL?.trim() ||
+      process.env.NEXT_PUBLIC_GRAPHQL_WS_URL?.trim();
+    if (s) return s.replace(/\/$/, "");
+    return defaultWsFromHttp(resolveGraphqlHttpUrl());
   }
+  const c =
+    process.env.NEXT_PUBLIC_KANEMA_GRAPHQL_WS_URL?.trim() ||
+    process.env.NEXT_PUBLIC_GRAPHQL_WS_URL?.trim();
+  if (c) return c.replace(/\/$/, "");
+  return defaultWsFromHttp(resolveGraphqlHttpUrl());
 }
 
 export function defaultElectionId(): string | undefined {
