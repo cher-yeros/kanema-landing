@@ -1,0 +1,416 @@
+/* Course catalog cards */
+.learn-page .learn-course-card {
+  flex-direction: column;
+  padding: 0;
+  gap: 0;
+}
+
+.learn-page .learn-course-card__media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--default-color), transparent 90%);
+}
+
+.learn-page .learn-course-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.35s ease;
+}
+
+.learn-page .learn-course-card:hover .learn-course-card__media img {
+  transform: scale(1.03);
+}
+
+.learn-page .learn-course-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-color);
+  font-size: 2.5rem;
+}
+
+.learn-page .learn-course-card .offering-body {
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+/* Theme accent button (hero green) — used for enroll CTAs */
+.learn-page .btn.btn-accent {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border: 2px solid var(--accent-color);
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+}
+
+.learn-page .btn.btn-accent:hover {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color), black 15%);
+  color: var(--contrast-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px
+    color-mix(in srgb, var(--accent-color), transparent 55%);
+}
+
+.learn-page .btn.btn-accent:disabled {
+  opacity: 0.65;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Course detail */
+.learn-page .learn-course-detail {
+  max-width: 960px;
+}
+
+.learn-page .learn-course-hero {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  background: var(--surface-color);
+  margin-bottom: 1.5rem;
+}
+
+.learn-page .learn-course-hero__video {
+  background: #000;
+}
+
+.learn-page .learn-course-hero__video iframe,
+.learn-page .learn-course-hero__video video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+
+.learn-page .learn-course-hero__thumb img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  display: block;
+}
+
+.learn-page .learn-course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.learn-page .learn-course-meta .featured-tag {
+  margin: 0;
+}
+
+.learn-page .learn-cta-card {
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  margin-bottom: 2rem;
+}
+
+.learn-page .learn-cta-card .badge.text-bg-success {
+  background: var(--accent-color) !important;
+  color: var(--contrast-color) !important;
+}
+
+/* Curriculum */
+.learn-page .learn-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.learn-page .learn-section-heading .h4 {
+  margin: 0;
+}
+
+.learn-page .learn-curriculum {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 2.5rem;
+}
+
+.learn-page .learn-curriculum-section {
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  background: var(--surface-color);
+  overflow: hidden;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.learn-page .learn-curriculum-section:hover {
+  border-color: color-mix(in srgb, var(--accent-color), transparent 50%);
+}
+
+.learn-page .learn-curriculum-section__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--default-color), transparent 92%);
+}
+
+.learn-page .learn-curriculum-section__index {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--accent-color), transparent 85%);
+  color: var(--accent-color);
+}
+
+.learn-page .learn-curriculum-section__title {
+  font-family: var(--heading-font);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--heading-color);
+  margin: 0 0 0.25rem;
+}
+
+.learn-page .learn-curriculum-section__meta {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--default-color), transparent 35%);
+  margin: 0;
+}
+
+.learn-page .learn-lesson-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.learn-page .learn-lesson-row {
+  border-top: 1px solid
+    color-mix(in srgb, var(--default-color), transparent 94%);
+}
+
+.learn-page .learn-lesson-row:first-child {
+  border-top: none;
+}
+
+.learn-page .learn-lesson-link {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.2s ease;
+}
+
+.learn-page .learn-lesson-link:hover {
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+}
+
+.learn-page .learn-lesson-link.is-locked {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.learn-page .learn-lesson-link.is-locked:hover {
+  background: transparent;
+}
+
+.learn-page .learn-lesson-icon {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+  color: var(--accent-color);
+}
+
+.learn-page .learn-lesson-link.is-completed .learn-lesson-icon {
+  background: color-mix(in srgb, var(--accent-color), transparent 75%);
+  color: var(--contrast-color);
+}
+
+.learn-page .learn-lesson-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.learn-page .learn-lesson-title {
+  font-weight: 500;
+  color: var(--heading-color);
+  margin: 0;
+  line-height: 1.35;
+}
+
+.learn-page .learn-lesson-link.is-locked .learn-lesson-title {
+  color: var(--default-color);
+}
+
+.learn-page .learn-lesson-sub {
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--default-color), transparent 35%);
+  margin: 0.15rem 0 0;
+}
+
+.learn-page .learn-lesson-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  flex-shrink: 0;
+}
+
+.learn-page .learn-badge-preview {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--accent-color), transparent 80%);
+  color: var(--accent-color);
+}
+
+.learn-page .learn-badge-locked {
+  font-size: 0.65rem;
+  font-weight: 600;
+  padding: 0.2rem 0.45rem;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--default-color), transparent 88%);
+  color: color-mix(in srgb, var(--default-color), transparent 25%);
+}
+
+/* Reviews */
+.learn-page .learn-reviews-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+.learn-page .learn-reviews-score {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--heading-color);
+}
+
+.learn-page .learn-reviews-stars {
+  color: var(--accent-color);
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
+}
+
+.learn-page .learn-reviews-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.learn-page .learn-review-card {
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+.learn-page .learn-review-card__head {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.learn-page .learn-review-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--accent-color), transparent 80%);
+  color: var(--accent-color);
+  flex-shrink: 0;
+}
+
+.learn-page .learn-review-card__name {
+  font-weight: 600;
+  color: var(--heading-color);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.learn-page .learn-review-card__meta {
+  font-size: 0.75rem;
+  color: color-mix(in srgb, var(--default-color), transparent 35%);
+  margin: 0;
+}
+
+.learn-page .learn-review-card__stars {
+  color: var(--accent-color);
+  font-size: 0.8rem;
+}
+
+.learn-page .learn-review-card__text {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--default-color);
+}
+
+.learn-page .learn-review-form-card {
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  margin-bottom: 2rem;
+}
+
+.learn-page .learn-review-form-card .form-label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--heading-color);
+}
+
+.learn-page .learn-review-form-card .form-control,
+.learn-page .learn-review-form-card .form-select {
+  background: color-mix(in srgb, var(--background-color), transparent 20%);
+  border-color: color-mix(in srgb, var(--default-color), transparent 80%);
+  color: var(--default-color);
+}
+
+.learn-page .learn-empty-state {
+  padding: 2rem 1.25rem;
+  text-align: center;
+  border-radius: 12px;
+  border: 1px dashed color-mix(in srgb, var(--default-color), transparent 80%);
+  color: color-mix(in srgb, var(--default-color), transparent 25%);
+  font-size: 0.9rem;
+}

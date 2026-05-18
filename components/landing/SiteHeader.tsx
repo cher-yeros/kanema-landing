@@ -11,7 +11,14 @@ import {
   type MouseEvent,
 } from "react";
 
-type NavKey = "home" | "about" | "election" | "community" | "jobs" | "contact";
+type NavKey =
+  | "home"
+  | "about"
+  | "election"
+  | "community"
+  | "jobs"
+  | "learn"
+  | "contact";
 
 export function SiteHeader() {
   const pathname = usePathname();
@@ -37,6 +44,7 @@ export function SiteHeader() {
     if (pathname.startsWith("/election")) return "election";
     if (pathname.startsWith("/community")) return "community";
     if (pathname.startsWith("/jobs")) return "jobs";
+    if (pathname.startsWith("/learn")) return "learn";
     if (pathname === "/") {
       if (hash === "#about") return "about";
       if (hash === "#contact") return "contact";
@@ -87,8 +95,7 @@ export function SiteHeader() {
     syncHashFromLocation();
   }, [syncHashFromLocation]);
 
-  const navClass = (key: NavKey) =>
-    activeNav === key ? "active" : undefined;
+  const navClass = (key: NavKey) => (activeNav === key ? "active" : undefined);
 
   return (
     <header id="header" className="header d-flex align-items-center fixed-top">
@@ -150,6 +157,16 @@ export function SiteHeader() {
                 onClick={closeMobileForPage}
               >
                 Production jobs
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/learn"
+                className={navClass("learn")}
+                aria-current={activeNav === "learn" ? "page" : undefined}
+                onClick={closeMobileForPage}
+              >
+                Learn
               </Link>
             </li>
             {/* (removed) "More" dropdown — no remaining items */}

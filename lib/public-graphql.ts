@@ -4,7 +4,7 @@ type GraphQLErrorLike = { message?: string };
 
 async function fetchGraphQL<TData>(
   query: string,
-  variables?: Record<string, unknown>
+  variables?: Record<string, unknown>,
 ): Promise<TData> {
   const res = await fetch(graphqlHttpUrlServer(), {
     method: "POST",
@@ -58,7 +58,7 @@ export async function fetchTestimonials(): Promise<PublicTestimonial[]> {
         }
       }
     `,
-    { publishedOnly: true, featuredOnly: false }
+    { publishedOnly: true, featuredOnly: false },
   );
   return data.testimonials ?? [];
 }
@@ -90,7 +90,7 @@ export async function fetchTeamMembers(): Promise<PublicTeamMember[]> {
         }
       }
     `,
-    { activeOnly: true }
+    { activeOnly: true },
   );
   return data.teamMembers ?? [];
 }
@@ -139,15 +139,17 @@ export async function fetchProductionJobs(): Promise<PublicProductionJob[]> {
           updatedAt
         }
       }
-    `
+    `,
   );
   return data.productionJobs ?? [];
 }
 
 export async function fetchProductionJob(
-  id: string
+  id: string,
 ): Promise<PublicProductionJob | null> {
-  const data = await fetchGraphQL<{ productionJob: PublicProductionJob | null }>(
+  const data = await fetchGraphQL<{
+    productionJob: PublicProductionJob | null;
+  }>(
     `
       query ProductionJobPublic($id: ID!) {
         productionJob(id: $id) {
@@ -168,9 +170,190 @@ export async function fetchProductionJob(
         }
       }
     `,
-    { id }
+    { id },
   );
   return data.productionJob ?? null;
+}
+
+export type PublicPublishedCourse = {
+  id: string;
+  slug: string;
+  title: string;
+  short_description: string | null;
+  description: string | null;
+  thumbnail_url: string | null;
+  preview_video_url: string | null;
+  category: string | null;
+  language: string | null;
+  level: string | null;
+  tags: string | null;
+  price: string;
+  currency: string;
+  published_at: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type PublicCurriculumLesson = {
+  id: string;
+  section_id: string;
+  title: string;
+  sort_order: number;
+  content_type: string;
+  content_url: string | null;
+  duration_seconds: number | null;
+  is_free_preview: boolean;
+  content_unlocked: boolean;
+  resources_json: string | null;
+  is_completed: boolean;
+  watch_time_seconds: number;
+};
+
+export type PublicCourseSection = {
+  id: string;
+  course_id: string;
+  title: string;
+  sort_order: number;
+  is_free_preview: boolean;
+  lessons: PublicCurriculumLesson[];
+};
+
+export type PublicCourseReview = {
+  id: string;
+  user_id: string;
+  course_id: string;
+  rating: number;
+  comment: string | null;
+  createdAt: string;
+  author: { id: string; full_name: string };
+};
+
+export async function fetchPublishedCourses(): Promise<
+  PublicPublishedCourse[]
+> {
+  const data = await fetchGraphQL<{
+    publishedCourses: PublicPublishedCourse[];
+  }>(
+    `
+      query PublishedCourses {
+        publishedCourses(limit: 50, skip: 0, sort: newest) {
+          id
+          slug
+          title
+          short_description
+          description
+          thumbnail_url
+          preview_video_url
+          category
+          language
+          level
+          tags
+          price
+          currency
+          published_at
+          createdAt
+          updatedAt
+        }
+      }
+    `,
+  );
+  return data.publishedCourses ?? [];
+}
+
+export async function fetchPublishedCourse(
+  slug: string,
+): Promise<PublicPublishedCourse | null> {
+  const data = await fetchGraphQL<{
+    publishedCourse: PublicPublishedCourse | null;
+  }>(
+    `
+      query PublishedCourse($slug: String!) {
+        publishedCourse(slug: $slug) {
+          id
+          slug
+          title
+          short_description
+          description
+          thumbnail_url
+          preview_video_url
+          category
+          language
+          level
+          tags
+          price
+          currency
+          published_at
+          createdAt
+          updatedAt
+        }
+      }
+    `,
+    { slug },
+  );
+  return data.publishedCourse ?? null;
+}
+
+export async function fetchPublishedCourseCurriculum(
+  slug: string,
+): Promise<PublicCourseSection[]> {
+  const data = await fetchGraphQL<{
+    publishedCourseCurriculum: PublicCourseSection[];
+  }>(
+    `
+      query Curriculum($slug: String!) {
+        publishedCourseCurriculum(slug: $slug) {
+          id
+          course_id
+          title
+          sort_order
+          is_free_preview
+          lessons {
+            id
+            section_id
+            title
+            sort_order
+            content_type
+            content_url
+            duration_seconds
+            is_free_preview
+            content_unlocked
+            resources_json
+            is_completed
+            watch_time_seconds
+          }
+        }
+      }
+    `,
+    { slug },
+  );
+  return data.publishedCourseCurriculum ?? [];
+}
+
+export async function fetchPublishedCourseReviews(
+  slug: string,
+): Promise<PublicCourseReview[]> {
+  const data = await fetchGraphQL<{
+    publishedCourseReviews: PublicCourseReview[];
+  }>(
+    `
+      query Reviews($slug: String!) {
+        publishedCourseReviews(slug: $slug) {
+          id
+          user_id
+          course_id
+          rating
+          comment
+          createdAt
+          author {
+            id
+            full_name
+          }
+        }
+      }
+    `,
+    { slug },
+  );
+  return data.publishedCourseReviews ?? [];
 }
 
 export async function fetchTalents(): Promise<PublicTalent[]> {
@@ -192,8 +375,7 @@ export async function fetchTalents(): Promise<PublicTalent[]> {
         }
       }
     `,
-    { publicOnly: true }
+    { publicOnly: true },
   );
   return data.talentProfiles ?? [];
 }
-
