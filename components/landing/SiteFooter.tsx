@@ -75,7 +75,7 @@ export function SiteFooter() {
                 <a href="#services">Opportunities</a>
               </li>
               <li>
-                <a href="#team">Events and trainings</a>
+                <Link href="/events">Events and trainings</Link>
               </li>
               <li>
                 <a href="#why-us">Resources</a>

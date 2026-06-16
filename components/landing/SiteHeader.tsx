@@ -18,6 +18,7 @@ type NavKey =
   | "community"
   | "jobs"
   | "learn"
+  | "events"
   | "contact";
 
 export function SiteHeader() {
@@ -45,6 +46,7 @@ export function SiteHeader() {
     if (pathname.startsWith("/community")) return "community";
     if (pathname.startsWith("/jobs")) return "jobs";
     if (pathname.startsWith("/learn")) return "learn";
+    if (pathname.startsWith("/events")) return "events";
     if (pathname === "/") {
       if (hash === "#about") return "about";
       if (hash === "#contact") return "contact";
@@ -167,6 +169,16 @@ export function SiteHeader() {
                 onClick={closeMobileForPage}
               >
                 Learn
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/events"
+                className={navClass("events")}
+                aria-current={activeNav === "events" ? "page" : undefined}
+                onClick={closeMobileForPage}
+              >
+                Events
               </Link>
             </li>
             {/* (removed) "More" dropdown — no remaining items */}

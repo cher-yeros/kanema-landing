@@ -379,3 +379,89 @@ export async function fetchTalents(): Promise<PublicTalent[]> {
   );
   return data.talentProfiles ?? [];
 }
+
+export type PublicEvent = {
+  id: string;
+  slug: string;
+  title: string;
+  short_description: string | null;
+  description: string | null;
+  location: string | null;
+  modality: "ONLINE" | "IN_PERSON" | "HYBRID";
+  cover_url: string | null;
+  start_date: string;
+  end_date: string | null;
+  is_featured: boolean;
+  display_order: number;
+  published_at: string | null;
+  is_free: boolean;
+  price: string;
+  currency: string;
+  payment_instructions: string | null;
+};
+
+export async function fetchPublishedEvents(): Promise<PublicEvent[]> {
+  const data = await fetchGraphQL<{
+    events: PublicEvent[];
+  }>(
+    `
+      query Events($publishedOnly: Boolean) {
+        events(publishedOnly: $publishedOnly) {
+          id
+          slug
+          title
+          short_description
+          description
+          location
+          modality
+          cover_url
+          start_date
+          end_date
+          is_featured
+          display_order
+          published_at
+          is_free
+          price
+          currency
+          payment_instructions
+        }
+      }
+    `,
+    { publishedOnly: true },
+  );
+  return data.events ?? [];
+}
+
+export async function fetchPublishedEventBySlug(
+  slug: string,
+): Promise<PublicEvent | null> {
+  const data = await fetchGraphQL<{
+    eventBySlug: PublicEvent | null;
+  }>(
+    `
+      query EventBySlug($slug: String!) {
+        eventBySlug(slug: $slug) {
+          id
+          slug
+          title
+          short_description
+          description
+          location
+          modality
+          cover_url
+          start_date
+          end_date
+          is_featured
+          display_order
+          published_at
+          is_free
+          price
+          currency
+          payment_instructions
+        }
+      }
+    `,
+    { slug },
+  );
+  return data.eventBySlug ?? null;
+}

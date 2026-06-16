@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export function ServicesSection() {
   return (
     <section id="services" className="services section">
@@ -49,8 +51,8 @@ export function ServicesSection() {
                 <p>
                   A curated collection of outstanding work from Ethiopian
                   creatives—weddings, fashion, documentary, commercial, and
-                  film—so clients can experience the industry&apos;s storytelling
-                  power.
+                  film—so clients can experience the industry&apos;s
+                  storytelling power.
                 </p>
                 <a href="#showcase" className="explore-btn">
                   View categories <i className="bi bi-chevron-right" />
@@ -89,16 +91,16 @@ export function ServicesSection() {
               </div>
               <div className="offering-body">
                 <h4>
-                  <a href="#team">Events and trainings</a>
+                  <Link href="/events">Events and trainings</Link>
                 </h4>
                 <p>
                   Workshops, masterclasses, exhibitions, film festivals, and
                   networking meetups—stay current, learn from peers, and grow
                   your craft.
                 </p>
-                <a href="#team" className="explore-btn">
-                  Join the community <i className="bi bi-chevron-right" />
-                </a>
+                <Link href="/events" className="explore-btn">
+                  View events <i className="bi bi-chevron-right" />
+                </Link>
               </div>
             </div>
           </div>
