@@ -96,6 +96,7 @@
 }
 
 @media (max-width: 768px) {
+  .events-page .event-card {
     text-align: left;
     align-items: stretch;
   }
