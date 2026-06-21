@@ -1,0 +1,466 @@
+/* ─── Screen: digital event pass ─── */
+.events-page .event-ticket-page {
+  padding-bottom: 3rem;
+}
+
+.events-page .event-ticket-page__content {
+  max-width: 920px;
+}
+
+.events-page .event-ticket {
+  display: grid;
+  grid-template-columns: minmax(260px, 36%) 1fr;
+  grid-template-rows: auto 1fr auto;
+  grid-template-areas:
+    "hero body"
+    "hero body"
+    "footer footer";
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 75%);
+  background: var(--surface-color);
+  box-shadow:
+    0 4px 6px color-mix(in srgb, var(--default-color), transparent 92%),
+    0 24px 48px color-mix(in srgb, var(--accent-color), transparent 88%);
+}
+
+.events-page .event-ticket__hero {
+  grid-area: hero;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(
+    165deg,
+    var(--accent-color) 0%,
+    color-mix(in srgb, var(--accent-color), #0f172a 42%) 100%
+  );
+  color: var(--contrast-color);
+}
+
+.events-page .event-ticket__hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 20% 0%,
+    color-mix(in srgb, var(--contrast-color), transparent 88%) 0%,
+    transparent 55%
+  );
+  pointer-events: none;
+}
+
+.events-page .event-ticket__hero-top,
+.events-page .event-ticket__hero-bottom {
+  position: relative;
+  z-index: 1;
+}
+
+.events-page .event-ticket__brand {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  opacity: 0.92;
+  margin: 0 0 0.5rem;
+}
+
+.events-page .event-ticket__badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--contrast-color), transparent 82%);
+  color: var(--contrast-color);
+  backdrop-filter: blur(4px);
+}
+
+.events-page .event-ticket__title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0.75rem 0 0;
+  line-height: 1.25;
+  color: inherit;
+}
+
+.events-page .event-ticket__cover {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.28;
+  mix-blend-mode: luminosity;
+}
+
+.events-page .event-ticket__hero--has-cover .event-ticket__title {
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.events-page .event-ticket__body {
+  grid-area: body;
+  padding: 1.75rem 1.75rem 1.5rem;
+  background: var(--surface-color);
+}
+
+.events-page .event-ticket__grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+}
+
+.events-page .event-ticket__field {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  margin: 0;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--default-color), transparent 92%);
+}
+
+.events-page .event-ticket__field:last-child {
+  border-bottom: none;
+}
+
+.events-page .event-ticket__field--wide {
+  /* same row style */
+}
+
+.events-page .event-ticket__field-icon {
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent-color), transparent 90%);
+  color: var(--accent-color);
+  font-size: 1rem;
+}
+
+.events-page .event-ticket__field-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.events-page .event-ticket__field dt {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--default-color), transparent 45%);
+  margin-bottom: 0.15rem;
+}
+
+.events-page .event-ticket__field dd {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin: 0;
+  color: var(--heading-color);
+  line-height: 1.4;
+}
+
+.events-page .event-ticket__mono {
+  font-family: ui-monospace, "Cascadia Code", monospace;
+  font-size: 0.82rem;
+  font-weight: 500;
+  word-break: break-all;
+  color: color-mix(in srgb, var(--heading-color), transparent 15%);
+}
+
+.events-page .event-ticket__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  color: #0d5c3a;
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+}
+
+.events-page .event-ticket__status::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-color);
+}
+
+.events-page .event-ticket__label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--default-color), transparent 45%);
+}
+
+.events-page .event-ticket__note {
+  margin-top: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 12px;
+  border-left: 3px solid var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 94%);
+  font-size: 0.9rem;
+}
+
+/* Perforation — print only on screen */
+.events-page .event-ticket__stub {
+  display: none;
+}
+
+.events-page .event-ticket__footer {
+  grid-area: footer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 1.75rem;
+  background: color-mix(in srgb, var(--accent-color), transparent 94%);
+  border-top: 1px solid color-mix(in srgb, var(--accent-color), transparent 80%);
+}
+
+.events-page .event-ticket__footer-meta {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  margin: 0;
+}
+
+.events-page .event-ticket__footer-brand {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-color);
+  margin: 0;
+}
+
+.events-page .event-ticket-actions .btn.btn-accent {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border: 2px solid var(--accent-color);
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 12px 24px;
+}
+
+@media (max-width: 768px) {
+  .events-page .event-ticket {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "hero"
+      "body"
+      "footer";
+  }
+
+  .events-page .event-ticket__hero {
+    min-height: 200px;
+  }
+}
+
+/* ─── Print: compact paper ticket (unchanged intent) ─── */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 14mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #111 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  #header,
+  #footer,
+  #scroll-top,
+  .no-print,
+  .scroll-top {
+    display: none !important;
+  }
+
+  .main.events-page,
+  .event-ticket-page {
+    padding: 0 !important;
+    margin: 0 !important;
+    min-height: auto !important;
+    background: #fff !important;
+  }
+
+  .event-ticket-page .section,
+  .event-ticket-page__content {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .event-ticket-page .container {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .event-ticket-page .row {
+    margin: 0 !important;
+  }
+
+  .event-ticket-page .col-lg-7,
+  .event-ticket-page .col-lg-10,
+  .event-ticket-page .col-print-12 {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 !important;
+    flex: none !important;
+  }
+
+  .events-page .event-ticket {
+    display: block !important;
+    box-shadow: none !important;
+    border: 2px solid #1a1a1a !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  .events-page .event-ticket__hero {
+    display: block !important;
+    padding: 14px 18px !important;
+    background: #1a5f3f !important;
+    color: #fff !important;
+    min-height: auto !important;
+  }
+
+  .events-page .event-ticket__hero::before {
+    display: none !important;
+  }
+
+  .events-page .event-ticket__cover {
+    display: none !important;
+  }
+
+  .events-page .event-ticket__hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .events-page .event-ticket__hero-bottom {
+    margin-top: 8px;
+  }
+
+  .events-page .event-ticket__title {
+    font-size: 18pt !important;
+    color: #fff !important;
+    margin-top: 0 !important;
+  }
+
+  .events-page .event-ticket__brand,
+  .events-page .event-ticket__badge {
+    color: #fff !important;
+  }
+
+  .events-page .event-ticket__badge {
+    background: transparent !important;
+    border: 1.5px solid #fff !important;
+    border-radius: 4px !important;
+    backdrop-filter: none !important;
+  }
+
+  .events-page .event-ticket__field-icon {
+    display: none !important;
+  }
+
+  .events-page .event-ticket__body {
+    padding: 16px 18px !important;
+    background: #fff !important;
+  }
+
+  .events-page .event-ticket__grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px 20px !important;
+  }
+
+  .events-page .event-ticket__field {
+    display: block !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  .events-page .event-ticket__field--wide {
+    grid-column: 1 / -1 !important;
+  }
+
+  .events-page .event-ticket__field dt {
+    color: #555 !important;
+    font-size: 7pt !important;
+  }
+
+  .events-page .event-ticket__field dd {
+    color: #111 !important;
+    font-size: 10pt !important;
+    font-weight: 500 !important;
+  }
+
+  .events-page .event-ticket__status {
+    border: 1.5px solid #1a5f3f !important;
+    color: #1a5f3f !important;
+    background: #fff !important;
+    font-size: 8pt !important;
+    border-radius: 4px !important;
+    padding: 2px 6px !important;
+  }
+
+  .events-page .event-ticket__status::before {
+    display: none !important;
+  }
+
+  .events-page .event-ticket__note {
+    background: #f5f5f5 !important;
+    border: 1px solid #ddd !important;
+    border-left: 1px solid #ddd !important;
+    color: #111 !important;
+  }
+
+  .events-page .event-ticket__stub {
+    display: block !important;
+    height: 10px !important;
+    background: #f0f0f0 !important;
+    position: relative;
+  }
+
+  .events-page .event-ticket__stub span {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    top: 50%;
+    border-top: 2px dashed #999;
+  }
+
+  .events-page .event-ticket__footer {
+    background: #fafafa !important;
+    border-top: 1px solid #ccc !important;
+    padding: 10px 18px !important;
+  }
+
+  .events-page .event-ticket__footer-meta,
+  .events-page .event-ticket__footer-brand {
+    color: #444 !important;
+    font-size: 8pt !important;
+  }
+}

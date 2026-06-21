@@ -43,6 +43,11 @@ export function graphqlHttpUrl(): string {
   return resolveGraphqlHttpUrl();
 }
 
+/** Kanema API origin (GraphQL URL without `/graphql`). */
+export function kanemaApiBaseUrl(): string {
+  return graphqlHttpUrl().replace(/\/graphql\/?$/i, "");
+}
+
 /**
  * GraphQL HTTP URL when code runs on the Next server (RSC server fetches).
  * Uses the same resolution as {@link graphqlHttpUrl} on the server (including `KANEMA_GRAPHQL_URL`).

@@ -6,15 +6,13 @@ import { useState } from "react";
 
 import { ME_QUERY } from "@/lib/election-graphql";
 import {
+  INITIATE_EVENT_PAYMENT_MUTATION,
   MY_EVENT_REGISTRATION_QUERY,
+  PAYMENT_SETTINGS_QUERY,
   REGISTER_FOR_EVENT_MUTATION,
 } from "@/lib/events-graphql";
 import type { PublicEvent } from "@/lib/public-graphql";
 import type { MeQuery } from "@/types/election-apollo";
-
-function loginHrefBack(path: string) {
-  return `/election/login?next=${encodeURIComponent(path)}`;
-}
 
 function formatEventWhen(start: string, end?: string | null): string {
   const s = new Date(start);
@@ -57,15 +55,28 @@ type RegistrationData = {
   } | null;
 };
 
-export function EventDetailClient({
-  event,
-  pathHref,
-}: {
-  event: PublicEvent;
-  pathHref: string;
-}) {
+type ChapaCheckoutResponse = {
+  status?: string;
+  checkout_url?: string | null;
+  message?: string;
+};
+
+function redirectToChapaCheckout(data: ChapaCheckoutResponse | undefined) {
+  const url = data?.checkout_url?.trim();
+  if (url) {
+    window.location.assign(url);
+    return true;
+  }
+  return false;
+}
+
+export function EventDetailClient({ event }: { event: PublicEvent }) {
   const { data: meData } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
+  const { data: paymentData } = useQuery<{
+    paymentSettings: { chapaEnabled: boolean };
+  }>(PAYMENT_SETTINGS_QUERY);
+  const chapaEnabled = paymentData?.paymentSettings.chapaEnabled === true;
   const { data: regData, refetch } = useQuery<RegistrationData>(
     MY_EVENT_REGISTRATION_QUERY,
     {
@@ -76,8 +87,12 @@ export function EventDetailClient({
   const [register, { loading: registering }] = useMutation(
     REGISTER_FOR_EVENT_MUTATION,
   );
+  const [initiatePayment, { loading: paying }] = useMutation(
+    INITIATE_EVENT_PAYMENT_MUTATION,
+  );
   const [note, setNote] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
   const registration = regData?.myEventRegistration;
@@ -88,12 +103,45 @@ export function EventDetailClient({
     Boolean(me?.is_verified) &&
     !isRegistered &&
     !eventStarted;
+  const showManualPaymentInstructions =
+    !event.is_free && event.payment_instructions && !chapaEnabled;
+  const awaitingChapaPayment =
+    chapaEnabled &&
+    !event.is_free &&
+    (registration?.payment_status === "PENDING" || (!registration && done));
+  const awaitingManualPayment =
+    !chapaEnabled &&
+    !event.is_free &&
+    (registration?.payment_status === "PENDING" || (!registration && done));
+  const hasTicket =
+    registration?.payment_status === "CONFIRMED" ||
+    registration?.payment_status === "FREE";
+
+  async function startChapaCheckout() {
+    setPaymentError(null);
+    try {
+      const { data } = await initiatePayment({
+        variables: { event_id: event.id },
+      });
+      const payload = (
+        data as { initiateEventPayment?: ChapaCheckoutResponse } | undefined
+      )?.initiateEventPayment;
+
+      if (!redirectToChapaCheckout(payload)) {
+        throw new Error(payload?.message || "Could not start checkout.");
+      }
+    } catch (err: unknown) {
+      setPaymentError(
+        err instanceof Error ? err.message : "Could not start payment.",
+      );
+    }
+  }
 
   async function onRegister(e: React.FormEvent) {
     e.preventDefault();
     setFormError(null);
     try {
-      await register({
+      const { data } = await register({
         variables: {
           input: {
             event_id: event.id,
@@ -101,8 +149,26 @@ export function EventDetailClient({
           },
         },
       });
+
+      const payload = (
+        data as { registerForEvent?: ChapaCheckoutResponse } | undefined
+      )?.registerForEvent;
+
+      if (payload?.status !== "success") {
+        throw new Error(payload?.message || "Registration failed.");
+      }
+
+      if (chapaEnabled && !event.is_free) {
+        if (!redirectToChapaCheckout(payload)) {
+          throw new Error(
+            "Registration saved but Chapa checkout could not start. Use Pay with Chapa below.",
+          );
+        }
+        return;
+      }
+
       setDone(true);
-      void refetch();
+      await refetch();
     } catch (err: unknown) {
       setFormError(err instanceof Error ? err.message : "Registration failed.");
     }
@@ -175,7 +241,7 @@ export function EventDetailClient({
               ) : null}
             </div>
 
-            {!event.is_free && event.payment_instructions ? (
+            {showManualPaymentInstructions ? (
               <div className="info-box mb-4">
                 <h2 className="h6 mb-2">Payment instructions</h2>
                 <p className="mb-0" style={{ whiteSpace: "pre-wrap" }}>
@@ -188,11 +254,11 @@ export function EventDetailClient({
               <div className="info-box">
                 <h3 className="h5 mb-3">Register</h3>
                 <p className="mb-3">
-                  Sign in with your Kanema member account to register for this
-                  event.
+                  Join the Kanema community first, then sign in with your member
+                  account to register for this event.
                 </p>
-                <Link className="btn btn-accent" href={loginHrefBack(pathHref)}>
-                  Member sign-in
+                <Link className="btn btn-accent" href="/community#join">
+                  Join the community first
                 </Link>
               </div>
             ) : me.role !== "member" ? (
@@ -218,8 +284,28 @@ export function EventDetailClient({
             ) : isRegistered ? (
               <div className="info-box">
                 <h3 className="h5 mb-3">You&apos;re registered</h3>
-                {registration?.payment_status === "PENDING" ||
-                (!event.is_free && !registration && done) ? (
+                {awaitingChapaPayment ? (
+                  <>
+                    <p className="mb-3">
+                      Your spot is reserved. Pay{" "}
+                      <strong>{formatEventPrice(event)}</strong> securely with
+                      Chapa to confirm your registration.
+                    </p>
+                    {paymentError ? (
+                      <div className="text-danger small mb-2">
+                        {paymentError}
+                      </div>
+                    ) : null}
+                    <button
+                      type="button"
+                      className="btn btn-accent"
+                      disabled={paying}
+                      onClick={() => void startChapaCheckout()}
+                    >
+                      {paying ? "Starting checkout…" : "Pay with Chapa"}
+                    </button>
+                  </>
+                ) : awaitingManualPayment ? (
                   <>
                     <p className="mb-2">
                       Your spot is reserved. Complete payment of{" "}
@@ -230,10 +316,22 @@ export function EventDetailClient({
                       Payment pending confirmation
                     </span>
                   </>
-                ) : registration?.payment_status === "CONFIRMED" ? (
-                  <span className="badge text-bg-success">
-                    Registration confirmed
-                  </span>
+                ) : hasTicket ? (
+                  <>
+                    <span className="badge text-bg-success mb-3">
+                      {registration?.payment_status === "CONFIRMED"
+                        ? "Registration confirmed"
+                        : "Registered"}
+                    </span>
+                    <div>
+                      <Link
+                        href={`/events/${event.slug}/ticket`}
+                        className="btn btn-accent"
+                      >
+                        View ticket
+                      </Link>
+                    </div>
+                  </>
                 ) : (
                   <span className="badge text-bg-success">Registered</span>
                 )}
@@ -244,8 +342,9 @@ export function EventDetailClient({
                 {!event.is_free ? (
                   <p className="small text-muted mb-3">
                     Ticket price: <strong>{formatEventPrice(event)}</strong>.
-                    After registering, follow the payment instructions to
-                    complete your booking.
+                    {chapaEnabled
+                      ? " Submitting will take you to Chapa to complete payment."
+                      : " After registering, follow the payment instructions to complete your booking."}
                   </p>
                 ) : null}
                 <form
@@ -274,13 +373,15 @@ export function EventDetailClient({
                   <button
                     type="submit"
                     className="btn btn-accent"
-                    disabled={!canRegister || registering}
+                    disabled={!canRegister || registering || paying}
                   >
-                    {registering
-                      ? "Registering…"
+                    {registering || paying
+                      ? "Processing…"
                       : event.is_free
                         ? "Register free"
-                        : "Register & pay"}
+                        : chapaEnabled
+                          ? "Register & pay"
+                          : "Register"}
                   </button>
                 </form>
               </div>

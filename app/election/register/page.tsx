@@ -14,7 +14,8 @@ export default function ElectionRegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
 
-  const [register, { loading }] = useMutation<RegisterMutation>(REGISTER_MUTATION);
+  const [register, { loading }] =
+    useMutation<RegisterMutation>(REGISTER_MUTATION);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,9 +47,9 @@ export default function ElectionRegisterPage() {
       <div className="container section-title" data-aos="fade-up">
         <h1>Create your member account</h1>
         <p>
-          Your phone number is your unique identity—use international format (for
-          example +251911234567). Email is optional; if you skip it, you will still
-          sign in with your phone and password.
+          Your phone number is your unique identity—use international format
+          (for example +251911234567). Email is optional; if you skip it, you
+          will still sign in with your phone and password.
         </p>
       </div>
 
@@ -57,17 +58,12 @@ export default function ElectionRegisterPage() {
           <div className="col-lg-5">
             <div className="info-panel">
               <div className="panel-content">
-                <h3>Three quick steps</h3>
+                <h3>Two quick steps</h3>
                 <ol className="ps-3 mb-0 small">
-                  <li className="mb-2">Register here with phone and password.</li>
                   <li className="mb-2">
-                    Sign in, then open{" "}
-                    <Link href="/election/verify" className="link-light text-decoration-underline">
-                      Verify with OTP
-                    </Link>{" "}
-                    to confirm your phone.
+                    Register here with phone and password.
                   </li>
-                  <li>Return to the ballot when voting is open.</li>
+                  <li>Sign in and return to the ballot when voting is open.</li>
                 </ol>
                 <div className="d-flex flex-wrap gap-2 mt-4">
                   <Link href="/election/login" className="btn btn-accent">
@@ -91,22 +87,24 @@ export default function ElectionRegisterPage() {
                 <p>Password must be at least 8 characters.</p>
               </div>
 
-              {done ?
+              {done ? (
                 <div className="alert alert-success" role="status">
-                  <strong>Account created.</strong> Next, sign in and complete phone
-                  verification on the{" "}
-                  <Link href="/election/verify" className="alert-link">
-                    OTP page
-                  </Link>
-                  , then you can vote when the window is open.
+                  <strong>Account created.</strong> Sign in and you can vote
+                  when the window is open.
                   <div className="mt-3">
-                    <Link href="/election/login" className="btn btn-accent btn-sm">
+                    <Link
+                      href="/election/login"
+                      className="btn btn-accent btn-sm"
+                    >
                       Go to sign in
                     </Link>
                   </div>
                 </div>
-              : (
-                <form className="php-email-form" onSubmit={(e) => void onSubmit(e)}>
+              ) : (
+                <form
+                  className="php-email-form"
+                  onSubmit={(e) => void onSubmit(e)}
+                >
                   <div className="row g-3">
                     <div className="col-12">
                       <label className="form-label">Mobile phone</label>
@@ -134,7 +132,8 @@ export default function ElectionRegisterPage() {
                     </div>
                     <div className="col-12">
                       <label className="form-label">
-                        Display name <span className="text-muted">(optional)</span>
+                        Display name{" "}
+                        <span className="text-muted">(optional)</span>
                       </label>
                       <input
                         type="text"
@@ -160,9 +159,9 @@ export default function ElectionRegisterPage() {
                     </div>
                   </div>
 
-                  {error ?
+                  {error ? (
                     <div className="error-message d-block mt-3">{error}</div>
-                  : null}
+                  ) : null}
 
                   <button
                     type="submit"
@@ -170,7 +169,9 @@ export default function ElectionRegisterPage() {
                     disabled={loading}
                   >
                     <i className="bi bi-check2-circle" />
-                    <span>{loading ? "Creating account…" : "Create account"}</span>
+                    <span>
+                      {loading ? "Creating account…" : "Create account"}
+                    </span>
                   </button>
                 </form>
               )}

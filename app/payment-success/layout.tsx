@@ -6,16 +6,15 @@ import {
 } from "@/components/landing";
 import { ScrollTop } from "@/components/landing/ScrollTop";
 
-import "./events.css";
-import "./event-ticket.css";
+import "../events/events.css";
+import "./payment-success.css";
 
 export const metadata: Metadata = {
-  title: "Events — Kanema",
-  description:
-    "Workshops, screenings, and community gatherings for Ethiopian photographers, videographers, and filmmakers.",
+  title: "Payment successful — Kanema",
+  description: "Your event payment was received.",
 };
 
-export default function EventsLayout({
+export default function PaymentSuccessLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;

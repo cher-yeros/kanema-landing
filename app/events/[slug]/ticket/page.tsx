@@ -2,9 +2,9 @@ import { notFound } from "next/navigation";
 
 import { fetchPublishedEventBySlug } from "@/lib/public-graphql";
 
-import { EventDetailClient } from "./event-detail-client";
+import { EventTicketClient } from "./event-ticket-client";
 
-export default async function EventDetailPage({
+export default async function EventTicketPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -13,5 +13,5 @@ export default async function EventDetailPage({
   const event = await fetchPublishedEventBySlug(slug).catch(() => null);
   if (!event) notFound();
 
-  return <EventDetailClient event={event} />;
+  return <EventTicketClient event={event} />;
 }

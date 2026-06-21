@@ -69,8 +69,33 @@
   color: var(--accent-color);
 }
 
+/* Theme accent button (hero green) — register / sign-in CTAs */
+.events-page .btn.btn-accent {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border: 2px solid var(--accent-color);
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+}
+
+.events-page .btn.btn-accent:hover {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color), black 15%);
+  color: var(--contrast-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px
+    color-mix(in srgb, var(--accent-color), transparent 55%);
+}
+
+.events-page .btn.btn-accent:disabled {
+  opacity: 0.65;
+  transform: none;
+  box-shadow: none;
+}
+
 @media (max-width: 768px) {
-  .events-page .event-card {
     text-align: left;
     align-items: stretch;
   }
