@@ -161,7 +161,7 @@ export function SiteHeader() {
                 Production jobs
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 href="/learn"
                 className={navClass("learn")}
@@ -170,7 +170,7 @@ export function SiteHeader() {
               >
                 Learn
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 href="/events"

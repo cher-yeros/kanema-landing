@@ -1,7 +1,14 @@
 "use client";
 
+import { communityRoleLabel } from "@/lib/community-member-labels";
+import { memberImageSrc } from "@/lib/member-image";
+import {
+  fetchCommunityMembers,
+  fetchTeamMembers,
+  type PublicCommunityMember,
+  type PublicTeamMember,
+} from "@/lib/public-graphql";
 import { landingImage } from "@/lib/landing-assets";
-import { fetchTeamMembers, type PublicTeamMember } from "@/lib/public-graphql";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useEffect, useMemo, useState } from "react";
@@ -33,41 +40,93 @@ const leaders = [
   },
 ];
 
+type LeaderSlide = {
+  key: string;
+  img: string;
+  role: string;
+  name: string;
+  text: string;
+};
+
+function mapAdvisor(member: PublicTeamMember): LeaderSlide {
+  return {
+    key: `advisor-${member.id}`,
+    img: memberImageSrc(member.photo_url, "person/person-m-3.webp"),
+    role: member.role_title,
+    name: member.full_name,
+    text: member.bio ?? "Industry voice supporting Kanema’s community.",
+  };
+}
+
+function mapFeaturedMember(member: PublicCommunityMember): LeaderSlide {
+  const roleLabel = communityRoleLabel(member.role);
+  const role = member.city ? `${roleLabel} · ${member.city}` : roleLabel;
+  return {
+    key: `community-${member.id}`,
+    img: memberImageSrc(member.avatar_url, "person/person-m-3.webp"),
+    role,
+    name: member.full_name,
+    text:
+      member.message?.trim() ||
+      "Featured Kanema community member sharing craft and industry perspective.",
+  };
+}
+
 export function TeamLeadersSwiper() {
-  const [remote, setRemote] = useState<PublicTeamMember[] | null>(null);
+  const [remoteAdvisors, setRemoteAdvisors] = useState<PublicTeamMember[] | null>(
+    null,
+  );
+  const [featuredMembers, setFeaturedMembers] = useState<
+    PublicCommunityMember[] | null
+  >(null);
 
   useEffect(() => {
     let alive = true;
-    fetchTeamMembers()
-      .then((rows) => {
+    Promise.all([fetchTeamMembers(), fetchCommunityMembers({ featuredOnly: true })])
+      .then(([advisors, featured]) => {
         if (!alive) return;
-        setRemote(rows.length ? rows : []);
+        setRemoteAdvisors(advisors);
+        setFeaturedMembers(featured);
       })
       .catch(() => {
         if (!alive) return;
-        setRemote([]);
+        setRemoteAdvisors([]);
+        setFeaturedMembers([]);
       });
     return () => {
       alive = false;
     };
   }, []);
 
-  const advisorSlides = useMemo(() => {
-    const rows = (remote ?? []).filter((x) => x.category === "ADVISOR");
-    if (remote == null || rows.length === 0) return leaders;
-    return rows.map((x) => ({
-      img: x.photo_url ?? "person/person-m-3.webp",
-      role: x.role_title,
-      name: x.full_name,
-      text: x.bio ?? "Industry voice supporting Kanema’s community.",
-    }));
-  }, [remote]);
+  const slides = useMemo((): LeaderSlide[] => {
+    const advisorMapped = (remoteAdvisors ?? [])
+      .filter((x) => x.category === "ADVISOR")
+      .map(mapAdvisor);
+
+    const featuredMapped = (featuredMembers ?? []).map(mapFeaturedMember);
+
+    if (advisorMapped.length > 0 || featuredMapped.length > 0) {
+      return [...advisorMapped, ...featuredMapped];
+    }
+
+    if (remoteAdvisors == null && featuredMembers == null) {
+      return leaders.map((x) => ({
+        key: x.name,
+        img: landingImage(x.img),
+        role: x.role,
+        name: x.name,
+        text: x.text,
+      }));
+    }
+
+    return [];
+  }, [featuredMembers, remoteAdvisors]);
 
   return (
     <Swiper
       className="leaders-carousel init-swiper"
       modules={[Autoplay, Pagination]}
-      loop
+      loop={slides.length > 1}
       speed={600}
       autoplay={{ delay: 5000 }}
       spaceBetween={24}
@@ -77,14 +136,14 @@ export function TeamLeadersSwiper() {
         768: { slidesPerView: 2 },
       }}
     >
-      {advisorSlides.map((leader) => (
-        <SwiperSlide key={leader.name}>
+      {slides.map((leader) => (
+        <SwiperSlide key={leader.key}>
           <div className="leader-panel">
             <div className="row g-0 align-items-center">
               <div className="col-sm-5">
                 <div className="panel-image">
                   <img
-                    src={landingImage(leader.img)}
+                    src={leader.img}
                     className="img-fluid"
                     alt=""
                   />

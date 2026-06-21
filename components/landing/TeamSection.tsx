@@ -1,24 +1,55 @@
 "use client";
 
-import { landingImage } from "@/lib/landing-assets";
-
-import { TeamLeadersSwiper } from "./TeamLeadersSwiper";
-import { fetchTalents, type PublicTalent } from "@/lib/public-graphql";
+import { communityRoleLabel } from "@/lib/community-member-labels";
+import { memberImageSrc } from "@/lib/member-image";
+import {
+  fetchCommunityMembers,
+  type PublicCommunityMember,
+} from "@/lib/public-graphql";
 import { useEffect, useMemo, useState } from "react";
 
+import { TeamLeadersSwiper } from "./TeamLeadersSwiper";
+
+const PLACEHOLDER_MEMBERS = [
+  {
+    img: "person/person-f-7.webp",
+    name: "Liya Solomon",
+    role: "Fashion and portrait photographer",
+    delay: 200,
+  },
+  {
+    img: "person/person-m-2.webp",
+    name: "Biniam Alemayehu",
+    role: "Commercial cinematographer",
+    delay: 250,
+  },
+  {
+    img: "person/person-f-11.webp",
+    name: "Rahel Demissie",
+    role: "Wedding photo and film",
+    delay: 300,
+  },
+  {
+    img: "person/person-m-8.webp",
+    name: "Samuel Tesfaye",
+    role: "Documentary director / DP",
+    delay: 350,
+  },
+];
+
 export function TeamSection() {
-  const [talents, setTalents] = useState<PublicTalent[] | null>(null);
+  const [members, setMembers] = useState<PublicCommunityMember[] | null>(null);
 
   useEffect(() => {
     let alive = true;
-    fetchTalents()
+    fetchCommunityMembers()
       .then((rows) => {
         if (!alive) return;
-        setTalents(rows.length ? rows : []);
+        setMembers(rows);
       })
       .catch(() => {
         if (!alive) return;
-        setTalents([]);
+        setMembers([]);
       });
     return () => {
       alive = false;
@@ -26,58 +57,26 @@ export function TeamSection() {
   }, []);
 
   const memberCards = useMemo(() => {
-    if (talents == null || talents.length === 0) {
-      return [
-        {
-          img: "person/person-f-7.webp",
-          name: "Liya Solomon",
-          role: "Fashion and portrait photographer",
-          delay: 200,
-        },
-        {
-          img: "person/person-m-2.webp",
-          name: "Biniam Alemayehu",
-          role: "Commercial cinematographer",
-          delay: 250,
-        },
-        {
-          img: "person/person-f-11.webp",
-          name: "Rahel Demissie",
-          role: "Wedding photo and film",
-          delay: 300,
-        },
-        {
-          img: "person/person-m-8.webp",
-          name: "Samuel Tesfaye",
-          role: "Documentary director / DP",
-          delay: 350,
-        },
-      ];
+    if (members == null) {
+      return PLACEHOLDER_MEMBERS;
+    }
+    if (members.length === 0) {
+      return [];
     }
 
-    return talents.slice(0, 4).map((t, idx) => {
-      const role =
-        t.headline ??
-        (() => {
-          try {
-            const parsed = t.specialties ? (JSON.parse(t.specialties) as unknown) : null;
-            if (Array.isArray(parsed)) {
-              const first = parsed.find((x) => typeof x === "string") as string | undefined;
-              if (first) return first;
-            }
-          } catch {
-            // ignore invalid JSON
-          }
-          return "Creative member";
-        })();
+    return members.map((m, idx) => {
+      const roleLabel = communityRoleLabel(m.role);
+      const role = m.city ? `${roleLabel} · ${m.city}` : roleLabel;
       return {
-        img: t.avatar_url ?? "person/person-m-2.webp",
-        name: t.user.full_name,
-        role: t.city ? `${role} · ${t.city}` : role,
+        key: m.id,
+        img: memberImageSrc(m.avatar_url, "person/person-m-2.webp"),
+        name: m.full_name,
+        role,
         delay: 200 + idx * 50,
+        portfolioUrl: m.portfolio_url,
       };
     });
-  }, [talents]);
+  }, [members]);
 
   return (
     <section id="team" className="team section">
@@ -119,10 +118,22 @@ export function TeamSection() {
           </div>
         </div>
 
+        {members != null && members.length === 0 ? (
+          <p
+            className="text-center text-secondary mt-4 mb-0"
+            data-aos="fade-up"
+            data-aos-delay="180"
+          >
+            Approved members will appear here after joining.{" "}
+            <a href="#join">Apply to join</a>.
+          </p>
+        ) : null}
+
+        {memberCards.length > 0 ? (
         <div className="row g-4 mt-4">
           {memberCards.map((m) => (
             <div
-              key={m.name}
+              key={"key" in m ? m.key : m.name}
               className="col-lg-3 col-md-6"
               data-aos="fade-up"
               data-aos-delay={m.delay}
@@ -130,16 +141,27 @@ export function TeamSection() {
               <div className="member-card">
                 <div className="member-photo">
                   <img
-                    src={landingImage(m.img)}
+                    src={m.img}
                     className="img-fluid"
-                    alt="Team member"
+                    alt={m.name}
                   />
                   <div className="social-links">
-                    <a href="#contact" aria-label="Contact">
+                    {"portfolioUrl" in m && m.portfolioUrl ? (
+                      <a
+                        href={m.portfolioUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Portfolio"
+                      >
+                        <i className="bi bi-link-45deg" />
+                      </a>
+                    ) : (
+                      <a href="#join" aria-label="Join community">
+                        <i className="bi bi-people" />
+                      </a>
+                    )}
+                    <a href="#join" aria-label="Join community">
                       <i className="bi bi-envelope" />
-                    </a>
-                    <a href="#services" aria-label="Opportunities">
-                      <i className="bi bi-briefcase" />
                     </a>
                   </div>
                 </div>
@@ -151,6 +173,7 @@ export function TeamSection() {
             </div>
           ))}
         </div>
+        ) : null}
 
         <div className="row mt-5">
           <div className="col-12">

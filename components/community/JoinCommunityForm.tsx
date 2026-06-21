@@ -3,17 +3,20 @@
 import { useMutation } from "@apollo/client/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 import { SUBMIT_COMMUNITY_JOIN } from "@/lib/graphql/community-join";
 
+import { CommunityInterestsField } from "./CommunityInterestsField";
+import { ProfilePictureUpload } from "./ProfilePictureUpload";
 import {
-  COMMUNITY_JOIN_INTEREST_OPTIONS,
   JOIN_COMMUNITY_HONEYPOT_FIELD,
   joinCommunityFormDefaultValues,
   joinCommunityFormSchema,
   type JoinCommunityFormValues,
 } from "./join-community-form-schema";
+
+import "./community-shadcn.css";
 
 const COMMUNITY_JOIN_ROLE_GRAPHQL: Record<string, string> = {
   creative: "CREATIVE",
@@ -48,6 +51,7 @@ export function JoinCommunityForm() {
     reset,
     clearErrors,
     setError,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<JoinCommunityFormValues>({
     resolver: yupResolver(joinCommunityFormSchema),
@@ -75,6 +79,7 @@ export function JoinCommunityForm() {
             interests: values.interests,
             portfolio_url: values.portfolioUrl?.trim(),
             message: values.message?.trim(),
+            avatar_url: values.avatarUrl?.trim() || null,
           },
         },
       });
@@ -96,7 +101,7 @@ export function JoinCommunityForm() {
       reset(joinCommunityFormDefaultValues);
       setSuccessMessage(
         payload.message?.trim() ||
-          "Thanks! Your request was submitted.",
+          "Thanks! Your request was submitted and is pending admin approval.",
       );
       setBanner("sent");
     } catch (err) {
@@ -286,6 +291,20 @@ export function JoinCommunityForm() {
                 </div>
 
                 <div className="col-12">
+                  <Controller
+                    name="avatarUrl"
+                    control={control}
+                    render={({ field }) => (
+                      <ProfilePictureUpload
+                        value={field.value || null}
+                        onChange={(url) => field.onChange(url ?? "")}
+                        disabled={isSubmitting || banner === "sent"}
+                      />
+                    )}
+                  />
+                </div>
+
+                <div className="col-12">
                   <label htmlFor="join-community-role" className="form-label">
                     You are joining as
                   </label>
@@ -309,26 +328,10 @@ export function JoinCommunityForm() {
                 </div>
 
                 <div className="col-12">
-                  <span className="form-label d-block">Interests</span>
-                  <div className="row g-2">
-                    {COMMUNITY_JOIN_INTEREST_OPTIONS.map((opt) => (
-                      <div className="col-sm-6" key={opt.id}>
-                        <label className="d-flex align-items-center gap-2 mb-0">
-                          <input
-                            type="checkbox"
-                            value={opt.id}
-                            {...register("interests")}
-                          />
-                          <span>{opt.label}</span>
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                  {errors.interests?.message ? (
-                    <div className="invalid-feedback d-block mt-2">
-                      {errors.interests.message}
-                    </div>
-                  ) : null}
+                  <CommunityInterestsField
+                    control={control}
+                    error={errors.interests}
+                  />
                 </div>
 
                 <div className="col-12">

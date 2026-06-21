@@ -95,6 +95,44 @@ export async function fetchTeamMembers(): Promise<PublicTeamMember[]> {
   return data.teamMembers ?? [];
 }
 
+export type PublicCommunityMember = {
+  id: string;
+  full_name: string;
+  role: string;
+  city: string | null;
+  avatar_url: string | null;
+  message: string | null;
+  portfolio_url: string | null;
+  interests: string[];
+  is_featured: boolean;
+};
+
+export async function fetchCommunityMembers(options?: {
+  featuredOnly?: boolean;
+}): Promise<PublicCommunityMember[]> {
+  const data = await fetchGraphQL<{
+    communityMembers: PublicCommunityMember[];
+  }>(
+    `
+      query CommunityMembers($featuredOnly: Boolean) {
+        communityMembers(featuredOnly: $featuredOnly) {
+          id
+          full_name
+          role
+          city
+          avatar_url
+          message
+          portfolio_url
+          interests
+          is_featured
+        }
+      }
+    `,
+    { featuredOnly: options?.featuredOnly ?? false },
+  );
+  return data.communityMembers ?? [];
+}
+
 export type PublicTalent = {
   id: string;
   headline: string | null;

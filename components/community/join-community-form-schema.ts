@@ -52,6 +52,7 @@ export const joinCommunityFormSchema = yup.object({
       (v) => !v || /^https?:\/\/[^\s]+$/.test(v),
     ),
   message: yup.string().trim().default(""),
+  avatarUrl: yup.string().trim().default(""),
 });
 
 export type JoinCommunityFormValues = yup.InferType<
@@ -68,4 +69,5 @@ export const joinCommunityFormDefaultValues: JoinCommunityFormValues = {
   interests: [],
   portfolioUrl: "",
   message: "",
+  avatarUrl: "",
 };
