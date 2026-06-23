@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 
-import { kanemaAuthSlice } from "@/lib/store/auth-slice";
+import { canmaAuthSlice } from "@/lib/store/auth-slice";
 import { readCanmaTokenFromStorage } from "@/lib/store/token-persist";
 
 export function makeCanmaStore() {
@@ -9,7 +9,7 @@ export function makeCanmaStore() {
 
   return configureStore({
     reducer: {
-      auth: kanemaAuthSlice.reducer,
+      auth: canmaAuthSlice.reducer,
     },
     preloadedState: {
       auth: { token },

@@ -10,26 +10,39 @@ import { useEffect, useMemo, useState } from "react";
 
 import { TeamLeadersSwiper } from "./TeamLeadersSwiper";
 
-const PLACEHOLDER_MEMBERS = [
+type MemberCard = {
+  key: string;
+  img: string;
+  name: string;
+  role: string;
+  delay: number;
+  portfolioUrl?: string | null;
+};
+
+const PLACEHOLDER_MEMBERS: MemberCard[] = [
   {
+    key: "liya-solomon",
     img: "person/person-f-7.webp",
     name: "Liya Solomon",
     role: "Fashion and portrait photographer",
     delay: 200,
   },
   {
+    key: "biniam-alemayehu",
     img: "person/person-m-2.webp",
     name: "Biniam Alemayehu",
     role: "Commercial cinematographer",
     delay: 250,
   },
   {
+    key: "rahel-demissie",
     img: "person/person-f-11.webp",
     name: "Rahel Demissie",
     role: "Wedding photo and film",
     delay: 300,
   },
   {
+    key: "samuel-tesfaye",
     img: "person/person-m-8.webp",
     name: "Samuel Tesfaye",
     role: "Documentary director / DP",
@@ -56,7 +69,7 @@ export function TeamSection() {
     };
   }, []);
 
-  const memberCards = useMemo(() => {
+  const memberCards = useMemo((): MemberCard[] => {
     if (members == null) {
       return PLACEHOLDER_MEMBERS;
     }
@@ -133,7 +146,7 @@ export function TeamSection() {
           <div className="row g-4 mt-4">
             {memberCards.map((m) => (
               <div
-                key={"key" in m ? m.key : m.name}
+                key={m.key}
                 className="col-lg-3 col-md-6"
                 data-aos="fade-up"
                 data-aos-delay={m.delay}
@@ -142,7 +155,7 @@ export function TeamSection() {
                   <div className="member-photo">
                     <img src={m.img} className="img-fluid" alt={m.name} />
                     <div className="social-links">
-                      {"portfolioUrl" in m && m.portfolioUrl ? (
+                      {m.portfolioUrl ? (
                         <a
                           href={m.portfolioUrl}
                           target="_blank"
