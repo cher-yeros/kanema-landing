@@ -131,7 +131,7 @@ export function SiteHeader() {
                 About
               </Link>
             </li>
-            <li>
+            {/* <li>
               <Link
                 href="/election"
                 className={navClass("election")}
@@ -140,7 +140,7 @@ export function SiteHeader() {
               >
                 Election
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 href="/community"
@@ -151,16 +151,7 @@ export function SiteHeader() {
                 Community
               </Link>
             </li>
-            <li>
-              <Link
-                href="/jobs"
-                className={navClass("jobs")}
-                aria-current={activeNav === "jobs" ? "page" : undefined}
-                onClick={closeMobileForPage}
-              >
-                Production jobs
-              </Link>
-            </li>
+
             {/* <li>
               <Link
                 href="/learn"
@@ -181,7 +172,7 @@ export function SiteHeader() {
                 Events
               </Link>
             </li>
-            {/* (removed) "More" dropdown — no remaining items */}
+
             <li>
               <Link
                 href="/#contact"
@@ -190,6 +181,17 @@ export function SiteHeader() {
                 onClick={closeMobileIfHash}
               >
                 Contact
+              </Link>
+            </li>
+
+            <li>
+              <Link
+                href="/jobs"
+                className={navClass("jobs")}
+                aria-current={activeNav === "jobs" ? "page" : undefined}
+                onClick={closeMobileForPage}
+              >
+                Production jobs
               </Link>
             </li>
           </ul>
