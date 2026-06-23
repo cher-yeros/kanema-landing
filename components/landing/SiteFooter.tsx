@@ -21,7 +21,7 @@ export function SiteFooter() {
               <p>
                 <strong>Email:</strong>{" "}
                 <span>
-                  <a href="mailto:info@canma.et">info@canma.et</a>
+                  <a href="mailto:info@canmaet.net">info@canmaet.net</a>
                 </span>
               </p>
             </div>
@@ -129,7 +129,13 @@ export function SiteFooter() {
         </p>
         <div className="credits">
           Designed by{" "}
-          <a href="https://yerosen-diriba.vercel.app/">Yerosen Diriba</a>
+          <a
+            target="_blank"
+            rel="noopener noreferrer"
+            href="https://shevadigitals.com/"
+          >
+            Sheva Digitals.
+          </a>
         </div>
       </div>
     </footer>

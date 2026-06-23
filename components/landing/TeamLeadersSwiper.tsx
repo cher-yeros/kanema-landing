@@ -154,7 +154,7 @@ export function TeamLeadersSwiper() {
                   <h5>{leader.name}</h5>
                   <p>{leader.text}</p>
                   <div className="panel-socials">
-                    <a href="mailto:info@canma.et" aria-label="Email">
+                    <a href="mailto:info@canmaet.net" aria-label="Email">
                       <i className="bi bi-envelope" />
                     </a>
                     <a href="#" aria-label="LinkedIn">

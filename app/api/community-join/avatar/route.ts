@@ -3,6 +3,12 @@ import path from "path";
 import { randomUUID } from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
+import {
+  getImageDimensionsFromBuffer,
+  isSquareDimensions,
+  squareImageErrorMessage,
+} from "@/lib/image-dimensions";
+
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 const IMAGE_TYPES = new Set([
@@ -39,6 +45,24 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  const buffer = Buffer.from(await file.arrayBuffer());
+
+  const dimensions = getImageDimensionsFromBuffer(buffer);
+  if (!dimensions) {
+    return NextResponse.json(
+      { error: "Could not read image dimensions." },
+      { status: 400 },
+    );
+  }
+  if (!isSquareDimensions(dimensions.width, dimensions.height)) {
+    return NextResponse.json(
+      {
+        error: squareImageErrorMessage(dimensions.width, dimensions.height),
+      },
+      { status: 400 },
+    );
+  }
+
   const ext = path.extname(file.name) || ".jpg";
   const safeExt = ext.replace(/[^a-zA-Z0-9.]/g, "").slice(0, 8) || ".jpg";
   const filename = `${randomUUID()}${safeExt}`;
@@ -46,7 +70,6 @@ export async function POST(req: NextRequest) {
   const absDir = path.join(process.cwd(), "public", relDir);
   await mkdir(absDir, { recursive: true });
 
-  const buffer = Buffer.from(await file.arrayBuffer());
   await writeFile(path.join(absDir, filename), buffer);
 
   const origin = req.nextUrl.origin;

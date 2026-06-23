@@ -133,7 +133,7 @@ Be part of a growing creative network.
 
 Have questions or want to collaborate?
 
-- Email: info@canma.et
+- Email: info@canmaet.net
 - Phone: +251 XXX XXX XXX
 - Location: Addis Ababa, Ethiopia
 

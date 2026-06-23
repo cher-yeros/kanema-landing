@@ -1,5 +1,6 @@
 "use client";
 
+import { communityRoleLabel } from "@/lib/community-member-labels";
 import { memberImageSrc } from "@/lib/member-image";
 import {
   fetchTestimonials,
@@ -8,6 +9,32 @@ import {
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useEffect, useMemo, useState } from "react";
+
+function testimonialSlide(t: PublicTestimonial) {
+  const member = t.community_member;
+  const name = member?.full_name ?? t.author_name;
+  const img = memberImageSrc(
+    member?.avatar_url ?? t.avatar_url,
+    "person/person-m-9.webp",
+  );
+  const roleLabel = member
+    ? communityRoleLabel(member.role)
+    : (t.author_title ?? "Canma community");
+  const role = member?.city
+    ? `${roleLabel} · ${member.city}`
+    : member
+      ? roleLabel
+      : [t.author_title, t.author_city].filter(Boolean).join(", ") ||
+        "Canma community";
+
+  return {
+    id: t.id,
+    img,
+    name,
+    role,
+    text: t.quote,
+  };
+}
 
 export function TestimonialsSection() {
   const [rows, setRows] = useState<PublicTestimonial[] | null>(null);
@@ -30,15 +57,7 @@ export function TestimonialsSection() {
 
   const slides = useMemo(() => {
     if (!rows?.length) return [];
-    return rows.map((t) => ({
-      id: t.id,
-      img: memberImageSrc(t.avatar_url, "person/person-m-9.webp"),
-      name: t.author_name,
-      role:
-        [t.author_title, t.author_city].filter(Boolean).join(", ") ||
-        "Canma community",
-      text: t.quote,
-    }));
+    return rows.map(testimonialSlide);
   }, [rows]);
 
   return (

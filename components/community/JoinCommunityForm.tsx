@@ -1,11 +1,14 @@
 "use client";
 
 import { useMutation } from "@apollo/client/react";
+import { useApolloClient } from "@apollo/client/react";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { SUBMIT_COMMUNITY_JOIN } from "@/lib/graphql/community-join";
+import { setStoredToken } from "@/lib/store/imperative-auth";
 
 import { CommunityInterestsField } from "./CommunityInterestsField";
 import { ProfilePictureUpload } from "./ProfilePictureUpload";
@@ -36,10 +39,13 @@ type SubmitCommunityJoinMutationData = {
   submitCommunityJoin: {
     success: boolean;
     message?: string | null;
+    token?: string | null;
   };
 };
 
-export function JoinCommunityForm() {
+export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
+  const router = useRouter();
+  const client = useApolloClient();
   const [banner, setBanner] = useState<"idle" | "sent">("idle");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -74,6 +80,7 @@ export function JoinCommunityForm() {
             full_name: values.fullName.trim(),
             email: values.email.trim(),
             phone: values.phone?.trim(),
+            password: values.password,
             city: values.city?.trim(),
             role: mapCommunityJoinRole(values.role),
             interests: values.interests,
@@ -96,6 +103,16 @@ export function JoinCommunityForm() {
             "We couldn’t submit your request. Please try again.",
         });
         return;
+      }
+
+      if (payload.token) {
+        setStoredToken(payload.token);
+        await client.resetStore();
+        if (nextUrl) {
+          router.push(nextUrl);
+          router.refresh();
+          return;
+        }
       }
 
       reset(joinCommunityFormDefaultValues);
@@ -255,7 +272,7 @@ export function JoinCommunityForm() {
 
                 <div className="col-sm-6">
                   <label htmlFor="join-community-phone" className="form-label">
-                    Phone (optional)
+                    Phone
                   </label>
                   <input
                     id="join-community-phone"
@@ -286,6 +303,49 @@ export function JoinCommunityForm() {
                   {errors.city?.message ? (
                     <div className="invalid-feedback d-block">
                       {errors.city.message}
+                    </div>
+                  ) : null}
+                </div>
+
+                <div className="col-sm-6">
+                  <label
+                    htmlFor="join-community-password"
+                    className="form-label"
+                  >
+                    Password
+                  </label>
+                  <input
+                    id="join-community-password"
+                    type="password"
+                    autoComplete="new-password"
+                    className={`form-control${errors.password ? " is-invalid" : ""}`}
+                    placeholder="At least 8 characters"
+                    {...register("password")}
+                  />
+                  {errors.password?.message ? (
+                    <div className="invalid-feedback d-block">
+                      {errors.password.message}
+                    </div>
+                  ) : null}
+                </div>
+                <div className="col-sm-6">
+                  <label
+                    htmlFor="join-community-confirmPassword"
+                    className="form-label"
+                  >
+                    Confirm password
+                  </label>
+                  <input
+                    id="join-community-confirmPassword"
+                    type="password"
+                    autoComplete="new-password"
+                    className={`form-control${errors.confirmPassword ? " is-invalid" : ""}`}
+                    placeholder="Repeat password"
+                    {...register("confirmPassword")}
+                  />
+                  {errors.confirmPassword?.message ? (
+                    <div className="invalid-feedback d-block">
+                      {errors.confirmPassword.message}
                     </div>
                   ) : null}
                 </div>

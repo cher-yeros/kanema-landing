@@ -38,7 +38,7 @@ export function ContactSection() {
               </div>
               <h5>Email</h5>
               <p>
-                <a href="mailto:info@canma.et">info@canma.et</a>
+                <a href="mailto:info@canmaet.net">info@canmaet.net</a>
               </p>
               <span className="reach-note">
                 Partnerships, press, and support

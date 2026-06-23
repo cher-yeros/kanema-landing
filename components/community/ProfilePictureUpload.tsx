@@ -1,5 +1,10 @@
 "use client";
 
+import {
+  isSquareDimensions,
+  loadImageFileDimensions,
+  squareImageErrorMessage,
+} from "@/lib/image-dimensions";
 import { useId, useRef, useState } from "react";
 
 type ProfilePictureUploadProps = {
@@ -26,6 +31,23 @@ export function ProfilePictureUpload({
   async function onFile(file: File | null) {
     if (!file) return;
     setUploadError(null);
+
+    let dimensions: { width: number; height: number };
+    try {
+      dimensions = await loadImageFileDimensions(file);
+    } catch {
+      setUploadError("Could not read image. Try another file.");
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
+
+    if (!isSquareDimensions(dimensions.width, dimensions.height)) {
+      setUploadError(
+        squareImageErrorMessage(dimensions.width, dimensions.height),
+      );
+      if (fileRef.current) fileRef.current.value = "";
+      return;
+    }
 
     const localPreview = URL.createObjectURL(file);
     setPreview(localPreview);
@@ -86,7 +108,10 @@ export function ProfilePictureUpload({
               className="w-100 h-100 d-flex align-items-center justify-content-center text-secondary"
               aria-hidden
             >
-              <i className="bi bi-person-fill" style={{ fontSize: "1.75rem" }} />
+              <i
+                className="bi bi-person-fill"
+                style={{ fontSize: "1.75rem" }}
+              />
             </div>
           )}
         </div>
@@ -98,7 +123,11 @@ export function ProfilePictureUpload({
             disabled={disabled || uploading}
             onClick={() => fileRef.current?.click()}
           >
-            {uploading ? "Uploading…" : preview ? "Change photo" : "Upload photo"}
+            {uploading
+              ? "Uploading…"
+              : preview
+                ? "Change photo"
+                : "Upload photo"}
           </button>
           {preview ? (
             <button
@@ -123,7 +152,7 @@ export function ProfilePictureUpload({
         />
       </div>
       <p className="small text-secondary mb-0 mt-2">
-        JPEG, PNG, WebP, or GIF · max 5 MB
+        Square image only (1:1) · JPEG, PNG, WebP, or GIF · max 5 MB
       </p>
       {displayError ? (
         <div className="invalid-feedback d-block">{displayError}</div>

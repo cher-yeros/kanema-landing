@@ -5,7 +5,7 @@ import {
   TeamSectionClient,
 } from "@/components/landing";
 import { ScrollTop } from "@/components/landing/ScrollTop";
-import { JoinCommunityForm } from "@/components/community/JoinCommunityForm";
+import { CommunityJoinSection } from "@/components/community/CommunityJoinSection";
 
 export default function CommunityPage() {
   return (
@@ -22,7 +22,7 @@ export default function CommunityPage() {
             </p>
           </div>
 
-          <JoinCommunityForm />
+          <CommunityJoinSection />
         </section>
         <TeamSectionClient />
       </main>

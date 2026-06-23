@@ -11,6 +11,7 @@ import {
   PAYMENT_SETTINGS_QUERY,
   REGISTER_FOR_EVENT_MUTATION,
 } from "@/lib/events-graphql";
+import { MY_COMMUNITY_JOIN_QUERY } from "@/lib/graphql/community-join";
 import type { PublicEvent } from "@/lib/public-graphql";
 import type { MeQuery } from "@/types/election-apollo";
 
@@ -71,9 +72,20 @@ function redirectToChapaCheckout(data: ChapaCheckoutResponse | undefined) {
   return false;
 }
 
+function communityJoinHref(pathHref: string) {
+  return `/community?next=${encodeURIComponent(pathHref)}#join`;
+}
+
 export function EventDetailClient({ event }: { event: PublicEvent }) {
+  const pathHref = `/events/${event.slug}`;
   const { data: meData } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
+  const { data: joinData } = useQuery<{
+    myCommunityJoin: { status: "PENDING" | "APPROVED" | "REJECTED" } | null;
+  }>(MY_COMMUNITY_JOIN_QUERY, { skip: !me });
+  const communityJoin = joinData?.myCommunityJoin;
+  const communityApproved = communityJoin?.status === "APPROVED";
+  const communityPending = communityJoin?.status === "PENDING";
   const { data: paymentData } = useQuery<{
     paymentSettings: { chapaEnabled: boolean };
   }>(PAYMENT_SETTINGS_QUERY);
@@ -100,10 +112,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
   const isRegistered = Boolean(registration) || done;
   const eventStarted = new Date(event.start_date).getTime() < Date.now();
   const canRegister =
-    Boolean(me?.role === "member") &&
-    Boolean(me?.is_verified) &&
-    !isRegistered &&
-    !eventStarted;
+    Boolean(me) && communityApproved && !isRegistered && !eventStarted;
   const showManualPaymentInstructions =
     !event.is_free && event.payment_instructions && !chapaEnabled;
   const awaitingChapaPayment =
@@ -253,28 +262,42 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
 
             {!me ? (
               <div className="info-box">
-                <h3 className="h5 mb-3">Register</h3>
+                <h3 className="h5 mb-3">Register for this event</h3>
                 <p className="mb-3">
-                  Join the Canma community first, then sign in with your member
-                  account to register for this event.
+                  Join the Canma community first. Set a password when you join,
+                  or use your phone number if you&apos;re already registered.
                 </p>
-                <Link className="btn btn-accent" href="/community#join">
+                <Link
+                  className="btn btn-accent"
+                  href={communityJoinHref(pathHref)}
+                >
                   Join the community first
+                </Link>
+              </div>
+            ) : communityPending ? (
+              <div className="info-box">
+                <h3 className="h5 mb-3">Membership pending</h3>
+                <p className="mb-0 text-muted">
+                  Your community application is awaiting admin approval. You can
+                  register for events once you&apos;re approved.
+                </p>
+              </div>
+            ) : !communityApproved ? (
+              <div className="info-box">
+                <h3 className="h5 mb-3">Join the community</h3>
+                <p className="mb-3">
+                  Complete a community join request to register for this event.
+                </p>
+                <Link
+                  className="btn btn-accent"
+                  href={communityJoinHref(pathHref)}
+                >
+                  Join the community
                 </Link>
               </div>
             ) : me.role !== "member" ? (
               <div className="alert alert-warning">
                 Only Canma members can register for events.
-              </div>
-            ) : !me.is_verified ? (
-              <div className="info-box">
-                <h3 className="h5 mb-3">Verify your account</h3>
-                <p className="mb-3">
-                  Complete OTP verification before registering for events.
-                </p>
-                <Link className="btn btn-accent" href="/election/verify">
-                  Verify account
-                </Link>
               </div>
             ) : eventStarted ? (
               <div className="info-box">
@@ -360,7 +383,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
                   onSubmit={(e) => void onRegister(e)}
                   className="space-y-3"
                 >
-                  <div>
+                  {/* <div>
                     <label
                       htmlFor="event-reg-note"
                       className="form-label small"
@@ -375,7 +398,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
                       onChange={(e) => setNote(e.target.value)}
                       placeholder="Dietary needs, accessibility requests, etc."
                     />
-                  </div>
+                  </div> */}
                   {formError ? (
                     <div className="text-danger small">{formError}</div>
                   ) : null}

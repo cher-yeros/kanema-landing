@@ -29,11 +29,21 @@ async function fetchGraphQL<TData>(
 
 export type PublicTestimonial = {
   id: string;
+  quote: string;
+  community_member_id: string | null;
+  community_member: {
+    id: string;
+    full_name: string;
+    role: string;
+    city: string | null;
+    avatar_url: string | null;
+    message: string | null;
+    portfolio_url: string | null;
+  } | null;
   author_name: string;
   author_title: string | null;
   author_city: string | null;
   author_type: "CREATIVE" | "CLIENT" | "PARTNER";
-  quote: string;
   avatar_url: string | null;
   is_featured: boolean;
   published_at: string | null;
@@ -47,11 +57,21 @@ export async function fetchTestimonials(): Promise<PublicTestimonial[]> {
       query Testimonials($publishedOnly: Boolean, $featuredOnly: Boolean) {
         testimonials(publishedOnly: $publishedOnly, featuredOnly: $featuredOnly) {
           id
+          quote
+          community_member_id
+          community_member {
+            id
+            full_name
+            role
+            city
+            avatar_url
+            message
+            portfolio_url
+          }
           author_name
           author_title
           author_city
           author_type
-          quote
           avatar_url
           is_featured
           published_at

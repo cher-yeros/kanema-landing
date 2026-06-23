@@ -268,7 +268,7 @@ export function EventTicketClient({ event }: { event: PublicEvent }) {
                     timeStyle: "short",
                   })}
                 </p>
-                <p className="event-ticket__footer-brand">canma.et</p>
+                <p className="event-ticket__footer-brand">canmaet.net</p>
               </div>
             </article>
 
