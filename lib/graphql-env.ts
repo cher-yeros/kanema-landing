@@ -7,7 +7,7 @@
 
 const DEFAULT_GRAPHQL_HTTP_DEV = "http://localhost:4000/graphql";
 /** Production API host (GraphQL at `/graphql`, subscriptions at `/subscriptions`). */
-const DEFAULT_GRAPHQL_HTTP_PROD = "https://canma.shevadigitals.com/graphql";
+const DEFAULT_GRAPHQL_HTTP_PROD = "https://kanema.shevadigitals.com/graphql";
 
 function defaultGraphqlHttpForNodeEnv(): string {
   return process.env.NODE_ENV === "production"
