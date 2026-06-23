@@ -21,7 +21,7 @@ export function ContactSection() {
         <h2>Contact us</h2>
         <p>
           Questions about membership, partnerships, or listing an opportunity?
-          Reach the Kanema team in Addis Ababa—we reply as quickly as we can.
+          Reach the Canma team in Addis Ababa—we reply as quickly as we can.
         </p>
       </div>
 
@@ -38,9 +38,11 @@ export function ContactSection() {
               </div>
               <h5>Email</h5>
               <p>
-                <a href="mailto:info@kanema.et">info@kanema.et</a>
+                <a href="mailto:info@canma.et">info@canma.et</a>
               </p>
-              <span className="reach-note">Partnerships, press, and support</span>
+              <span className="reach-note">
+                Partnerships, press, and support
+              </span>
             </div>
           </div>
 
@@ -70,7 +72,9 @@ export function ContactSection() {
               </div>
               <h5>Location</h5>
               <p>Addis Ababa, Ethiopia</p>
-              <span className="reach-note">Nationwide community, local roots</span>
+              <span className="reach-note">
+                Nationwide community, local roots
+              </span>
             </div>
           </div>
         </div>
@@ -83,7 +87,7 @@ export function ContactSection() {
           <div className="col-lg-5">
             <div className="info-panel">
               <div className="panel-content">
-                <h3>Collaborate with Kanema</h3>
+                <h3>Collaborate with Canma</h3>
                 <p>
                   Whether you are joining as a creative, hiring talent, or
                   sponsoring programs, we will route your message to the right
@@ -122,7 +126,7 @@ export function ContactSection() {
                   data-aos="fade-up"
                   data-aos-delay="400"
                 >
-                  <span>Follow Kanema</span>
+                  <span>Follow Canma</span>
                   <div className="social-icons">
                     <a href="#" aria-label="Instagram">
                       <i className="bi bi-instagram" />
@@ -191,7 +195,7 @@ export function ContactSection() {
                       name="message"
                       className="form-control"
                       rows={5}
-                      placeholder="Share timelines, links, or questions for the Kanema team…"
+                      placeholder="Share timelines, links, or questions for the Canma team…"
                       required
                     />
                   </div>
@@ -224,7 +228,7 @@ export function ContactSection() {
                   disabled={status === "loading"}
                 >
                   <i className="bi bi-arrow-right-circle-fill" />
-                  <span>Send to Kanema</span>
+                  <span>Send to Canma</span>
                 </button>
               </form>
             </div>

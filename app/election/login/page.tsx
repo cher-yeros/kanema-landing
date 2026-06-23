@@ -58,7 +58,7 @@ function ElectionLoginInner() {
       <div className="container section-title" data-aos="fade-up">
         <h1>Member login</h1>
         <p>
-          Sign in with the phone or email on your Kanema account. New members can{" "}
+          Sign in with the phone or email on your Canma account. New members can{" "}
           <Link href={registerHref} className="link-body-emphasis">
             register with phone only
           </Link>
@@ -66,7 +66,8 @@ function ElectionLoginInner() {
           <Link href="/election/verify" className="link-body-emphasis">
             OTP verification
           </Link>
-          . The same account works for votes, production job applications, and postings.
+          . The same account works for votes, production job applications, and
+          postings.
         </p>
       </div>
 
@@ -77,10 +78,14 @@ function ElectionLoginInner() {
               <div className="panel-content">
                 <h3>Trust, then participate</h3>
                 <p>
-                  Whether you are joining as a creative, hiring talent, or taking part
-                  in community decisions, we route access carefully.
+                  Whether you are joining as a creative, hiring talent, or
+                  taking part in community decisions, we route access carefully.
                 </p>
-                <div className="panel-stats" data-aos="zoom-in" data-aos-delay="200">
+                <div
+                  className="panel-stats"
+                  data-aos="zoom-in"
+                  data-aos-delay="200"
+                >
                   <div className="row g-3">
                     <div className="col-4">
                       <div className="single-stat">
@@ -120,10 +125,13 @@ function ElectionLoginInner() {
               <div className="form-intro">
                 <i className="bi bi-shield-lock" />
                 <h3>Sign in</h3>
-                <p>Use your Kanema member credentials.</p>
+                <p>Use your Canma member credentials.</p>
               </div>
 
-              <form className="php-email-form" onSubmit={(e) => void onSubmit(e)}>
+              <form
+                className="php-email-form"
+                onSubmit={(e) => void onSubmit(e)}
+              >
                 <div className="row g-3">
                   <div className="col-12">
                     <label className="form-label">Email or phone</label>
@@ -150,9 +158,9 @@ function ElectionLoginInner() {
                   </div>
                 </div>
 
-                {error ?
+                {error ? (
                   <div className="error-message d-block mt-3">{error}</div>
-                : null}
+                ) : null}
 
                 <button
                   type="submit"
@@ -163,7 +171,8 @@ function ElectionLoginInner() {
                   <span>{loading ? "Signing in…" : "Sign in"}</span>
                 </button>
                 <p className="small text-muted mt-3 mb-0">
-                  No account yet? <Link href={registerHref}>Create one with your phone</Link>.
+                  No account yet?{" "}
+                  <Link href={registerHref}>Create one with your phone</Link>.
                 </p>
               </form>
             </div>

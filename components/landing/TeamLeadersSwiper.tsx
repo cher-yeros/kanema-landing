@@ -18,7 +18,7 @@ const leaders = [
     img: "person/person-m-3.webp",
     role: "Festival programmer",
     name: "Elias Worku",
-    text: "Kanema gives emerging filmmakers a credible surface to meet programmers and funders—visibility is half the battle for first features.",
+    text: "Canma gives emerging filmmakers a credible surface to meet programmers and funders—visibility is half the battle for first features.",
   },
   {
     img: "person/person-f-9.webp",
@@ -36,7 +36,7 @@ const leaders = [
     img: "person/person-f-2.webp",
     role: "Photo collective lead",
     name: "Aster Mulugeta",
-    text: "Community is more than followers—it is contracts, ethics, and shared standards. Kanema nudges the industry toward that professionalism.",
+    text: "Community is more than followers—it is contracts, ethics, and shared standards. Canma nudges the industry toward that professionalism.",
   },
 ];
 
@@ -54,7 +54,7 @@ function mapAdvisor(member: PublicTeamMember): LeaderSlide {
     img: memberImageSrc(member.photo_url, "person/person-m-3.webp"),
     role: member.role_title,
     name: member.full_name,
-    text: member.bio ?? "Industry voice supporting Kanema’s community.",
+    text: member.bio ?? "Industry voice supporting Canma’s community.",
   };
 }
 
@@ -68,21 +68,24 @@ function mapFeaturedMember(member: PublicCommunityMember): LeaderSlide {
     name: member.full_name,
     text:
       member.message?.trim() ||
-      "Featured Kanema community member sharing craft and industry perspective.",
+      "Featured Canma community member sharing craft and industry perspective.",
   };
 }
 
 export function TeamLeadersSwiper() {
-  const [remoteAdvisors, setRemoteAdvisors] = useState<PublicTeamMember[] | null>(
-    null,
-  );
+  const [remoteAdvisors, setRemoteAdvisors] = useState<
+    PublicTeamMember[] | null
+  >(null);
   const [featuredMembers, setFeaturedMembers] = useState<
     PublicCommunityMember[] | null
   >(null);
 
   useEffect(() => {
     let alive = true;
-    Promise.all([fetchTeamMembers(), fetchCommunityMembers({ featuredOnly: true })])
+    Promise.all([
+      fetchTeamMembers(),
+      fetchCommunityMembers({ featuredOnly: true }),
+    ])
       .then(([advisors, featured]) => {
         if (!alive) return;
         setRemoteAdvisors(advisors);
@@ -142,11 +145,7 @@ export function TeamLeadersSwiper() {
             <div className="row g-0 align-items-center">
               <div className="col-sm-5">
                 <div className="panel-image">
-                  <img
-                    src={leader.img}
-                    className="img-fluid"
-                    alt=""
-                  />
+                  <img src={leader.img} className="img-fluid" alt="" />
                 </div>
               </div>
               <div className="col-sm-7">
@@ -155,7 +154,7 @@ export function TeamLeadersSwiper() {
                   <h5>{leader.name}</h5>
                   <p>{leader.text}</p>
                   <div className="panel-socials">
-                    <a href="mailto:info@kanema.et" aria-label="Email">
+                    <a href="mailto:info@canma.et" aria-label="Email">
                       <i className="bi bi-envelope" />
                     </a>
                     <a href="#" aria-label="LinkedIn">

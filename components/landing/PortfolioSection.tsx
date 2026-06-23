@@ -195,7 +195,11 @@ export function PortfolioSection() {
                           >
                             <i className="bi bi-fullscreen" />
                           </a>
-                          <a href="#" className="action-link" title="Project Details">
+                          <a
+                            href="#"
+                            className="action-link"
+                            title="Project Details"
+                          >
                             <i className="bi bi-link-45deg" />
                           </a>
                         </div>
@@ -204,7 +208,9 @@ export function PortfolioSection() {
                     <div className="col-md-7">
                       <div className="card-info">
                         <div className="info-header">
-                          <span className="category-label">{item.category}</span>
+                          <span className="category-label">
+                            {item.category}
+                          </span>
                           <div className="rating-badge">
                             <i className="bi bi-star-fill" /> {item.rating}
                           </div>
@@ -231,12 +237,12 @@ export function PortfolioSection() {
               <h4>Hiring a creative or listing an opportunity?</h4>
               <p>
                 Reach out to collaborate, post a gig, or feature your work with
-                Kanema&apos;s community of Ethiopian visual storytellers.
+                Canma&apos;s community of Ethiopian visual storytellers.
               </p>
             </div>
             <div className="col-lg-5 text-lg-end text-center mt-3 mt-lg-0">
               <a href="#contact" className="btn-launch">
-                Contact Kanema
+                Contact Canma
               </a>
               <a href="#services" className="btn-explore">
                 Explore platform

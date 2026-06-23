@@ -63,14 +63,14 @@ export default function CandidateProfilePage() {
           <div className="row gy-4 align-items-center">
             <div className="col-lg-5" data-aos="fade-right">
               <div className="showcase-image">
-                {c.image_url ?
+                {c.image_url ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={c.image_url}
                     alt=""
                     className="img-fluid rounded-3"
                   />
-                : (
+                ) : (
                   <img
                     src={landingImage("illustration/illustration-15.webp")}
                     alt=""
@@ -83,16 +83,16 @@ export default function CandidateProfilePage() {
               <div className="hero-heading">
                 <span className="badge-label">Candidate profile</span>
                 <div className="d-flex flex-wrap gap-2 mt-2 mb-2">
-                  {c.approved ?
+                  {c.approved ? (
                     <span className="featured-tag">Approved candidate</span>
-                  : (
+                  ) : (
                     <span className="featured-tag">Pending review</span>
                   )}
                 </div>
                 <h1>{c.user.full_name}</h1>
                 <p className="lead">
                   {c.bio ??
-                    "A member of the Kanema community standing for the presidential ballot."}
+                    "A member of the Canma community standing for the presidential ballot."}
                 </p>
                 <div className="hero-actions">
                   <Link href="/election" className="btn btn-accent">
@@ -104,8 +104,8 @@ export default function CandidateProfilePage() {
                   </Link>
                 </div>
                 <p className="small text-muted mt-3 mb-0">
-                  Voting uses a confirmation step on the ballot page so your choice is
-                  deliberate and recorded once on the server.
+                  Voting uses a confirmation step on the ballot page so your
+                  choice is deliberate and recorded once on the server.
                 </p>
               </div>
             </div>
@@ -130,20 +130,24 @@ export default function CandidateProfilePage() {
                 <p className="lead" style={{ whiteSpace: "pre-wrap" }}>
                   {c.experience ?? "—"}
                 </p>
-                {portfolio.length > 0 ?
+                {portfolio.length > 0 ? (
                   <>
                     <h3 className="mt-4">Portfolio</h3>
                     <ul className="checklist list-unstyled">
                       {portfolio.map((url) => (
                         <li key={url} className="mb-2">
-                          <a href={url} target="_blank" rel="noopener noreferrer">
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
                             {url}
                           </a>
                         </li>
                       ))}
                     </ul>
                   </>
-                : null}
+                ) : null}
               </div>
             </div>
           </div>

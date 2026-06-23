@@ -124,7 +124,7 @@ export default async function EventsCatalogPage() {
       <div className="container section-title" data-aos="fade-up">
         <h1>Events</h1>
         <p>
-          Workshops, screenings, and community gatherings from Kanema and
+          Workshops, screenings, and community gatherings from Canma and
           partners.
         </p>
         <p className="small text-muted mb-0">

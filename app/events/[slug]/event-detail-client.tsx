@@ -49,6 +49,7 @@ type RegistrationData = {
   myEventRegistration: {
     id: string;
     event_id: string;
+    ticket_code: string;
     payment_status: "FREE" | "PENDING" | "CONFIRMED";
     fee_amount: string;
     fee_currency: string;
@@ -254,7 +255,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
               <div className="info-box">
                 <h3 className="h5 mb-3">Register</h3>
                 <p className="mb-3">
-                  Join the Kanema community first, then sign in with your member
+                  Join the Canma community first, then sign in with your member
                   account to register for this event.
                 </p>
                 <Link className="btn btn-accent" href="/community#join">
@@ -263,7 +264,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
               </div>
             ) : me.role !== "member" ? (
               <div className="alert alert-warning">
-                Only Kanema members can register for events.
+                Only Canma members can register for events.
               </div>
             ) : !me.is_verified ? (
               <div className="info-box">
@@ -284,6 +285,14 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
             ) : isRegistered ? (
               <div className="info-box">
                 <h3 className="h5 mb-3">You&apos;re registered</h3>
+                {registration?.ticket_code ? (
+                  <p className="small mb-3">
+                    Registration code:{" "}
+                    <strong className="font-monospace">
+                      {registration.ticket_code}
+                    </strong>
+                  </p>
+                ) : null}
                 {awaitingChapaPayment ? (
                   <>
                     <p className="mb-3">

@@ -57,7 +57,7 @@ export function HeroSection() {
                 Empowering Ethiopian Visual Storytellers
               </span>
               <h1>
-                Kanema (ካንማ) — the home for Ethiopia&apos;s camera creatives
+                Canma (ካንማ) — the home for Ethiopia&apos;s camera creatives
               </h1>
               <p>
                 The official digital hub for photographers, videographers, and
@@ -82,7 +82,7 @@ export function HeroSection() {
             <div className="hero-showcase">
               <img
                 src={landingImage("about/about-wide-2.webp")}
-                alt="Ethiopian visual storytellers and creative work on Kanema"
+                alt="Ethiopian visual storytellers and creative work on Canma"
                 className="img-fluid"
               />
               <div className="stats-overlay">

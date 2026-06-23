@@ -10,8 +10,8 @@ import { getMainDefinition } from "@apollo/client/utilities";
 import { createClient } from "graphql-ws";
 import { graphqlHttpUrl, graphqlWsUrl } from "@/lib/graphql-env";
 
-/** Apollo Client 4 requires an initial link; overwritten on first binder pass via {@link configureKanemaApolloLink}. */
-export function createKanemaApolloClient(): ApolloClient {
+/** Apollo Client 4 requires an initial link; overwritten on first binder pass via {@link configureCanmaApolloLink}. */
+export function createCanmaApolloClient(): ApolloClient {
   return new ApolloClient({
     cache: new InMemoryCache(),
     link: new HttpLink({
@@ -30,7 +30,7 @@ export function createKanemaApolloClient(): ApolloClient {
  * Lela-platform-internet-facing style: rebuild the link on each binder render so
  * `graphqlHttpUrl()` / auth headers stay current (no stale HttpLink closure).
  */
-export function configureKanemaApolloLink(
+export function configureCanmaApolloLink(
   client: ApolloClient,
   authToken: string | null,
 ): void {

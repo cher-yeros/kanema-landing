@@ -84,8 +84,8 @@ export function TeamSection() {
         <h2>Community</h2>
         <p>
           Connect with professionals, collaborate on projects, and share
-          knowledge—Kanema is a growing network for Ethiopian visual
-          storytellers and the partners who hire them.
+          knowledge—Canma is a growing network for Ethiopian visual storytellers
+          and the partners who hire them.
         </p>
       </div>
 
@@ -130,49 +130,45 @@ export function TeamSection() {
         ) : null}
 
         {memberCards.length > 0 ? (
-        <div className="row g-4 mt-4">
-          {memberCards.map((m) => (
-            <div
-              key={"key" in m ? m.key : m.name}
-              className="col-lg-3 col-md-6"
-              data-aos="fade-up"
-              data-aos-delay={m.delay}
-            >
-              <div className="member-card">
-                <div className="member-photo">
-                  <img
-                    src={m.img}
-                    className="img-fluid"
-                    alt={m.name}
-                  />
-                  <div className="social-links">
-                    {"portfolioUrl" in m && m.portfolioUrl ? (
-                      <a
-                        href={m.portfolioUrl}
-                        target="_blank"
-                        rel="noreferrer"
-                        aria-label="Portfolio"
-                      >
-                        <i className="bi bi-link-45deg" />
-                      </a>
-                    ) : (
+          <div className="row g-4 mt-4">
+            {memberCards.map((m) => (
+              <div
+                key={"key" in m ? m.key : m.name}
+                className="col-lg-3 col-md-6"
+                data-aos="fade-up"
+                data-aos-delay={m.delay}
+              >
+                <div className="member-card">
+                  <div className="member-photo">
+                    <img src={m.img} className="img-fluid" alt={m.name} />
+                    <div className="social-links">
+                      {"portfolioUrl" in m && m.portfolioUrl ? (
+                        <a
+                          href={m.portfolioUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          aria-label="Portfolio"
+                        >
+                          <i className="bi bi-link-45deg" />
+                        </a>
+                      ) : (
+                        <a href="#join" aria-label="Join community">
+                          <i className="bi bi-people" />
+                        </a>
+                      )}
                       <a href="#join" aria-label="Join community">
-                        <i className="bi bi-people" />
+                        <i className="bi bi-envelope" />
                       </a>
-                    )}
-                    <a href="#join" aria-label="Join community">
-                      <i className="bi bi-envelope" />
-                    </a>
+                    </div>
+                  </div>
+                  <div className="member-details">
+                    <h5>{m.name}</h5>
+                    <span>{m.role}</span>
                   </div>
                 </div>
-                <div className="member-details">
-                  <h5>{m.name}</h5>
-                  <span>{m.role}</span>
-                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
         ) : null}
 
         <div className="row mt-5">
@@ -203,7 +199,7 @@ export function TeamSection() {
                     </div>
                     <h4>List a gig, grant, or collaboration</h4>
                     <p>
-                      Kanema connects talent with demand—post roles, freelance
+                      Canma connects talent with demand—post roles, freelance
                       briefs, and partnership calls so the right creatives see
                       them first.
                     </p>

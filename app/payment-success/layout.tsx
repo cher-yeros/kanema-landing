@@ -10,7 +10,7 @@ import "../events/events.css";
 import "./payment-success.css";
 
 export const metadata: Metadata = {
-  title: "Payment successful — Kanema",
+  title: "Payment successful — Canma",
   description: "Your event payment was received.",
 };
 

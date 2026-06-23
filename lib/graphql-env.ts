@@ -1,13 +1,13 @@
 /**
- * Kanema GraphQL (kanema-backend) HTTP/WS URLs for the landing app.
- * Mirrors `kanema-admin/lib/graphql-env.ts`: NODE_ENV defaults plus `KANEMA_*` / `NEXT_PUBLIC_KANEMA_*` overrides.
+ * Canma GraphQL (canma-backend) HTTP/WS URLs for the landing app.
+ * Mirrors `canma-admin/lib/graphql-env.ts`: NODE_ENV defaults plus `KANEMA_*` / `NEXT_PUBLIC_KANEMA_*` overrides.
  *
  * Legacy: `NEXT_PUBLIC_GRAPHQL_URL`, `GRAPHQL_URL`, `NEXT_PUBLIC_GRAPHQL_WS_URL` are still honored if set.
  */
 
 const DEFAULT_GRAPHQL_HTTP_DEV = "http://localhost:4000/graphql";
 /** Production API host (GraphQL at `/graphql`, subscriptions at `/subscriptions`). */
-const DEFAULT_GRAPHQL_HTTP_PROD = "https://kanema.shevadigitals.com/graphql";
+const DEFAULT_GRAPHQL_HTTP_PROD = "https://canma.shevadigitals.com/graphql";
 
 function defaultGraphqlHttpForNodeEnv(): string {
   return process.env.NODE_ENV === "production"
@@ -38,13 +38,13 @@ function resolveGraphqlHttpUrl(): string {
   return defaultGraphqlHttpForNodeEnv();
 }
 
-/** HTTP endpoint of the Kanema GraphQL API (backend tier), not a Next.js route. */
+/** HTTP endpoint of the Canma GraphQL API (backend tier), not a Next.js route. */
 export function graphqlHttpUrl(): string {
   return resolveGraphqlHttpUrl();
 }
 
-/** Kanema API origin (GraphQL URL without `/graphql`). */
-export function kanemaApiBaseUrl(): string {
+/** Canma API origin (GraphQL URL without `/graphql`). */
+export function canmaApiBaseUrl(): string {
   return graphqlHttpUrl().replace(/\/graphql\/?$/i, "");
 }
 

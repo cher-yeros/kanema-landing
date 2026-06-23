@@ -15,7 +15,7 @@ export default async function LearnCatalogPage() {
       <div className="container section-title" data-aos="fade-up">
         <h1>Learn</h1>
         <p>
-          Self-paced lessons from the Kanema team and community. Sign in with
+          Self-paced lessons from the Canma team and community. Sign in with
           your member account to enroll in free courses.
         </p>
         <p className="small text-muted mb-0">

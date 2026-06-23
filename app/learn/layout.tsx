@@ -9,9 +9,9 @@ import { ScrollTop } from "@/components/landing/ScrollTop";
 import "./learn.css";
 
 export const metadata: Metadata = {
-  title: "Learn — Kanema",
+  title: "Learn — Canma",
   description:
-    "Free courses and learning paths for Ethiopian photographers, videographers, and filmmakers on Kanema.",
+    "Free courses and learning paths for Ethiopian photographers, videographers, and filmmakers on Canma.",
 };
 
 export default function LearnLayout({

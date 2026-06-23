@@ -1,16 +1,16 @@
-# Kanema (ካንማ)
+# Canma (ካንማ)
 
 ## Empowering Ethiopian Visual Storytellers
 
-Kanema (ካንማ) is the official digital hub for Ethiopian photographers, videographers, and filmmakers—connecting talent, creating opportunities, and building a stronger creative industry.
+Canma (ካንማ) is the official digital hub for Ethiopian photographers, videographers, and filmmakers—connecting talent, creating opportunities, and building a stronger creative industry.
 
 [Join the Community] [Explore Talent]
 
 ---
 
-## About Kanema
+## About Canma
 
-Kanema (ካንማ) is a platform dedicated to uniting Ethiopian camera professionals under one digital ecosystem. It serves as a space where creatives can showcase their work, connect with clients, and collaborate with peers.
+Canma (ካንማ) is a platform dedicated to uniting Ethiopian camera professionals under one digital ecosystem. It serves as a space where creatives can showcase their work, connect with clients, and collaborate with peers.
 
 ### Our Mission
 
@@ -22,7 +22,7 @@ To become Africa’s leading platform for visual creatives and storytelling.
 
 ---
 
-## Why Kanema Exists
+## Why Canma Exists
 
 In Ethiopia, many talented photographers and videographers struggle with:
 
@@ -30,7 +30,7 @@ In Ethiopia, many talented photographers and videographers struggle with:
 - Lack of structured networking
 - Difficulty accessing job opportunities
 
-Kanema bridges this gap by offering a centralized platform that enables creatives to showcase their work, connect with clients, and grow professionally.
+Canma bridges this gap by offering a centralized platform that enables creatives to showcase their work, connect with clients, and grow professionally.
 
 ---
 
@@ -104,7 +104,7 @@ Access valuable content to improve your craft:
 
 ## Membership
 
-Join Kanema and unlock exclusive benefits:
+Join Canma and unlock exclusive benefits:
 
 ### Benefits
 
@@ -133,7 +133,7 @@ Be part of a growing creative network.
 
 Have questions or want to collaborate?
 
-- Email: info@kanema.et
+- Email: info@canma.et
 - Phone: +251 XXX XXX XXX
 - Location: Addis Ababa, Ethiopia
 
@@ -147,6 +147,6 @@ Follow us on social media:
 
 ## Footer
 
-© 2026 Kanema (ካንማ). All rights reserved.
+© 2026 Canma (ካንማ). All rights reserved.
 
 Empowering Ethiopian Visual Storytellers.

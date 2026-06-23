@@ -174,9 +174,9 @@ function ElectionPageInner() {
     return (
       <section className="hero section">
         <div className="container section-title" data-aos="fade-up">
-          <h1>Kanema Presidential Election 2026</h1>
+          <h1>Canma Presidential Election 2026</h1>
           <p>
-            There is no presidential ballot open on the site yet. When Kanema
+            There is no presidential ballot open on the site yet. When Canma
             starts this election, approved candidates, deadlines, and your vote
             will appear here—the same trusted space you use for community,
             showcase, and opportunities.
@@ -188,7 +188,7 @@ function ElectionPageInner() {
           <div className="hero-actions justify-content-center mt-4">
             <Link href="/#contact" className="btn btn-accent">
               <i className="bi bi-envelope me-2" />
-              Contact Kanema
+              Contact Canma
             </Link>
             <Link href="/" className="btn btn-ghost">
               <i className="bi bi-arrow-left-circle me-2" />
@@ -218,11 +218,11 @@ function ElectionPageInner() {
                     <span className="featured-tag">Complete OTP to vote</span>
                   ) : null}
                 </div>
-                <h1>Kanema Presidential Election 2026</h1>
+                <h1>Canma Presidential Election 2026</h1>
                 <p>
                   Ethiopia&apos;s photographers and videographers deserve
                   visibility, structured participation, and fair access to
-                  leadership choices. This ballot lives inside the same Kanema
+                  leadership choices. This ballot lives inside the same Canma
                   (ካንማ) hub you use for community, showcase, and
                   opportunities—recorded transparently on the server.
                 </p>
@@ -297,10 +297,10 @@ function ElectionPageInner() {
               <div className="intro-content text-center text-lg-start">
                 <h3>A centralized, trustworthy vote</h3>
                 <p className="lead">
-                  Many talented creatives already trust Kanema for portfolios
-                  and gigs. Voting uses the same discipline: verified
-                  membership, clear deadlines, and tallies you can follow
-                  live—no shadow spreadsheets.
+                  Many talented creatives already trust Canma for portfolios and
+                  gigs. Voting uses the same discipline: verified membership,
+                  clear deadlines, and tallies you can follow live—no shadow
+                  spreadsheets.
                 </p>
                 <div className="checklist">
                   <div className="check-item">
@@ -330,7 +330,7 @@ function ElectionPageInner() {
                     <div>
                       <h5>Live, open results</h5>
                       <p>
-                        Follow counts as they move—aligned with how Kanema
+                        Follow counts as they move—aligned with how Canma
                         surfaces opportunities and events in the open.
                       </p>
                     </div>

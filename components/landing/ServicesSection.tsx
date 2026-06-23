@@ -121,7 +121,7 @@ export function ServicesSection() {
                   and business.
                 </p>
                 <a href="#why-us" className="explore-btn">
-                  Why Kanema exists <i className="bi bi-chevron-right" />
+                  Why Canma exists <i className="bi bi-chevron-right" />
                 </a>
               </div>
             </div>
@@ -140,7 +140,7 @@ export function ServicesSection() {
                 <p>
                   Portfolio profiles, client exposure, opportunities, event
                   invites, professional networking, and industry recognition—all
-                  designed to help you grow with Kanema.
+                  designed to help you grow with Canma.
                 </p>
                 <a href="#contact" className="explore-btn">
                   Become a member <i className="bi bi-chevron-right" />
@@ -157,7 +157,7 @@ export function ServicesSection() {
                 <div className="col-lg-8">
                   <h3>Ready to grow with Ethiopia&apos;s visual community?</h3>
                   <p>
-                    Join Kanema to showcase your work, meet clients, and access
+                    Join Canma to showcase your work, meet clients, and access
                     opportunities, events, and resources in one trusted hub.
                   </p>
                 </div>

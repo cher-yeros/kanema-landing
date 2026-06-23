@@ -21,7 +21,7 @@ export function SiteFooter() {
               <p>
                 <strong>Email:</strong>{" "}
                 <span>
-                  <a href="mailto:info@kanema.et">info@kanema.et</a>
+                  <a href="mailto:info@canma.et">info@canma.et</a>
                 </span>
               </p>
             </div>
@@ -45,7 +45,7 @@ export function SiteFooter() {
                 <Link href="/">Home</Link>
               </li>
               <li>
-                <a href="#about">About Kanema</a>
+                <a href="#about">About Canma</a>
               </li>
               <li>
                 <a href="#services">Platform</a>
@@ -96,7 +96,7 @@ export function SiteFooter() {
                 <a href="#contact">Post a brief</a>
               </li>
               <li>
-                <a href="#why-us">Why Kanema</a>
+                <a href="#why-us">Why Canma</a>
               </li>
               <li>
                 <a href="#team">Community</a>

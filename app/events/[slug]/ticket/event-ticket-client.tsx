@@ -42,12 +42,8 @@ function formatTicketPrice(
   return `${formatted} ${currency}`;
 }
 
-function ticketRef(registration: {
-  id: string;
-  chapa_tx_ref?: string | null;
-}): string {
-  if (registration.chapa_tx_ref) return registration.chapa_tx_ref;
-  return registration.id.replace(/-/g, "").slice(0, 12).toUpperCase();
+function ticketRef(registration: { ticket_code?: string | null }): string {
+  return registration.ticket_code ?? "—";
 }
 
 function hasValidTicket(
@@ -97,6 +93,7 @@ export function EventTicketClient({ event }: { event: PublicEvent }) {
     me: { full_name: string; email: string; phone: string } | null;
     myEventRegistration: {
       id: string;
+      ticket_code: string;
       payment_status: "FREE" | "PENDING" | "CONFIRMED";
       fee_amount: string;
       fee_currency: string;
@@ -132,7 +129,7 @@ export function EventTicketClient({ event }: { event: PublicEvent }) {
           <div className="info-box text-center">
             <h1 className="h4 mb-3">Sign in to view your ticket</h1>
             <p className="mb-4 text-muted">
-              Your event ticket is linked to your Kanema member account.
+              Your event ticket is linked to your Canma member account.
             </p>
             <Link
               className="btn btn-accent"
@@ -204,7 +201,7 @@ export function EventTicketClient({ event }: { event: PublicEvent }) {
                 ) : null}
                 <div className="event-ticket__hero-top">
                   <div>
-                    <p className="event-ticket__brand">Kanema</p>
+                    <p className="event-ticket__brand">Canma</p>
                     <span className="event-ticket__badge">Admit one</span>
                   </div>
                 </div>
@@ -271,7 +268,7 @@ export function EventTicketClient({ event }: { event: PublicEvent }) {
                     timeStyle: "short",
                   })}
                 </p>
-                <p className="event-ticket__footer-brand">kanema.et</p>
+                <p className="event-ticket__footer-brand">canma.et</p>
               </div>
             </article>
 

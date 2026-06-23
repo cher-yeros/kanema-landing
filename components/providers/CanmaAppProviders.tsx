@@ -5,12 +5,12 @@ import { useMemo, useState } from "react";
 import { Provider } from "react-redux";
 
 import {
-  configureKanemaApolloLink,
-  createKanemaApolloClient,
-} from "@/lib/kanema-apollo-client";
+  configureCanmaApolloLink,
+  createCanmaApolloClient,
+} from "@/lib/canma-apollo-client";
 import type { AppStore } from "@/lib/store";
-import { makeKanemaStore } from "@/lib/store";
-import { bindKanemaReduxStore } from "@/lib/store/store-ref";
+import { makeCanmaStore } from "@/lib/store";
+import { bindCanmaReduxStore } from "@/lib/store/store-ref";
 import { useAppSelector } from "@/lib/store/hooks";
 
 /**
@@ -18,30 +18,26 @@ import { useAppSelector } from "@/lib/store/hooks";
  * {@link ApolloClient#setLink} on every render so `graphqlHttpUrl()` / auth headers
  * stay aligned with Redux.
  */
-function KanemaApolloBinder({ children }: { children: React.ReactNode }) {
+function CanmaApolloBinder({ children }: { children: React.ReactNode }) {
   const token = useAppSelector((s) => s.auth.token ?? null);
-  const client = useMemo(() => createKanemaApolloClient(), []);
+  const client = useMemo(() => createCanmaApolloClient(), []);
 
-  configureKanemaApolloLink(client, token);
+  configureCanmaApolloLink(client, token);
 
   return <ApolloProvider client={client}>{children}</ApolloProvider>;
 }
 
 /** Redux root + Apollo (Lela-style `StoreProvider` + `MyApolloProvider`). */
-export function KanemaAppProviders({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export function CanmaAppProviders({ children }: { children: React.ReactNode }) {
   const [store] = useState<AppStore>(() => {
-    const s = makeKanemaStore();
-    bindKanemaReduxStore(s);
+    const s = makeCanmaStore();
+    bindCanmaReduxStore(s);
     return s;
   });
 
   return (
     <Provider store={store}>
-      <KanemaApolloBinder>{children}</KanemaApolloBinder>
+      <CanmaApolloBinder>{children}</CanmaApolloBinder>
     </Provider>
   );
 }

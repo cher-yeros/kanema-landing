@@ -29,10 +29,15 @@ export function JobDetailClient({
 }) {
   const { data: meData } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
-  const { data: appsData, refetch } = useQuery<MyAppsData>(MY_JOB_APPLICATIONS_QUERY, {
-    skip: !me,
-  });
-  const [apply, { loading: applying }] = useMutation(APPLY_TO_PRODUCTION_JOB_MUTATION);
+  const { data: appsData, refetch } = useQuery<MyAppsData>(
+    MY_JOB_APPLICATIONS_QUERY,
+    {
+      skip: !me,
+    },
+  );
+  const [apply, { loading: applying }] = useMutation(
+    APPLY_TO_PRODUCTION_JOB_MUTATION,
+  );
   const [coverMessage, setCoverMessage] = useState("");
   const [portfolioLinks, setPortfolioLinks] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
@@ -40,7 +45,7 @@ export function JobDetailClient({
 
   const isEmployer = me?.id === job.poster.id;
   const applied = Boolean(
-    appsData?.myJobApplications?.some((a) => a.job_id === job.id)
+    appsData?.myJobApplications?.some((a) => a.job_id === job.id),
   );
   const canTryApply =
     Boolean(me?.role === "member") &&
@@ -83,12 +88,12 @@ export function JobDetailClient({
             <span className="badge rounded-pill text-bg-secondary text-uppercase small">
               {job.status}
             </span>
-            {job.application_count > 0 ?
+            {job.application_count > 0 ? (
               <span className="small text-muted">
                 {job.application_count} applicant
                 {job.application_count === 1 ? "" : "s"}
               </span>
-            : null}
+            ) : null}
           </div>
 
           <h1 className="h2">{job.title}</h1>
@@ -102,62 +107,68 @@ export function JobDetailClient({
           </div>
         </div>
 
-        {!me ?
+        {!me ? (
           <div className="info-box mb-5">
             <h3 className="h5 mb-3">Applicant?</h3>
             <p className="mb-3">
-              You need to sign in with a Kanema <strong>member</strong> account to
-              submit an application — use the election member login (same workspace
-              account).
+              You need to sign in with a Canma <strong>member</strong> account
+              to submit an application — use the election member login (same
+              workspace account).
             </p>
             <Link className="btn btn-accent" href={loginHrefBack(pathHref)}>
               Member sign-in
             </Link>
           </div>
-        : null}
+        ) : null}
 
-        {me?.role === "admin" ?
+        {me?.role === "admin" ? (
           <div className="alert alert-warning">
-            Signed in as <strong>admin</strong>: members apply with a standard member
-            account. Use GraphQL or a member test account to exercise applications.
+            Signed in as <strong>admin</strong>: members apply with a standard
+            member account. Use GraphQL or a member test account to exercise
+            applications.
           </div>
-        : null}
+        ) : null}
 
-        {isEmployer ?
+        {isEmployer ? (
           <div className="info-box mb-5">
             <h3 className="h5 mb-2">You posted this role</h3>
             <p className="mb-3">
-              Review applicants with their contact details (email and phone) on the
-              applicant list.
+              Review applicants with their contact details (email and phone) on
+              the applicant list.
             </p>
-            <Link className="btn btn-accent me-2" href={`/jobs/${job.id}/applicants`}>
+            <Link
+              className="btn btn-accent me-2"
+              href={`/jobs/${job.id}/applicants`}
+            >
               View applicants
             </Link>
             <Link className="btn btn-outline-secondary" href="/jobs/mine">
               My dashboard
             </Link>
           </div>
-        : null}
+        ) : null}
 
-        {me && me.role === "member" && !isEmployer && job.status !== "OPEN" ?
-          <p className="text-muted">This role is not accepting new applications.</p>
-        : null}
+        {me && me.role === "member" && !isEmployer && job.status !== "OPEN" ? (
+          <p className="text-muted">
+            This role is not accepting new applications.
+          </p>
+        ) : null}
 
-        {applied || done ?
+        {applied || done ? (
           <div className="alert alert-success">
-            You have already applied to this role. The poster can reach you using the
-            contact details on your Kanema profile.
+            You have already applied to this role. The poster can reach you
+            using the contact details on your Canma profile.
           </div>
-        : null}
+        ) : null}
 
-        {canTryApply ?
+        {canTryApply ? (
           <div className="form-panel mt-4">
             <div className="form-intro mb-3">
               <i className="bi bi-send" />
               <h3 className="h5">Apply as {me?.full_name}</h3>
               <p className="small text-muted mb-0">
-                One application per role. Be concise—posters see your email and phone
-                from your member profile.
+                One application per role. Be concise—posters see your email and
+                phone from your member profile.
               </p>
             </div>
             <form className="php-email-form" onSubmit={(e) => void onApply(e)}>
@@ -187,16 +198,20 @@ export function JobDetailClient({
                   placeholder="https://… (one per line or comma-separated)"
                 />
               </div>
-              {formError ?
+              {formError ? (
                 <div className="error-message d-block mb-3">{formError}</div>
-              : null}
-              <button type="submit" className="dispatch-btn" disabled={applying}>
+              ) : null}
+              <button
+                type="submit"
+                className="dispatch-btn"
+                disabled={applying}
+              >
                 <i className="bi bi-arrow-right-circle-fill" />
                 <span>{applying ? "Sending…" : "Submit application"}</span>
               </button>
             </form>
           </div>
-        : null}
+        ) : null}
       </div>
     </section>
   );

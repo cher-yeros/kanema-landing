@@ -1,23 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { writeKanemaTokenToStorage } from "@/lib/store/token-persist";
+import { writeCanmaTokenToStorage } from "@/lib/store/token-persist";
 
-export type KanemaAuthState = {
+export type CanmaAuthState = {
   token: string | null;
 };
 
-/** Default for SSR; hydrated via `preloadedState` in `makeKanemaStore`. */
-const initialState: KanemaAuthState = { token: null };
+/** Default for SSR; hydrated via `preloadedState` in `makeCanmaStore`. */
+const initialState: CanmaAuthState = { token: null };
 
-export const kanemaAuthSlice = createSlice({
-  name: "kanemaAuth",
+export const canmaAuthSlice = createSlice({
+  name: "canmaAuth",
   initialState,
   reducers: {
     setAuthToken(state, action: PayloadAction<string | null>) {
       state.token = action.payload;
-      writeKanemaTokenToStorage(action.payload);
+      writeCanmaTokenToStorage(action.payload);
     },
   },
 });
 
-export const { setAuthToken } = kanemaAuthSlice.actions;
+export const { setAuthToken } = canmaAuthSlice.actions;

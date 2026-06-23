@@ -22,6 +22,7 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
 
   const { data: regData, refetch } = useQuery<{
     myEventRegistrationByTxRef: {
+      ticket_code: string;
       payment_status: "FREE" | "PENDING" | "CONFIRMED";
       event: { slug: string; title: string } | null;
     } | null;
@@ -143,6 +144,14 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
                   </p>
                   {event ? (
                     <p className="mt-3 mb-0">
+                      {registration?.ticket_code ? (
+                        <span className="d-block small text-muted mb-2">
+                          Ticket code:{" "}
+                          <strong className="font-monospace">
+                            {registration.ticket_code}
+                          </strong>
+                        </span>
+                      ) : null}
                       <Link
                         href={`/events/${event.slug}/ticket`}
                         className="btn btn-accent"

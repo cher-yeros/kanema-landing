@@ -11,7 +11,10 @@ export function JobsMemberStrip() {
 
   if (loading) {
     return (
-      <section className="section py-4" style={{ background: "rgba(0,0,0,.02)" }}>
+      <section
+        className="section py-4"
+        style={{ background: "rgba(0,0,0,.02)" }}
+      >
         <div className="container">
           <p className="small text-muted mb-0 text-center">
             Checking your session…
@@ -23,12 +26,15 @@ export function JobsMemberStrip() {
 
   if (!me) {
     return (
-      <section className="section py-4" style={{ background: "rgba(0,0,0,.02)" }}>
+      <section
+        className="section py-4"
+        style={{ background: "rgba(0,0,0,.02)" }}
+      >
         <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
           <div>
             <strong>Member access</strong>
             <span className="text-muted ms-2">
-              Sign in with your Kanema account to apply or post roles.
+              Sign in with your Canma account to apply or post roles.
             </span>
           </div>
           <div className="d-flex flex-wrap gap-2">
@@ -38,7 +44,10 @@ export function JobsMemberStrip() {
             >
               Sign in
             </Link>
-            <Link className="btn btn-sm btn-outline-secondary" href="/election/register">
+            <Link
+              className="btn btn-sm btn-outline-secondary"
+              href="/election/register"
+            >
               Register
             </Link>
           </div>
@@ -53,9 +62,14 @@ export function JobsMemberStrip() {
         <div>
           <strong>Signed in as {me.full_name}</strong>
           <span className="text-muted ms-2">
-            {me.role === "admin" ?
-              <>Admin workspace—post roles from your personal member account views below.</>
-            : <>Browse open roles above or jump to your dashboard.</>}
+            {me.role === "admin" ? (
+              <>
+                Admin workspace—post roles from your personal member account
+                views below.
+              </>
+            ) : (
+              <>Browse open roles above or jump to your dashboard.</>
+            )}
           </span>
         </div>
         <div className="d-flex flex-wrap gap-2">

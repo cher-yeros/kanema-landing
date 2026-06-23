@@ -28,20 +28,22 @@ export default async function ProductionJobsPage() {
                 </div>
                 <h1>Production job center</h1>
                 <p>
-                  Ethiopia&apos;s photographers and videographers deserve visibility,
-                  structured networking, and fair access to opportunity—this board
-                  keeps the focus on <strong>production work</strong> (set, crew, and
-                  post) so serious briefs do not get lost in general chatter.
+                  Ethiopia&apos;s photographers and videographers deserve
+                  visibility, structured networking, and fair access to
+                  opportunity—this board keeps the focus on{" "}
+                  <strong>production work</strong> (set, crew, and post) so
+                  serious briefs do not get lost in general chatter.
                 </p>
                 <p className="lead mb-2">
-                  Members can <strong>post production roles</strong> and browse open
-                  briefs here. Applying requires a Kanema{" "}
-                  <strong>member account</strong> (sign up with your phone, then verify
-                  with OTP)—posters stay in charge of reviewing applicants themselves.
+                  Members can <strong>post production roles</strong> and browse
+                  open briefs here. Applying requires a Canma{" "}
+                  <strong>member account</strong> (sign up with your phone, then
+                  verify with OTP)—posters stay in charge of reviewing
+                  applicants themselves.
                 </p>
                 <p className="small text-muted mb-0">
-                  Questions about moderation or spam? Reach the Kanema team on the
-                  contact page.
+                  Questions about moderation or spam? Reach the Canma team on
+                  the contact page.
                 </p>
                 <div className="hero-actions mt-4">
                   <a href="#open-roles" className="btn btn-accent">
@@ -87,10 +89,11 @@ export default async function ProductionJobsPage() {
                   How postings and applications work
                 </h2>
                 <p className="lead">
-                  Create an account as a Kanema member, post a structured production
-                  brief, and applicants sign in with the same hub account you use across
-                  the community. Employers see applicants—including contact channel—on
-                  a private applicant list tied to each job.
+                  Create an account as a Canma member, post a structured
+                  production brief, and applicants sign in with the same hub
+                  account you use across the community. Employers see
+                  applicants—including contact channel—on a private applicant
+                  list tied to each job.
                 </p>
                 <div className="checklist">
                   <div className="check-item">
@@ -98,8 +101,9 @@ export default async function ProductionJobsPage() {
                     <div>
                       <h5>Poster</h5>
                       <p>
-                        Any signed-in Kanema member can publish an open brief. Closed or
-                        filled roles stay visible to you while new applicants pause.
+                        Any signed-in Canma member can publish an open brief.
+                        Closed or filled roles stay visible to you while new
+                        applicants pause.
                       </p>
                     </div>
                   </div>
@@ -108,9 +112,9 @@ export default async function ProductionJobsPage() {
                     <div>
                       <h5>Applicant</h5>
                       <p>
-                        Only <strong>member</strong> accounts (not staff admin logins)
-                        can send an application—with a note and portfolio links—for each
-                        open role once.
+                        Only <strong>member</strong> accounts (not staff admin
+                        logins) can send an application—with a note and
+                        portfolio links—for each open role once.
                       </p>
                     </div>
                   </div>
@@ -119,9 +123,9 @@ export default async function ProductionJobsPage() {
                     <div>
                       <h5>Transparency</h5>
                       <p>
-                        Public listings show poster name counts and scope; applicant
-                        contact details are shared only with the poster and platform
-                        administrators.
+                        Public listings show poster name counts and scope;
+                        applicant contact details are shared only with the
+                        poster and platform administrators.
                       </p>
                     </div>
                   </div>
@@ -140,8 +144,8 @@ export default async function ProductionJobsPage() {
         <div className="container section-title" data-aos="fade-up">
           <h2 id="openRolesHeading">Open production roles</h2>
           <p>
-            Live briefs submitted by Kanema members. Read the scope, modalility, then
-            open a role for full detail and member-only applications.
+            Live briefs submitted by Canma members. Read the scope, modalility,
+            then open a role for full detail and member-only applications.
           </p>
           <p className="small text-muted mb-0">
             No active listings yet? Anyone signed in can start one from{" "}
@@ -169,15 +173,19 @@ export default async function ProductionJobsPage() {
                       </span>
                     </div>
                     <p className="small text-muted mb-2">
-                      {[role.location, role.modality].filter(Boolean).join(" · ") ||
-                        "Modality · location TBC"}
+                      {[role.location, role.modality]
+                        .filter(Boolean)
+                        .join(" · ") || "Modality · location TBC"}
                       {" · "}
                       Posted by {role.poster.full_name}
                       {role.application_count > 0
                         ? ` · ${role.application_count} applicant${role.application_count === 1 ? "" : "s"}`
                         : null}
                     </p>
-                    <p className="text-truncate-3-lines" style={{ minHeight: "4.5rem" }}>
+                    <p
+                      className="text-truncate-3-lines"
+                      style={{ minHeight: "4.5rem" }}
+                    >
                       {role.description}
                     </p>
                     <Link
@@ -193,7 +201,7 @@ export default async function ProductionJobsPage() {
             ))}
           </div>
 
-          {jobs.length === 0 ?
+          {jobs.length === 0 ? (
             <div className="row mt-4">
               <div className="col-12">
                 <div className="info-box text-center py-5">
@@ -207,7 +215,7 @@ export default async function ProductionJobsPage() {
                 </div>
               </div>
             </div>
-          : null}
+          ) : null}
 
           <div className="row mt-5">
             <div className="col-12" data-aos="fade-up" data-aos-delay="200">
@@ -216,9 +224,9 @@ export default async function ProductionJobsPage() {
                   <div className="col-lg-8">
                     <h3>Membership unlocks applicants and postings</h3>
                     <p>
-                      Kanema ties production jobs to verified community accounts—you
-                      can register with your phone from the ballot flow if you already
-                      have not elsewhere.
+                      Canma ties production jobs to verified community
+                      accounts—you can register with your phone from the ballot
+                      flow if you already have not elsewhere.
                     </p>
                   </div>
                   <div className="col-lg-4 text-lg-end text-center">

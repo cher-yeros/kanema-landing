@@ -11,10 +11,10 @@ export function AboutSection() {
             data-aos-delay="200"
           >
             <div className="info-block">
-              <span className="tag-label">About Kanema</span>
+              <span className="tag-label">About Canma</span>
               <h2>One digital home for Ethiopia&apos;s visual industry</h2>
               <p>
-                Kanema (ካንማ) unites photographers, videographers, and filmmakers
+                Canma (ካንማ) unites photographers, videographers, and filmmakers
                 in a single ecosystem—to showcase work, meet clients, and
                 collaborate with peers. Our mission is to empower Ethiopian
                 visual storytellers with visibility, opportunities, and
@@ -53,7 +53,7 @@ export function AboutSection() {
               </div>
 
               <a href="#services" className="action-link">
-                See what Kanema offers <i className="bi bi-arrow-right" />
+                See what Canma offers <i className="bi bi-arrow-right" />
               </a>
             </div>
           </div>

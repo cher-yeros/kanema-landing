@@ -17,7 +17,7 @@ export default function CommunityPage() {
           <div className="container section-title" data-aos="fade-up">
             <h2>Join the community</h2>
             <p>
-              Become part of Kanema’s network—connect with creators, find
+              Become part of Canma’s network—connect with creators, find
               opportunities, and collaborate on productions.
             </p>
           </div>
@@ -31,4 +31,3 @@ export default function CommunityPage() {
     </>
   );
 }
-

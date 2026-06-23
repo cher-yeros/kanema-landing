@@ -34,12 +34,11 @@ function ResultsInner() {
     const envId = defaultElectionId();
     if (envId) return envId;
     if (paramId) return paramId;
-    const list =
-      electionsData?.elections?.length ?
-        electionsData.elections
-      : electionsAll?.elections ?? [];
+    const list = electionsData?.elections?.length
+      ? electionsData.elections
+      : (electionsAll?.elections ?? []);
     const active = list.find((x: { is_active: unknown }) =>
-      isTruthyFlag(x.is_active)
+      isTruthyFlag(x.is_active),
     );
     return active?.id ?? list[0]?.id ?? null;
   }, [paramId, electionsData, electionsAll]);
@@ -50,7 +49,7 @@ function ResultsInner() {
       variables: { election_id: resolvedId ?? "" },
       skip: !resolvedId,
       pollInterval: 30_000,
-    }
+    },
   );
 
   const { data: live } = useSubscription<ElectionResultsSub>(
@@ -58,7 +57,7 @@ function ResultsInner() {
     {
       variables: { election_id: resolvedId ?? "" },
       skip: !resolvedId,
-    }
+    },
   );
 
   const results = live?.electionResultsUpdated ?? initial?.electionResults;
@@ -69,12 +68,13 @@ function ResultsInner() {
         <div className="container section-title" data-aos="fade-up">
           <h1>Live results</h1>
           <p>
-            There is no election to show totals for yet. Once an election is live,
-            counts update here in real time for everyone following the ballot.
+            There is no election to show totals for yet. Once an election is
+            live, counts update here in real time for everyone following the
+            ballot.
           </p>
           <p className="small text-muted mb-0">
             If you opened a shared results link, check that the address is
-            complete. Otherwise, ask your organizer or contact Kanema.
+            complete. Otherwise, ask your organizer or contact Canma.
           </p>
           <div className="hero-actions justify-content-center mt-4">
             <Link href="/election" className="btn btn-accent">
@@ -94,14 +94,14 @@ function ResultsInner() {
       <div className="container section-title" data-aos="fade-up">
         <h1>Live results</h1>
         <p>
-          Fair view of totals for the presidential ballot—updated in real time for
-          the community, alongside the transparency you expect from Kanema.
+          Fair view of totals for the presidential ballot—updated in real time
+          for the community, alongside the transparency you expect from Canma.
         </p>
-        {results?.updatedAt ?
+        {results?.updatedAt ? (
           <p className="small text-muted mb-0">
             Last update: {new Date(results.updatedAt).toLocaleString()}
           </p>
-        : (
+        ) : (
           <p className="small text-muted mb-0">
             Waiting for the first vote or tally…
           </p>
@@ -122,14 +122,17 @@ function ResultsInner() {
                   <span className="featured-tag">Live GraphQL</span>
                 </div>
                 <p className="small text-muted">
-                  Percentages reflect all cast votes for this election. Totals refresh
-                  when members submit ballots.
+                  Percentages reflect all cast votes for this election. Totals
+                  refresh when members submit ballots.
                 </p>
                 <ResultsBars
                   tallies={results?.tallies ?? []}
                   totalVotes={results?.total_votes ?? 0}
                 />
-                <Link href="/election" className="explore-btn mt-4 d-inline-flex">
+                <Link
+                  href="/election"
+                  className="explore-btn mt-4 d-inline-flex"
+                >
                   Return to ballot <i className="bi bi-chevron-right" />
                 </Link>
               </div>

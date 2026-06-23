@@ -13,6 +13,7 @@ export const MY_EVENT_REGISTRATION_QUERY = gql`
     myEventRegistration(event_id: $event_id) {
       id
       event_id
+      ticket_code
       payment_status
       fee_amount
       fee_currency
@@ -32,6 +33,7 @@ export const MY_EVENT_TICKET_QUERY = gql`
     }
     myEventRegistration(event_id: $event_id) {
       id
+      ticket_code
       payment_status
       fee_amount
       fee_currency
@@ -60,6 +62,7 @@ export const MY_EVENT_REGISTRATION_BY_TX_REF_QUERY = gql`
   query MyEventRegistrationByTxRef($tx_ref: String!) {
     myEventRegistrationByTxRef(tx_ref: $tx_ref) {
       id
+      ticket_code
       payment_status
       chapa_tx_ref
       event {
@@ -84,6 +87,7 @@ export const REGISTER_FOR_EVENT_MUTATION = gql`
         payment_status
         fee_amount
         fee_currency
+        ticket_code
         createdAt
       }
     }

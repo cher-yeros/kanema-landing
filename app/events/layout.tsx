@@ -10,7 +10,7 @@ import "./events.css";
 import "./event-ticket.css";
 
 export const metadata: Metadata = {
-  title: "Events — Kanema",
+  title: "Events — Canma",
   description:
     "Workshops, screenings, and community gatherings for Ethiopian photographers, videographers, and filmmakers.",
 };

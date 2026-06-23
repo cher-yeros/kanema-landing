@@ -61,7 +61,7 @@ export function JoinCommunityForm() {
   const buttonLabel = useMemo(() => {
     if (isSubmitting) return "Submitting…";
     if (banner === "sent") return "Submitted";
-    return "Join Kanema";
+    return "Join Canma";
   }, [isSubmitting, banner]);
 
   async function onSubmit(values: JoinCommunityFormValues) {
@@ -121,7 +121,7 @@ export function JoinCommunityForm() {
         <div className="col-lg-5">
           <div className="info-panel">
             <div className="panel-content">
-              <h3>Join the Kanema community</h3>
+              <h3>Join the Canma community</h3>
               <p>
                 Tell us what you do and what you want to collaborate on. We’ll
                 reach out with next steps and ways to get involved.
@@ -159,7 +159,7 @@ export function JoinCommunityForm() {
                 data-aos="fade-up"
                 data-aos-delay="250"
               >
-                <span>Follow Kanema</span>
+                <span>Follow Canma</span>
                 <div className="social-icons">
                   <a href="#" aria-label="Instagram">
                     <i className="bi bi-instagram" />

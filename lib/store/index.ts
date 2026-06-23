@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 
 import { kanemaAuthSlice } from "@/lib/store/auth-slice";
-import { readKanemaTokenFromStorage } from "@/lib/store/token-persist";
+import { readCanmaTokenFromStorage } from "@/lib/store/token-persist";
 
-export function makeKanemaStore() {
+export function makeCanmaStore() {
   const token =
-    typeof window !== "undefined" ? readKanemaTokenFromStorage() : null;
+    typeof window !== "undefined" ? readCanmaTokenFromStorage() : null;
 
   return configureStore({
     reducer: {
@@ -17,6 +17,6 @@ export function makeKanemaStore() {
   });
 }
 
-export type AppStore = ReturnType<typeof makeKanemaStore>;
+export type AppStore = ReturnType<typeof makeCanmaStore>;
 export type RootState = ReturnType<AppStore["getState"]>;
 export type AppDispatch = AppStore["dispatch"];

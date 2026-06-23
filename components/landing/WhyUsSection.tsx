@@ -4,10 +4,10 @@ export function WhyUsSection() {
   return (
     <section id="why-us" className="why-us section">
       <div className="container section-title" data-aos="fade-up">
-        <h2>Why Kanema</h2>
+        <h2>Why Canma</h2>
         <p>
           Ethiopia&apos;s photographers and videographers deserve visibility,
-          structured networking, and fair access to opportunity—Kanema exists to
+          structured networking, and fair access to opportunity—Canma exists to
           close that gap.
         </p>
       </div>
@@ -19,7 +19,7 @@ export function WhyUsSection() {
               <h3>A centralized home for visual storytellers</h3>
               <p className="lead">
                 Many talented creatives struggle with limited reach, fragmented
-                networks, and gigs that never leave private chats. Kanema brings
+                networks, and gigs that never leave private chats. Canma brings
                 portfolios, opportunities, events, and learning into one trusted
                 ecosystem.
               </p>
