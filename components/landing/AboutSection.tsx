@@ -1,4 +1,4 @@
-import { landingImage } from "@/lib/landing-assets";
+const ABOUT_IMAGE = "/img/about/about-us.png";
 
 export function AboutSection() {
   return (
@@ -14,12 +14,12 @@ export function AboutSection() {
               <span className="tag-label">About Canma</span>
               <h2>One digital home for Ethiopia&apos;s visual industry</h2>
               <p>
-                Canma (ካንማ) unites photographers, videographers, and filmmakers
-                in a single ecosystem—to showcase work, meet clients, and
-                collaborate with peers. Our mission is to empower Ethiopian
-                visual storytellers with visibility, opportunities, and
-                professional growth. Our vision: Africa&apos;s leading platform
-                for visual creatives and storytelling.
+                Canma unites photographers, videographers, and filmmakers in a
+                single ecosystem—to showcase work, meet clients, and collaborate
+                with peers. Our mission is to empower Ethiopian visual
+                storytellers with visibility, opportunities, and professional
+                growth. Our vision: Africa&apos;s leading platform for visual
+                creatives and storytelling.
               </p>
 
               <div className="highlight-points">
@@ -64,32 +64,13 @@ export function AboutSection() {
             data-aos-delay="300"
           >
             <div className="gallery-grid">
-              <div className="row g-3">
-                <div className="col-7 d-flex">
-                  <div className="gallery-item tall">
-                    <img
-                      src={landingImage("about/about-14.webp")}
-                      alt=""
-                      className="img-fluid"
-                      loading="lazy"
-                    />
-                  </div>
-                </div>
-                <div className="col-5 d-flex flex-column gap-3">
-                  <div className="gallery-item">
-                    <img
-                      src={landingImage("about/about-square-12.webp")}
-                      alt=""
-                      className="img-fluid"
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="experience-badge">
-                    <i className="bi bi-award-fill" />
-                    <h4>ካንማ</h4>
-                    <span>Built for Ethiopia</span>
-                  </div>
-                </div>
+              <div className="gallery-item">
+                <img
+                  src={ABOUT_IMAGE}
+                  alt="Ethiopian visual creators collaborating in a studio"
+                  className="img-fluid"
+                  loading="lazy"
+                />
               </div>
             </div>
           </div>

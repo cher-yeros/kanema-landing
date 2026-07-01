@@ -5,6 +5,7 @@ import { memberImageSrc } from "@/lib/member-image";
 import {
   fetchCommunityMembers,
   type PublicCommunityMember,
+  type PublicTeamMember,
 } from "@/lib/public-graphql";
 import { useEffect, useMemo, useState } from "react";
 
@@ -19,41 +20,23 @@ type MemberCard = {
   portfolioUrl?: string | null;
 };
 
-const PLACEHOLDER_MEMBERS: MemberCard[] = [
-  {
-    key: "liya-solomon",
-    img: "person/person-f-7.webp",
-    name: "Liya Solomon",
-    role: "Fashion and portrait photographer",
-    delay: 200,
-  },
-  {
-    key: "biniam-alemayehu",
-    img: "person/person-m-2.webp",
-    name: "Biniam Alemayehu",
-    role: "Commercial cinematographer",
-    delay: 250,
-  },
-  {
-    key: "rahel-demissie",
-    img: "person/person-f-11.webp",
-    name: "Rahel Demissie",
-    role: "Wedding photo and film",
-    delay: 300,
-  },
-  {
-    key: "samuel-tesfaye",
-    img: "person/person-m-8.webp",
-    name: "Samuel Tesfaye",
-    role: "Documentary director / DP",
-    delay: 350,
-  },
-];
+type TeamSectionProps = {
+  initialMembers?: PublicCommunityMember[];
+  initialTeamMembers?: PublicTeamMember[];
+  initialFeaturedMembers?: PublicCommunityMember[];
+};
 
-export function TeamSection() {
-  const [members, setMembers] = useState<PublicCommunityMember[] | null>(null);
+export function TeamSection({
+  initialMembers,
+  initialTeamMembers,
+  initialFeaturedMembers,
+}: TeamSectionProps = {}) {
+  const [members, setMembers] = useState<PublicCommunityMember[] | null>(
+    initialMembers ?? null,
+  );
 
   useEffect(() => {
+    if (initialMembers !== undefined) return;
     let alive = true;
     fetchCommunityMembers()
       .then((rows) => {
@@ -67,11 +50,11 @@ export function TeamSection() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [initialMembers]);
 
   const memberCards = useMemo((): MemberCard[] => {
     if (members == null) {
-      return PLACEHOLDER_MEMBERS;
+      return [];
     }
     if (members.length === 0) {
       return [];
@@ -130,6 +113,16 @@ export function TeamSection() {
             </div>
           </div>
         </div>
+
+        {members === null ? (
+          <p
+            className="text-center text-secondary mt-4 mb-0"
+            data-aos="fade-up"
+            data-aos-delay="180"
+          >
+            Loading community members…
+          </p>
+        ) : null}
 
         {members != null && members.length === 0 ? (
           <p
@@ -192,7 +185,10 @@ export function TeamSection() {
               data-aos-delay="200"
             >
               <h4 className="leaders-heading">Mentors and industry voices</h4>
-              <TeamLeadersSwiper />
+              <TeamLeadersSwiper
+                initialTeamMembers={initialTeamMembers}
+                initialFeaturedMembers={initialFeaturedMembers}
+              />
             </div>
           </div>
         </div>

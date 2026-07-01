@@ -36,10 +36,17 @@ function testimonialSlide(t: PublicTestimonial) {
   };
 }
 
-export function TestimonialsSection() {
-  const [rows, setRows] = useState<PublicTestimonial[] | null>(null);
+export function TestimonialsSection({
+  initialRows,
+}: {
+  initialRows?: PublicTestimonial[];
+}) {
+  const [rows, setRows] = useState<PublicTestimonial[] | null>(
+    initialRows ?? null,
+  );
 
   useEffect(() => {
+    if (initialRows !== undefined) return;
     let alive = true;
     fetchTestimonials()
       .then((data) => {
@@ -53,7 +60,7 @@ export function TestimonialsSection() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [initialRows]);
 
   const slides = useMemo(() => {
     if (!rows?.length) return [];

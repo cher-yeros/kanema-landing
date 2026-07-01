@@ -223,7 +223,7 @@ function ElectionPageInner() {
                   Ethiopia&apos;s photographers and videographers deserve
                   visibility, structured participation, and fair access to
                   leadership choices. This ballot lives inside the same Canma
-                  (ካንማ) hub you use for community, showcase, and
+                  Canma hub you use for community, showcase, and
                   opportunities—recorded transparently on the server.
                 </p>
                 {election?.title ? (

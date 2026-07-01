@@ -10,6 +10,7 @@ async function fetchGraphQL<TData>(
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ query, variables }),
+    cache: "no-store",
   });
 
   if (!res.ok) {

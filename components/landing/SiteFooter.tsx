@@ -4,7 +4,7 @@ import Link from "next/link";
 import {
   BRAND_ALT,
   BRAND_LOGO_RECTANGLE,
-  BRAND_NAME_AMHARIC,
+  BRAND_NAME,
 } from "@/lib/brand-assets";
 import { SITE_CONTACT } from "@/lib/site-contact";
 
@@ -142,7 +142,7 @@ export function SiteFooter() {
       <div className="container copyright text-center mt-4">
         <p>
           © <span>2026</span>
-          <strong className="px-1 sitename">{BRAND_NAME_AMHARIC}</strong>
+          <strong className="px-1 sitename">{BRAND_NAME}</strong>
           <span>All rights reserved.</span>
         </p>
         <div className="credits">

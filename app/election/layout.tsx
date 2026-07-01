@@ -8,7 +8,7 @@ import { ScrollTop } from "@/components/landing/ScrollTop";
 import "./election.css";
 
 export const metadata: Metadata = {
-  title: "Canma Presidential Election 2026 — ካንማ",
+  title: "Canma Presidential Election 2026 — Canma",
   description:
     "Official Canma member ballot: one verified vote per election, transparent live results, built on the same trusted community hub.",
 };

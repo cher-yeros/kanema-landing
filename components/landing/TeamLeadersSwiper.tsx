@@ -72,19 +72,37 @@ function mapFeaturedMember(member: PublicCommunityMember): LeaderSlide {
   };
 }
 
-export function TeamLeadersSwiper() {
+type TeamLeadersSwiperProps = {
+  initialTeamMembers?: PublicTeamMember[];
+  initialFeaturedMembers?: PublicCommunityMember[];
+};
+
+export function TeamLeadersSwiper({
+  initialTeamMembers,
+  initialFeaturedMembers,
+}: TeamLeadersSwiperProps = {}) {
   const [remoteAdvisors, setRemoteAdvisors] = useState<
     PublicTeamMember[] | null
-  >(null);
+  >(initialTeamMembers ?? null);
   const [featuredMembers, setFeaturedMembers] = useState<
     PublicCommunityMember[] | null
-  >(null);
+  >(initialFeaturedMembers ?? null);
 
   useEffect(() => {
+    if (
+      initialTeamMembers !== undefined &&
+      initialFeaturedMembers !== undefined
+    ) {
+      return;
+    }
     let alive = true;
     Promise.all([
-      fetchTeamMembers(),
-      fetchCommunityMembers({ featuredOnly: true }),
+      initialTeamMembers !== undefined
+        ? Promise.resolve(initialTeamMembers)
+        : fetchTeamMembers(),
+      initialFeaturedMembers !== undefined
+        ? Promise.resolve(initialFeaturedMembers)
+        : fetchCommunityMembers({ featuredOnly: true }),
     ])
       .then(([advisors, featured]) => {
         if (!alive) return;
@@ -99,7 +117,7 @@ export function TeamLeadersSwiper() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [initialFeaturedMembers, initialTeamMembers]);
 
   const slides = useMemo((): LeaderSlide[] => {
     const advisorMapped = (remoteAdvisors ?? [])
