@@ -2,6 +2,9 @@
 
 import { FormEvent, useState } from "react";
 
+import { SocialLinks } from "@/components/landing/SocialLinks";
+import { SITE_CONTACT } from "@/lib/site-contact";
+
 export function ContactSection() {
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">(
     "idle",
@@ -38,7 +41,12 @@ export function ContactSection() {
               </div>
               <h5>Email</h5>
               <p>
-                <a href="mailto:info@canmaet.net">info@canmaet.net</a>
+                {SITE_CONTACT.emails.map((email, index) => (
+                  <span key={email}>
+                    <a href={`mailto:${email}`}>{email}</a>
+                    {index < SITE_CONTACT.emails.length - 1 ? <br /> : null}
+                  </span>
+                ))}
               </p>
               <span className="reach-note">
                 Partnerships, press, and support
@@ -56,7 +64,11 @@ export function ContactSection() {
                 <i className="bi bi-telephone" />
               </div>
               <h5>Phone</h5>
-              <p>+251 XXX XXX XXX</p>
+              <p>
+                <a href={SITE_CONTACT.phone.href}>
+                  {SITE_CONTACT.phone.display}
+                </a>
+              </p>
               <span className="reach-note">Ethiopia country code +251</span>
             </div>
           </div>
@@ -71,7 +83,7 @@ export function ContactSection() {
                 <i className="bi bi-geo-alt" />
               </div>
               <h5>Location</h5>
-              <p>Addis Ababa, Ethiopia</p>
+              <p>{SITE_CONTACT.location}</p>
               <span className="reach-note">
                 Nationwide community, local roots
               </span>
@@ -128,15 +140,7 @@ export function ContactSection() {
                 >
                   <span>Follow Canma</span>
                   <div className="social-icons">
-                    <a href="#" aria-label="Instagram">
-                      <i className="bi bi-instagram" />
-                    </a>
-                    <a href="#" aria-label="Facebook">
-                      <i className="bi bi-facebook" />
-                    </a>
-                    <a href="#" aria-label="Telegram">
-                      <i className="bi bi-telegram" />
-                    </a>
+                    <SocialLinks />
                   </div>
                 </div>
               </div>

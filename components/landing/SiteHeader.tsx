@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { BRAND_ALT, BRAND_LOGO_RECTANGLE } from "@/lib/brand-assets";
 import {
   useCallback,
   useEffect,
@@ -105,8 +107,16 @@ export function SiteHeader() {
         <Link
           href="/"
           className="logo d-flex align-items-center me-auto me-xl-0"
+          aria-label={`${BRAND_ALT} home`}
         >
-          <h1 className="sitename">ካንማ</h1>
+          <Image
+            src={BRAND_LOGO_RECTANGLE}
+            alt={BRAND_ALT}
+            width={140}
+            height={36}
+            priority
+            className="logo-image"
+          />
         </Link>
 
         <nav id="navmenu" className="navmenu">

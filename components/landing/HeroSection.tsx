@@ -1,49 +1,17 @@
-"use client";
-
 import { landingImage } from "@/lib/landing-assets";
-import { useEffect, useRef } from "react";
 
-const HERO_BG_VIDEO_MP4 =
-  "https://res.cloudinary.com/di1hpum4d/video/upload/v1777578031/vecteezy_a-caucasian-male-filmmaker-focuses-intently-on-directing-a_51583040_fdxteg.mp4";
-
-/** JPG frame derived on Cloudinary (`so_3`) — visible immediately if autoplay stalls. */
-const HERO_BG_VIDEO_POSTER =
-  "https://res.cloudinary.com/di1hpum4d/video/upload/so_3,f_jpg,q_auto/v1777578031/vecteezy_a-caucasian-male-filmmaker-focuses-intently-on-directing-a_51583040_fdxteg.jpg";
+const HERO_BG_IMAGE = "/img/hero/hero-bg.png";
 
 export function HeroSection() {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.defaultMuted = true;
-    v.playbackRate = 0.8;
-    const tryPlay = () => {
-      void v.play().catch(() => {});
-    };
-    tryPlay();
-    v.addEventListener("loadeddata", tryPlay);
-    v.addEventListener("canplay", tryPlay);
-    return () => {
-      v.removeEventListener("loadeddata", tryPlay);
-      v.removeEventListener("canplay", tryPlay);
-    };
-  }, []);
-
   return (
     <section id="hero" className="hero section">
-      <div className="hero-bg-video" aria-hidden="true">
-        <video
-          ref={videoRef}
-          poster={HERO_BG_VIDEO_POSTER}
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="auto"
-        >
-          <source src={HERO_BG_VIDEO_MP4} type="video/mp4" />
-        </video>
+      <div className="hero-bg" aria-hidden="true">
+        <img
+          src={HERO_BG_IMAGE}
+          alt=""
+          className="hero-bg-image"
+          fetchPriority="high"
+        />
       </div>
       <div className="container" data-aos="fade-up" data-aos-delay="100">
         <div className="row justify-content-center">

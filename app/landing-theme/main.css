@@ -9,48 +9,83 @@
 # Font & Color Variables
 --------------------------------------------------------------*/
 /* Fonts */
+@font-face {
+  font-family: "Arial Black";
+  src: url("/fonts/ariblk.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   --default-font:
     "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --heading-font: "Raleway", sans-serif;
+  --heading-font: "Arial Black", sans-serif;
   --nav-font: "Poppins", sans-serif;
+}
+
+/* Brand palette — Deep Royal Navy, Vibrant Yellow, Pure White */
+:root {
+  --brand-navy: #061428;
+  --brand-navy-deep: #0a2345;
+  --brand-yellow: #ddb82a;
+  --brand-yellow-deep: #c19a1f;
+  --brand-white: #ffffff;
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
 :root {
-  --background-color: #121212; /* Background color for the entire website, including individual sections */
-  --default-color: #dcdcdc; /* Default color used for the majority of the text content across the entire website */
-  --heading-color: #ffffff; /* Color for headings, subheadings and title throughout the website */
-  --accent-color: #0ee6b0; /* Accent color that represents your brand on the website. It's used for buttons, links, and other elements that need to stand out */
-  --surface-color: #2c2c2c; /* The surface color is used as a background of boxed elements within sections, such as cards, icon boxes, or other elements that require a visual separation from the global background. */
-  --contrast-color: #000000; /* Contrast color for text, ensuring readability against backgrounds of accent, heading, or default colors. */
+  --background-color: var(
+    --brand-navy
+  ); /* Dominant navy backdrop across sections */
+  --default-color: var(
+    --brand-white
+  ); /* Body and secondary promotional typography */
+  --heading-color: var(--brand-white); /* Headings, logotype, and title text */
+  --accent-color: var(
+    --brand-yellow
+  ); /* Logo emblem, CTAs, links, and highlights */
+  --surface-color: var(
+    --brand-navy-deep
+  ); /* Cards, nav shells, and elevated surfaces */
+  --contrast-color: var(--brand-navy); /* Text on yellow accent surfaces */
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
 :root {
-  --nav-color: #dcdcdc; /* The default color of the main navmenu links */
-  --nav-hover-color: #0ee6b0; /* Applied to main navmenu links when they are hovered over or active */
-  --nav-mobile-background-color: #2c2c2c; /* Used as the background color for mobile navigation menu */
-  --nav-dropdown-background-color: #2c2c2c; /* Used as the background color for dropdown items that appear when hovering over primary navigation items */
-  --nav-dropdown-color: #dcdcdc; /* Used for navigation links of the dropdown items in the navigation menu. */
-  --nav-dropdown-hover-color: #0ee6b0; /* Similar to --nav-hover-color, this color is applied to dropdown navigation links when they are hovered over. */
+  --nav-color: var(--brand-white); /* Default navigation link color */
+  --nav-hover-color: var(
+    --brand-yellow
+  ); /* Active and hovered navigation links */
+  --nav-mobile-background-color: var(
+    --brand-navy-deep
+  ); /* Mobile navigation panel */
+  --nav-dropdown-background-color: var(
+    --brand-navy-deep
+  ); /* Dropdown menu background */
+  --nav-dropdown-color: var(--brand-white); /* Dropdown navigation links */
+  --nav-dropdown-hover-color: var(--brand-yellow); /* Hovered dropdown links */
 }
 
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 .light-background {
-  --background-color: #121212;
-  --surface-color: #464646;
+  --background-color: var(--brand-navy-deep);
+  --surface-color: color-mix(
+    in srgb,
+    var(--brand-navy-deep),
+    var(--brand-white) 12%
+  );
 }
 
 .dark-background {
-  --background-color: #01020e;
-  --default-color: #ffffff;
-  --heading-color: #ffffff;
-  --surface-color: #252525;
-  --contrast-color: #ffffff;
+  --background-color: var(--brand-navy);
+  --default-color: var(--brand-white);
+  --heading-color: var(--brand-white);
+  --surface-color: var(--brand-navy-deep);
+  --contrast-color: var(--brand-white);
 }
 
 /* Smooth scroll */
@@ -155,7 +190,7 @@ h6 {
 --------------------------------------------------------------*/
 .header {
   --background-color: rgba(255, 255, 255, 0);
-  --surface-color: #060606;
+  --surface-color: var(--brand-navy-deep);
   color: var(--default-color);
   background-color: var(--background-color);
   padding: 20px 0;
@@ -174,9 +209,12 @@ h6 {
   line-height: 1;
 }
 
-.header .logo img {
+.header .logo img,
+.header .logo .logo-image {
   max-height: 36px;
-  margin-right: 8px;
+  width: auto;
+  height: auto;
+  margin-right: 0;
 }
 
 .header .logo h1 {
@@ -487,9 +525,12 @@ h6 {
   margin-bottom: 25px;
 }
 
-.footer .footer-about .logo img {
+.footer .footer-about .logo img,
+.footer .footer-about .logo .logo-image {
   max-height: 40px;
-  margin-right: 6px;
+  width: auto;
+  height: auto;
+  margin-right: 0;
 }
 
 .footer .footer-about .logo span {
@@ -598,26 +639,26 @@ h6 {
   transition: all 0.6s ease-out;
 }
 
-#preloader:before {
-  content: "";
+#preloader .preloader-logo {
   position: fixed;
-  top: calc(50% - 30px);
-  left: calc(50% - 30px);
-  border: 6px solid #ffffff;
-  border-color: var(--accent-color) transparent var(--accent-color) transparent;
-  border-radius: 50%;
-  width: 60px;
-  height: 60px;
-  animation: animate-preloader 1.5s linear infinite;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 72px;
+  height: 72px;
+  animation: animate-preloader 1.5s ease-in-out infinite;
 }
 
 @keyframes animate-preloader {
-  0% {
-    transform: rotate(0deg);
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: translate(-50%, -50%) scale(0.92);
   }
 
-  100% {
-    transform: rotate(360deg);
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
@@ -900,12 +941,12 @@ section,
   content: "";
   position: absolute;
   inset: 0;
-  /* Light enough that footage reads as “alive”; darken more if headings lose contrast */
+  /* Subtle navy tint so hero text stays readable over the background image */
   background: linear-gradient(
     180deg,
-    color-mix(in srgb, var(--accent-color), transparent 94%) 0%,
-    rgba(18, 18, 18, 0.42) 50%,
-    rgba(18, 18, 18, 0.58) 100%
+    color-mix(in srgb, var(--brand-navy-deep), transparent 55%) 0%,
+    color-mix(in srgb, var(--brand-navy), transparent 35%) 55%,
+    color-mix(in srgb, var(--brand-navy), transparent 25%) 100%
   );
   z-index: 1;
   pointer-events: none;
@@ -916,7 +957,7 @@ section,
   z-index: 3;
 }
 
-.hero .hero-bg-video {
+.hero .hero-bg {
   position: absolute;
   inset: 0;
   z-index: 0;
@@ -924,15 +965,13 @@ section,
   pointer-events: none;
 }
 
-/* 100% width, intrinsic height — full frame width visible (no side crop); anchored top, vertical overflow clips below */
-.hero .hero-bg-video video {
+.hero .hero-bg-image {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
+  inset: 0;
   width: 100%;
-  max-width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: cover;
+  object-position: center center;
   display: block;
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -1467,7 +1506,7 @@ section,
   background: linear-gradient(
     180deg,
     var(--accent-color),
-    color-mix(in srgb, var(--accent-color), #6366f1 40%)
+    color-mix(in srgb, var(--accent-color), var(--brand-navy) 40%)
   );
   border-radius: 0 4px 4px 0;
   transition: height 0.4s ease;
@@ -1534,7 +1573,11 @@ section,
 
 .services .featured-tag {
   display: inline-block;
-  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  background: linear-gradient(
+    135deg,
+    var(--brand-yellow),
+    var(--brand-yellow-deep)
+  );
   color: var(--contrast-color);
   font-size: 11px;
   font-weight: 700;
@@ -1569,7 +1612,7 @@ section,
   background: linear-gradient(
     135deg,
     var(--accent-color),
-    color-mix(in srgb, var(--accent-color), #6366f1 40%)
+    color-mix(in srgb, var(--accent-color), var(--brand-navy) 40%)
   );
   border-radius: 16px;
   padding: 45px 40px;
@@ -1816,7 +1859,7 @@ section,
   gap: 4px;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #f59e0b;
+  color: var(--brand-yellow-deep);
 }
 
 .portfolio .showcase-card .card-info .info-header .rating-badge i {
@@ -1865,7 +1908,7 @@ section,
   background: linear-gradient(
     135deg,
     var(--accent-color),
-    color-mix(in srgb, var(--accent-color), #1e3a5f 30%)
+    color-mix(in srgb, var(--accent-color), var(--brand-navy) 30%)
   );
   border-radius: 12px;
 }
@@ -2217,7 +2260,7 @@ section,
 }
 
 .testimonials .testimonial-item .stars i {
-  color: #ffc107;
+  color: var(--brand-yellow);
   margin: 0 1px;
 }
 
@@ -4203,19 +4246,19 @@ section,
 }
 
 .terms-of-service .highlight-card.warning {
-  background-color: color-mix(in srgb, #f59e0b, transparent 92%);
+  background-color: color-mix(in srgb, var(--brand-yellow), transparent 92%);
 }
 
 .terms-of-service .highlight-card.warning .card-icon {
-  background-color: color-mix(in srgb, #f59e0b, transparent 80%);
+  background-color: color-mix(in srgb, var(--brand-yellow), transparent 80%);
 }
 
 .terms-of-service .highlight-card.warning .card-icon i {
-  color: #d97706;
+  color: var(--brand-yellow-deep);
 }
 
 .terms-of-service .highlight-card.warning h5 {
-  color: #b45309;
+  color: color-mix(in srgb, var(--brand-yellow-deep), var(--brand-navy) 35%);
 }
 
 .terms-of-service .highlight-card.notice {

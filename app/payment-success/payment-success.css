@@ -22,7 +22,7 @@
 }
 
 .events-page .payment-status-card--pending {
-  border-bottom: 4px solid #f59e0b;
+  border-bottom: 4px solid var(--brand-yellow-deep, #c19a1f);
 }
 
 .events-page .payment-status-card--error {
@@ -41,7 +41,7 @@
 }
 
 .events-page .payment-status-card__icon--pending {
-  color: #f59e0b;
+  color: var(--brand-yellow-deep, #c19a1f);
   animation: payment-pulse 1.5s ease-in-out infinite;
 }
 

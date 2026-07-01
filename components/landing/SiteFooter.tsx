@@ -1,4 +1,14 @@
+import Image from "next/image";
 import Link from "next/link";
+
+import {
+  BRAND_ALT,
+  BRAND_LOGO_RECTANGLE,
+  BRAND_NAME_AMHARIC,
+} from "@/lib/brand-assets";
+import { SITE_CONTACT } from "@/lib/site-contact";
+
+import { SocialLinks } from "@/components/landing/SocialLinks";
 
 export function SiteFooter() {
   return (
@@ -7,34 +17,42 @@ export function SiteFooter() {
         <div className="row gy-4">
           <div className="col-lg-4 col-md-6 footer-about">
             <Link href="/" className="logo d-flex align-items-center">
-              <span className="sitename">ካንማ</span>
+              <Image
+                src={BRAND_LOGO_RECTANGLE}
+                alt={BRAND_ALT}
+                width={150}
+                height={40}
+                className="logo-image"
+              />
             </Link>
             <p className="mt-3 small text-secondary">
               Empowering Ethiopian visual storytellers—visibility,
               opportunities, and professional growth in one digital hub.
             </p>
             <div className="footer-contact pt-3">
-              <p>Addis Ababa, Ethiopia</p>
+              <p>{SITE_CONTACT.location}</p>
               <p className="mt-3">
-                <strong>Phone:</strong> <span>+251 XXX XXX XXX</span>
+                <strong>Phone:</strong>{" "}
+                <span>
+                  <a href={SITE_CONTACT.phone.href}>
+                    {SITE_CONTACT.phone.display}
+                  </a>
+                </span>
               </p>
               <p>
                 <strong>Email:</strong>{" "}
                 <span>
-                  <a href="mailto:info@canmaet.net">info@canmaet.net</a>
+                  {SITE_CONTACT.emails.map((email, index) => (
+                    <span key={email}>
+                      <a href={`mailto:${email}`}>{email}</a>
+                      {index < SITE_CONTACT.emails.length - 1 ? ", " : null}
+                    </span>
+                  ))}
                 </span>
               </p>
             </div>
             <div className="social-links d-flex mt-4">
-              <a href="#" aria-label="Instagram">
-                <i className="bi bi-instagram" />
-              </a>
-              <a href="#" aria-label="Facebook">
-                <i className="bi bi-facebook" />
-              </a>
-              <a href="#" aria-label="Telegram">
-                <i className="bi bi-telegram" />
-              </a>
+              <SocialLinks />
             </div>
           </div>
 
@@ -124,7 +142,7 @@ export function SiteFooter() {
       <div className="container copyright text-center mt-4">
         <p>
           © <span>2026</span>
-          <strong className="px-1 sitename">ካንማ</strong>
+          <strong className="px-1 sitename">{BRAND_NAME_AMHARIC}</strong>
           <span>All rights reserved.</span>
         </p>
         <div className="credits">

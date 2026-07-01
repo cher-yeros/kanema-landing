@@ -22,7 +22,7 @@ export default function Home() {
         <HeroSection />
         <AboutSection />
         <WhyUsSection />
-        <ServicesSection />
+        {/* <ServicesSection /> */}
         {/* <PortfolioSectionClient /> */}
         <TestimonialsSectionClient />
         <ContactSection />
