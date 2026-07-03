@@ -5,6 +5,7 @@ import {
   loadImageFileDimensions,
   squareImageErrorMessage,
 } from "@/lib/image-dimensions";
+import { communityAvatarUploadUrl } from "@/lib/graphql-env";
 import { useId, useRef, useState } from "react";
 
 type ProfilePictureUploadProps = {
@@ -54,12 +55,31 @@ export function ProfilePictureUpload({
     setUploading(true);
 
     try {
-      const fd = new FormData();
-      fd.set("file", file);
-      const res = await fetch("/api/community-join/avatar", {
-        method: "POST",
-        body: fd,
-      });
+      const buildFormData = () => {
+        const fd = new FormData();
+        fd.set("file", file);
+        return fd;
+      };
+
+      let res: Response;
+      try {
+        res = await fetch(communityAvatarUploadUrl(), {
+          method: "POST",
+          body: buildFormData(),
+        });
+        if (res.status === 404 || res.status === 405) {
+          res = await fetch("/api/community-join/avatar", {
+            method: "POST",
+            body: buildFormData(),
+          });
+        }
+      } catch {
+        res = await fetch("/api/community-join/avatar", {
+          method: "POST",
+          body: buildFormData(),
+        });
+      }
+
       const json = (await res.json()) as { url?: string; error?: string };
       if (!res.ok || !json.url) {
         throw new Error(json.error ?? "Upload failed");

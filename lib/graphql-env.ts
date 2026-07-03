@@ -48,6 +48,16 @@ export function canmaApiBaseUrl(): string {
   return graphqlHttpUrl().replace(/\/graphql\/?$/i, "");
 }
 
+/** Community join profile photo upload (multipart). */
+export function communityAvatarUploadUrl(): string {
+  return `${canmaApiBaseUrl()}/api/community-avatar`;
+}
+
+/** Community join profile photo upload (JSON base64 proxy). */
+export function communityAvatarBase64UploadUrl(): string {
+  return `${canmaApiBaseUrl()}/api/community-avatar/base64`;
+}
+
 /**
  * GraphQL HTTP URL when code runs on the Next server (RSC server fetches).
  * Uses the same resolution as {@link graphqlHttpUrl} on the server (including `KANEMA_GRAPHQL_URL`).

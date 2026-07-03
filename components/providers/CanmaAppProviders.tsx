@@ -4,6 +4,7 @@ import { ApolloProvider } from "@apollo/client/react";
 import { useMemo, useState } from "react";
 import { Provider } from "react-redux";
 
+import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import {
   configureCanmaApolloLink,
   createCanmaApolloClient,
@@ -37,7 +38,10 @@ export function CanmaAppProviders({ children }: { children: React.ReactNode }) {
 
   return (
     <Provider store={store}>
-      <CanmaApolloBinder>{children}</CanmaApolloBinder>
+      <CanmaApolloBinder>
+        <PageViewTracker />
+        {children}
+      </CanmaApolloBinder>
     </Provider>
   );
 }
