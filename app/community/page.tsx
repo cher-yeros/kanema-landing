@@ -19,17 +19,7 @@ export default async function CommunityPage() {
       <LandingProvidersClient />
       <SiteHeader />
       <main className="main">
-        <section id="join" className="contact section">
-          <div className="container section-title" data-aos="fade-up">
-            <h2>Join the community</h2>
-            <p>
-              Become part of Canma’s network—connect with creators, find
-              opportunities, and collaborate on productions.
-            </p>
-          </div>
-
-          <CommunityJoinSection />
-        </section>
+        <CommunityJoinSection />
         <TeamSectionClient
           initialMembers={communityMembers}
           initialTeamMembers={teamMembers}

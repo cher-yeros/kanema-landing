@@ -47,3 +47,15 @@ export const MY_COMMUNITY_JOIN_QUERY = gql`
     }
   }
 `;
+
+export const HEADER_USER_QUERY = gql`
+  query HeaderUser {
+    me {
+      id
+      full_name
+    }
+    myCommunityJoin {
+      avatar_url
+    }
+  }
+`;

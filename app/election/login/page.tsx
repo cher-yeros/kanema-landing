@@ -3,11 +3,11 @@
 import Link from "next/link";
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useApolloClient, useMutation } from "@apollo/client/react";
+import { useMutation } from "@apollo/client/react";
 import { LOGIN_MUTATION } from "@/lib/election-graphql";
 import type { LoginMutation } from "@/types/election-apollo";
 import { useAppDispatch } from "@/lib/store/hooks";
-import { setAuthToken } from "@/lib/store/auth-slice";
+import { setAuthSession } from "@/lib/store/auth-slice";
 
 function safeRedirectPath(raw: string | null): string {
   if (!raw?.startsWith("/") || raw.startsWith("//")) return "/election";
@@ -20,7 +20,6 @@ function ElectionLoginInner() {
   const searchParams = useSearchParams();
   const nextParam = searchParams.get("next");
 
-  const client = useApolloClient();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -40,14 +39,21 @@ function ElectionLoginInner() {
         variables: { input: { identifier, password } },
       });
       const payload = res.data?.login;
-      if (!payload?.success || !payload.token) {
+      if (!payload?.success || !payload.token || !payload.user) {
         setError(payload?.message ?? "Login failed.");
         return;
       }
-      dispatch(setAuthToken(payload.token));
-      await client.resetStore();
+      dispatch(
+        setAuthSession({
+          token: payload.token,
+          user: {
+            id: payload.user.id,
+            full_name: payload.user.full_name,
+            avatar_url: null,
+          },
+        }),
+      );
       router.push(safeRedirectPath(nextParam));
-      router.refresh();
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Login failed.");
     }

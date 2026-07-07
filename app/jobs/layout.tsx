@@ -7,9 +7,9 @@ import {
 import { ScrollTop } from "@/components/landing/ScrollTop";
 
 export const metadata: Metadata = {
-  title: "Production job center — Canma",
+  title: "Creative gigs — Canma",
   description:
-    "Film and commercial production roles on Canma: crew, set, and post—structured listings so Ethiopian visual storytellers find serious production work in one hub.",
+    "Film and commercial creative gigs on Canma: crew, set, and post—structured listings so Ethiopian visual storytellers find serious work in one hub.",
 };
 
 export default function JobsLayout({

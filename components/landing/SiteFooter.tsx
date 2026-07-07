@@ -78,7 +78,7 @@ export function SiteFooter() {
                 <Link href="/election">Presidential election</Link>
               </li>
               <li>
-                <Link href="/jobs">Production job center</Link>
+                <Link href="/jobs">Creative gigs</Link>
               </li>
             </ul>
           </div>

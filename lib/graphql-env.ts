@@ -58,6 +58,10 @@ export function communityAvatarBase64UploadUrl(): string {
   return `${canmaApiBaseUrl()}/api/community-avatar/base64`;
 }
 
+export function forumMediaUploadUrl(): string {
+  return `${canmaApiBaseUrl()}/api/forum-media`;
+}
+
 /**
  * GraphQL HTTP URL when code runs on the Next server (RSC server fetches).
  * Uses the same resolution as {@link graphqlHttpUrl} on the server (including `KANEMA_GRAPHQL_URL`).

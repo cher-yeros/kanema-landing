@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BRAND_ALT, BRAND_LOGO_RECTANGLE } from "@/lib/brand-assets";
+import { HeaderUserMenu } from "@/components/landing/HeaderUserMenu";
 import {
   useCallback,
   useEffect,
@@ -18,6 +19,7 @@ type NavKey =
   | "about"
   | "election"
   | "community"
+  | "forum"
   | "jobs"
   | "learn"
   | "events"
@@ -46,6 +48,7 @@ export function SiteHeader() {
   const activeNav = useMemo((): NavKey | null => {
     if (pathname.startsWith("/election")) return "election";
     if (pathname.startsWith("/community")) return "community";
+    if (pathname.startsWith("/forum")) return "forum";
     if (pathname.startsWith("/jobs")) return "jobs";
     if (pathname.startsWith("/learn")) return "learn";
     if (pathname.startsWith("/events")) return "events";
@@ -153,6 +156,16 @@ export function SiteHeader() {
             </li> */}
             <li>
               <Link
+                href="/forum"
+                className={navClass("forum")}
+                aria-current={activeNav === "forum" ? "page" : undefined}
+                onClick={closeMobileForPage}
+              >
+                Forum
+              </Link>
+            </li>
+            <li>
+              <Link
                 href="/community"
                 className={navClass("community")}
                 aria-current={activeNav === "community" ? "page" : undefined}
@@ -201,7 +214,7 @@ export function SiteHeader() {
                 aria-current={activeNav === "jobs" ? "page" : undefined}
                 onClick={closeMobileForPage}
               >
-                Production jobs
+                Gigs
               </Link>
             </li>
           </ul>
@@ -220,9 +233,7 @@ export function SiteHeader() {
           />
         </nav>
 
-        <Link className="btn-getstarted" href="/community#join">
-          Join the community
-        </Link>
+        <HeaderUserMenu />
       </div>
     </header>
   );

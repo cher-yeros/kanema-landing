@@ -9,4 +9,9 @@ export {
   CanmaAppProviders as CanmaApolloProvider,
 } from "@/components/providers/CanmaAppProviders";
 
-export { setStoredToken, getStoredToken } from "@/lib/store/imperative-auth";
+export {
+  setStoredAuthSession,
+  clearStoredAuthSession,
+  setStoredToken,
+  getStoredToken,
+} from "@/lib/store/imperative-auth";

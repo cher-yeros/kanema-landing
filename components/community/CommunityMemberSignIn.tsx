@@ -1,24 +1,28 @@
 "use client";
 
 import { useMutation } from "@apollo/client/react";
-import { useApolloClient } from "@apollo/client/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { LOGIN_COMMUNITY_MEMBER } from "@/lib/graphql/community-join";
-import { setStoredToken } from "@/lib/store/imperative-auth";
+import { setAuthSession } from "@/lib/store/auth-slice";
+import { useAppDispatch } from "@/lib/store/hooks";
 
 type LoginData = {
   loginCommunityMember: {
     success: boolean;
     message?: string | null;
     token?: string | null;
+    user?: {
+      id: string;
+      full_name: string;
+    } | null;
   };
 };
 
 export function CommunityMemberSignIn({ nextUrl }: { nextUrl?: string }) {
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  const client = useApolloClient();
   const [phone, setPhone] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [login, { loading }] = useMutation<LoginData>(LOGIN_COMMUNITY_MEMBER);
@@ -31,15 +35,24 @@ export function CommunityMemberSignIn({ nextUrl }: { nextUrl?: string }) {
         variables: { input: { phone: phone.trim() } },
       });
       const payload = res.data?.loginCommunityMember;
-      if (!payload?.success || !payload.token) {
+      if (!payload?.success || !payload.token || !payload.user) {
         setError(payload?.message ?? "Could not sign in.");
         return;
       }
-      setStoredToken(payload.token);
-      await client.resetStore();
+
+      dispatch(
+        setAuthSession({
+          token: payload.token,
+          user: {
+            id: payload.user.id,
+            full_name: payload.user.full_name,
+            avatar_url: null,
+          },
+        }),
+      );
+
       if (nextUrl) {
         router.push(nextUrl);
-        router.refresh();
       }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Could not sign in.");

@@ -1,14 +1,14 @@
 "use client";
 
 import { useMutation } from "@apollo/client/react";
-import { useApolloClient } from "@apollo/client/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { SUBMIT_COMMUNITY_JOIN } from "@/lib/graphql/community-join";
-import { setStoredToken } from "@/lib/store/imperative-auth";
+import { setAuthSession } from "@/lib/store/auth-slice";
+import { useAppDispatch } from "@/lib/store/hooks";
 
 import { CommunityInterestsField } from "./CommunityInterestsField";
 import { ProfilePictureUpload } from "./ProfilePictureUpload";
@@ -20,6 +20,8 @@ import {
 } from "./join-community-form-schema";
 
 import "./community-shadcn.css";
+
+const HOME_FEATURE_IMAGE = "/img/about/about-us.png";
 
 const COMMUNITY_JOIN_ROLE_GRAPHQL: Record<string, string> = {
   creative: "CREATIVE",
@@ -40,12 +42,16 @@ type SubmitCommunityJoinMutationData = {
     success: boolean;
     message?: string | null;
     token?: string | null;
+    user?: {
+      id: string;
+      full_name: string;
+    } | null;
   };
 };
 
 export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
+  const dispatch = useAppDispatch();
   const router = useRouter();
-  const client = useApolloClient();
   const [banner, setBanner] = useState<"idle" | "sent">("idle");
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
@@ -105,12 +111,19 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
         return;
       }
 
-      if (payload.token) {
-        setStoredToken(payload.token);
-        await client.resetStore();
+      if (payload.token && payload.user) {
+        dispatch(
+          setAuthSession({
+            token: payload.token,
+            user: {
+              id: payload.user.id,
+              full_name: payload.user.full_name,
+              avatar_url: values.avatarUrl?.trim() || null,
+            },
+          }),
+        );
         if (nextUrl) {
           router.push(nextUrl);
-          router.refresh();
           return;
         }
       }
@@ -136,7 +149,14 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
     <div className="container" data-aos="fade-up" data-aos-delay="100">
       <div className="row g-0 form-info-wrapper" data-aos="fade-up">
         <div className="col-lg-5">
-          <div className="info-panel">
+          <div className="info-panel info-panel--image-blend">
+            <img
+              src={HOME_FEATURE_IMAGE}
+              alt=""
+              aria-hidden="true"
+              className="panel-bg-image"
+            />
+            <div className="panel-bg-overlay" aria-hidden="true" />
             <div className="panel-content">
               <h3>Join the Canma community</h3>
               <p>

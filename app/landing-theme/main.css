@@ -241,6 +241,142 @@ h6 {
   background: color-mix(in srgb, var(--accent-color), transparent 15%);
 }
 
+.header .header-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  padding: 4px 14px 4px 4px;
+  border: 0;
+  border-radius: 50px;
+  background: color-mix(in srgb, var(--nav-color), transparent 92%);
+  color: var(--nav-color);
+  text-decoration: none;
+  transition: background 0.3s;
+  max-width: min(220px, 38vw);
+  cursor: pointer;
+  font: inherit;
+}
+
+.header .header-user-menu {
+  position: relative;
+  margin: 0 0 0 30px;
+  z-index: 1000;
+}
+
+.header .header-user-menu--open .header-user,
+.header .header-user:hover,
+.header .header-user:focus {
+  color: var(--nav-color);
+  background: color-mix(in srgb, var(--nav-color), transparent 86%);
+}
+
+.header .header-user-menu--open .header-user__chevron {
+  transform: rotate(180deg);
+}
+
+.header .header-user__chevron {
+  flex-shrink: 0;
+  font-size: 12px;
+  opacity: 0.75;
+  transition: transform 0.2s ease;
+}
+
+.header .header-user-menu__dropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  min-width: 190px;
+  padding: 8px;
+  border-radius: 14px;
+  background: var(--nav-dropdown-background-color);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+  border: 1px solid color-mix(in srgb, var(--nav-color), transparent 88%);
+}
+
+.header .header-user-menu__dropdown[hidden] {
+  display: none;
+}
+
+.header .header-user-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--nav-dropdown-color);
+  font-size: 14px;
+  font-family: var(--nav-font);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    color 0.2s ease,
+    background 0.2s ease;
+}
+
+.header .header-user-menu__item:hover,
+.header .header-user-menu__item:focus {
+  color: var(--nav-dropdown-hover-color);
+  background: color-mix(in srgb, var(--nav-color), transparent 92%);
+}
+
+.header .header-user-menu__item--danger:hover,
+.header .header-user-menu__item--danger:focus {
+  color: #f87171;
+  background: color-mix(in srgb, #f87171, transparent 88%);
+}
+
+.header .header-user__avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid color-mix(in srgb, var(--nav-color), transparent 70%);
+}
+
+.header .header-user__name {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: var(--nav-color);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header .header-user--loading .header-user__avatar,
+.header .header-user--loading .header-user__name {
+  display: inline-block;
+  background: color-mix(in srgb, var(--nav-color), transparent 80%);
+  animation: header-user-pulse 1.2s ease-in-out infinite;
+}
+
+.header .header-user--loading .header-user__avatar {
+  border-color: transparent;
+}
+
+.header .header-user--loading .header-user__name {
+  width: 72px;
+  height: 12px;
+  border-radius: 6px;
+}
+
+@keyframes header-user-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+
+  50% {
+    opacity: 0.9;
+  }
+}
+
 @media (max-width: 1200px) {
   .header {
     padding-top: 10px;
@@ -260,6 +396,15 @@ h6 {
     order: 2;
     margin: 0 10px 0 0;
     padding: 6px 15px;
+  }
+
+  .header .header-user-menu {
+    order: 2;
+    margin: 0 10px 0 0;
+  }
+
+  .header .header-user {
+    max-width: min(180px, 34vw);
   }
 
   .header .navmenu {
@@ -871,6 +1016,23 @@ section,
   .section {
     scroll-margin-top: 66px;
   }
+}
+
+/* Standalone routed pages: first section sits below fixed header (.hero sets its own padding-top). */
+:root {
+  --site-header-height: 72px;
+  --page-header-clearance: 160px;
+}
+
+@media (max-width: 1199px) {
+  :root {
+    --site-header-height: 66px;
+    --page-header-clearance: 110px;
+  }
+}
+
+.main > section:first-child:not(.hero) {
+  padding-top: var(--page-header-clearance);
 }
 
 /*--------------------------------------------------------------
@@ -2838,6 +3000,39 @@ section,
   height: 100%;
   display: flex;
   align-items: center;
+}
+
+.contact .info-panel.info-panel--image-blend {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.contact .info-panel.info-panel--image-blend .panel-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0.42;
+  mix-blend-mode: luminosity;
+}
+
+.contact .info-panel.info-panel--image-blend .panel-bg-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    155deg,
+    color-mix(in srgb, var(--accent-color) 65%, transparent) 0%,
+    color-mix(in srgb, var(--accent-color) 50%, transparent) 45%,
+    color-mix(in srgb, var(--brand-yellow-deep) 58%, transparent) 100%
+  );
+}
+
+.contact .info-panel.info-panel--image-blend .panel-content {
+  position: relative;
+  z-index: 1;
 }
 
 .contact .info-panel .panel-content {
@@ -4854,4 +5049,735 @@ section,
   .error-404 .search-box {
     margin: 0 20px;
   }
+}
+
+/* Jobs page — branded buttons */
+.jobs-page .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 14px 28px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+}
+
+.jobs-page .btn.btn-sm {
+  padding: 10px 20px;
+  font-size: 0.875rem;
+}
+
+.jobs-page .btn.btn-accent {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+}
+
+.jobs-page .btn.btn-accent:hover,
+.jobs-page .btn.btn-accent:focus-visible {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color), black 15%);
+  color: var(--contrast-color);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px
+    color-mix(in srgb, var(--accent-color), transparent 60%);
+}
+
+.jobs-page .btn.btn-ghost,
+.jobs-page .btn.btn-outline-secondary {
+  background: transparent;
+  color: var(--default-color);
+  border-color: color-mix(in srgb, var(--default-color), transparent 75%);
+}
+
+.jobs-page .btn.btn-ghost:hover,
+.jobs-page .btn.btn-ghost:focus-visible,
+.jobs-page .btn.btn-outline-secondary:hover,
+.jobs-page .btn.btn-outline-secondary:focus-visible {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+  transform: translateY(-3px);
+}
+
+.jobs-page .explore-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  text-decoration: none;
+  border: 2px solid color-mix(in srgb, var(--accent-color), transparent 60%);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent-color), transparent 94%);
+  transition: all 0.3s ease;
+}
+
+.jobs-page .explore-btn i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.jobs-page .explore-btn:hover,
+.jobs-page .explore-btn:focus-visible {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px
+    color-mix(in srgb, var(--accent-color), transparent 55%);
+}
+
+.jobs-page .explore-btn:hover i,
+.jobs-page .explore-btn:focus-visible i {
+  transform: translateX(3px);
+}
+
+.jobs-page .services .action-banner .action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--contrast-color);
+  color: var(--accent-color);
+  padding: 14px 34px;
+  border-radius: 8px;
+  border: 2px solid var(--contrast-color);
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 20px color-mix(in srgb, #000, transparent 80%);
+}
+
+.jobs-page .services .action-banner .action-btn:hover,
+.jobs-page .services .action-banner .action-btn:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px color-mix(in srgb, #000, transparent 70%);
+  color: var(--accent-color);
+  background: var(--contrast-color);
+  border-color: var(--contrast-color);
+}
+
+.jobs-page .info-box .btn.btn-accent {
+  margin-top: 0.25rem;
+}
+
+/*--------------------------------------------------------------
+# Forum page — branded buttons, contrast fixes for hero and cards
+--------------------------------------------------------------*/
+.forum-page .btn.btn-accent,
+.forum-page .btn.btn-ghost,
+.forum-page .btn.btn-outline-secondary,
+.forum-page .dispatch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 14px 28px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.forum-page .btn.btn-sm {
+  padding: 10px 20px;
+  font-size: 0.875rem;
+}
+
+.forum-page .btn.btn-accent {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+}
+
+.forum-page .btn.btn-accent:hover,
+.forum-page .btn.btn-accent:focus-visible {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color), black 15%);
+  color: var(--contrast-color);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px
+    color-mix(in srgb, var(--accent-color), transparent 60%);
+}
+
+.forum-page .btn.btn-accent:disabled {
+  opacity: 0.65;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.forum-page .btn.btn-ghost,
+.forum-page .btn.btn-outline-secondary {
+  background: transparent;
+  color: var(--default-color);
+  border-color: color-mix(in srgb, var(--default-color), transparent 75%);
+}
+
+.forum-page .btn.btn-ghost:hover,
+.forum-page .btn.btn-ghost:focus-visible,
+.forum-page .btn.btn-outline-secondary:hover,
+.forum-page .btn.btn-outline-secondary:focus-visible {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+  transform: translateY(-3px);
+}
+
+.forum-page .dispatch-btn {
+  gap: 10px;
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border: none;
+  padding: 14px 32px;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+.forum-page .dispatch-btn i {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.forum-page .dispatch-btn:hover:not(:disabled),
+.forum-page .dispatch-btn:focus-visible:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  color: var(--contrast-color);
+  box-shadow: 0 8px 25px
+    color-mix(in srgb, var(--accent-color), transparent 60%);
+  transform: translateY(-3px);
+}
+
+.forum-page .dispatch-btn:hover:not(:disabled) i,
+.forum-page .dispatch-btn:focus-visible:not(:disabled) i {
+  transform: translateX(4px);
+}
+
+.forum-page .dispatch-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.forum-page .btn.btn-link {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--accent-color);
+  text-decoration: none;
+  border-radius: 0;
+  box-shadow: none;
+  transform: none;
+  line-height: 1.4;
+}
+
+.forum-page .btn.btn-link:hover,
+.forum-page .btn.btn-link:focus-visible {
+  color: color-mix(in srgb, var(--accent-color), var(--brand-white) 18%);
+  text-decoration: underline;
+  transform: none;
+  box-shadow: none;
+  background: none;
+  border: none;
+}
+
+.forum-page .btn.btn-link.text-success {
+  color: #3ecf8e;
+}
+
+.forum-page .btn.btn-link.text-success:hover,
+.forum-page .btn.btn-link.text-success:focus-visible {
+  color: color-mix(in srgb, #3ecf8e, black 12%);
+}
+
+.forum-page .vote-stack .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 1.5rem;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  line-height: 1;
+  box-shadow: none;
+  transform: none;
+  color: color-mix(in srgb, var(--default-color), transparent 45%);
+}
+
+.forum-page .vote-stack .btn:hover:not(:disabled),
+.forum-page .vote-stack .btn:focus-visible:not(:disabled) {
+  color: var(--accent-color);
+  transform: scale(1.12);
+  box-shadow: none;
+  background: transparent;
+}
+
+.forum-page .vote-stack .btn.text-success {
+  color: var(--accent-color);
+}
+
+.forum-page .vote-stack .btn.text-danger {
+  color: #f07178;
+}
+
+.forum-page .vote-stack .btn.text-danger:hover:not(:disabled),
+.forum-page .vote-stack .btn.text-danger:focus-visible:not(:disabled) {
+  color: color-mix(in srgb, #f07178, white 10%);
+}
+
+.forum-page .hero .hero-actions .btn.btn-accent {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+}
+
+.forum-page .hero .hero-actions .btn.btn-accent:hover,
+.forum-page .hero .hero-actions .btn.btn-accent:focus-visible {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color), black 15%);
+  color: var(--contrast-color);
+}
+
+.forum-page .hero .hero-actions .btn.btn-ghost {
+  background: transparent;
+  color: var(--default-color);
+  border-color: color-mix(in srgb, var(--default-color), transparent 75%);
+}
+
+.forum-page .hero .hero-actions .btn.btn-ghost:hover,
+.forum-page .hero .hero-actions .btn.btn-ghost:focus-visible {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+}
+
+@media (max-width: 768px) {
+  .forum-page .dispatch-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+.forum-subnav {
+  margin-top: var(--site-header-height);
+  top: var(--site-header-height);
+  z-index: 100;
+  background: var(--surface-color);
+  border-color: color-mix(
+    in srgb,
+    var(--default-color),
+    transparent 88%
+  ) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.forum-page section,
+.forum-page .section {
+  scroll-margin-top: calc(var(--site-header-height) + 3rem);
+}
+
+/* Clear fixed site header on forum routes without a hero */
+.main.forum-page > *:first-child:not(.hero) {
+  padding-top: var(--page-header-clearance);
+}
+
+/* Forum forms — same UI as join community / new thread */
+.forum-page .form-panel {
+  background: var(--surface-color);
+  padding: 50px 45px;
+  height: 100%;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+.forum-page .form-panel.form-panel--compact {
+  padding: 1.25rem 1.5rem;
+}
+
+.forum-page .form-panel .form-intro {
+  margin-bottom: 30px;
+}
+
+.forum-page .form-panel .form-intro i {
+  font-size: 32px;
+  color: var(--accent-color);
+  margin-bottom: 14px;
+  display: inline-block;
+}
+
+.forum-page .form-panel .form-intro h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--heading-color);
+  margin-bottom: 8px;
+}
+
+.forum-page .form-panel .form-intro p {
+  font-size: 14px;
+  line-height: 1.6;
+  color: color-mix(in srgb, var(--default-color), transparent 25%);
+  margin-bottom: 0;
+}
+
+.forum-page .form-panel .form-label,
+.forum-page .php-email-form .form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--heading-color);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.forum-page .form-panel .php-email-form .form-control,
+.forum-page .php-email-form .form-control {
+  height: 48px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  background-color: var(--background-color);
+  color: var(--default-color);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.forum-page .form-panel .php-email-form .form-control:focus,
+.forum-page .php-email-form .form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color), transparent 88%);
+  outline: none;
+}
+
+.forum-page .form-panel .php-email-form .form-control::placeholder,
+.forum-page .php-email-form .form-control::placeholder {
+  color: color-mix(in srgb, var(--default-color), transparent 60%);
+}
+
+.forum-page .form-panel .php-email-form .form-select,
+.forum-page .php-email-form .form-select {
+  height: 48px;
+  padding: 12px 2.75rem 12px 16px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  background-color: var(--background-color);
+  color: var(--default-color);
+  font-size: 14px;
+  line-height: 1.25;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23737373' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px 12px;
+}
+
+.forum-page .form-panel .php-email-form .form-select:focus,
+.forum-page .php-email-form .form-select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color), transparent 88%);
+  outline: none;
+}
+
+.forum-page .form-panel .php-email-form textarea.form-control,
+.forum-page .php-email-form textarea.form-control {
+  height: auto;
+  min-height: 120px;
+  resize: vertical;
+}
+
+@media (max-width: 992px) {
+  .forum-page .form-panel {
+    padding: 40px 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .forum-page .form-panel {
+    padding: 35px 25px;
+  }
+
+  .forum-page .form-panel .form-intro h3 {
+    font-size: 22px;
+  }
+}
+
+.forum-subnav-link {
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  transition: color 0.2s ease;
+}
+
+.forum-subnav-link:hover {
+  color: var(--default-color);
+}
+
+.forum-subnav-link.is-active {
+  color: var(--accent-color);
+}
+
+.forum-subnav .forum-subnav-bell {
+  color: var(--default-color);
+}
+
+.forum-subnav .forum-subnav-bell:hover {
+  color: var(--accent-color);
+}
+
+.forum-notifications-dropdown {
+  width: 320px;
+  z-index: 200;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+  color: var(--default-color);
+  overflow: hidden;
+}
+
+.forum-notifications-dropdown__header {
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--default-color), transparent 88%);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.forum-notifications-dropdown__item {
+  display: block;
+  padding: 0.65rem 0.85rem;
+  text-decoration: none;
+  color: var(--default-color);
+  font-size: 0.875rem;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--default-color), transparent 92%);
+}
+
+.forum-notifications-dropdown__item:hover {
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+  color: var(--default-color);
+}
+
+.forum-notifications-dropdown__footer {
+  display: block;
+  padding: 0.65rem 0.85rem;
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.forum-notifications-dropdown__footer:hover {
+  color: color-mix(in srgb, var(--accent-color), var(--brand-white) 25%);
+}
+
+.forum-page .hero .hero-heading {
+  text-align: left;
+}
+
+.forum-page .hero .hero-heading p.lead {
+  color: color-mix(in srgb, var(--brand-white), transparent 12%);
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.forum-page .hero .hero-actions {
+  justify-content: flex-start;
+}
+
+.forum-page .offering-block {
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  border-radius: 12px;
+  color: var(--default-color);
+}
+
+.forum-page .forum-feed-link,
+.forum-page .forum-community-card {
+  color: var(--default-color);
+}
+
+.forum-page .forum-feed-link:hover,
+.forum-page .forum-community-card:hover {
+  border-color: color-mix(in srgb, var(--accent-color), transparent 55%);
+  color: var(--default-color);
+}
+
+.forum-page .forum-thread-title {
+  color: var(--heading-color);
+}
+
+.forum-page .forum-thread-title:hover {
+  color: var(--accent-color);
+}
+
+.forum-page .forum-tag-badge,
+.forum-tag-badge {
+  background: color-mix(
+    in srgb,
+    var(--accent-color),
+    transparent 88%
+  ) !important;
+  color: var(--accent-color) !important;
+  border: 1px solid color-mix(in srgb, var(--accent-color), transparent 70%);
+}
+
+.forum-toast-stack {
+  position: fixed;
+  top: calc(var(--site-header-height) + 1rem);
+  right: 1rem;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  width: min(360px, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.forum-toast {
+  pointer-events: auto;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.65rem;
+  align-items: start;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.28);
+  color: var(--default-color);
+  animation: forum-toast-in 0.28s ease;
+}
+
+.forum-toast--error {
+  border-left: 4px solid #df1529;
+}
+
+.forum-toast--success {
+  border-left: 4px solid #059652;
+}
+
+.forum-toast--info {
+  border-left: 4px solid var(--accent-color);
+}
+
+.forum-toast__icon {
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+.forum-toast__message {
+  font-size: 0.9rem;
+  line-height: 1.45;
+  padding-top: 0.1rem;
+}
+
+.forum-toast__close {
+  border: none;
+  background: transparent;
+  color: color-mix(in srgb, var(--default-color), transparent 35%);
+  padding: 0;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.forum-toast__close:hover {
+  color: var(--default-color);
+}
+
+@keyframes forum-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .forum-toast-stack {
+    left: 1rem;
+    right: 1rem;
+    width: auto;
+  }
+}
+
+.forum-media-attachment {
+  background: color-mix(in srgb, var(--default-color), transparent 94%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+.forum-media-attachment__thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.forum-media-attachment__icon {
+  width: 48px;
+  height: 48px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent-color), transparent 90%);
+  color: var(--accent-color);
+  flex-shrink: 0;
+  font-size: 1.25rem;
+}
+
+.forum-media-gallery__image {
+  display: block;
+  max-width: 220px;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+}
+
+.forum-media-gallery__image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 180px;
+  object-fit: cover;
+}
+
+.forum-media-gallery__doc {
+  color: var(--default-color);
+}
+
+.forum-media-gallery__video {
+  max-width: min(100%, 480px);
+}
+
+.forum-media-gallery__video video {
+  display: block;
+  width: 100%;
+  max-height: 320px;
+  border-radius: 10px;
+  background: #000;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
 }

@@ -20,27 +20,25 @@ export default async function ProductionJobsPage() {
             <div className="col-lg-7" data-aos="fade-up" data-aos-delay="100">
               <div className="hero-heading">
                 <span className="badge-label">
-                  Production opportunities · Set, crew, and post
+                  Creative gigs · Set, crew, and post
                 </span>
                 <div className="d-flex flex-wrap gap-2 mt-3 mb-2">
                   <span className="featured-tag">Film &amp; commercial</span>
                   <span className="featured-tag">Crew &amp; post only</span>
                 </div>
-                <h1>Production job center</h1>
+                <h1>Creative gigs</h1>
                 <p>
-                  Ethiopia&apos;s photographers and videographers deserve
-                  visibility, structured networking, and fair access to
-                  opportunity—this board keeps the focus on{" "}
-                  <strong>production work</strong> (set, crew, and post) so
-                  serious briefs do not get lost in general chatter.
+                  A focused board for Ethiopian photographers and videographers
+                  to find and post serious set, crew, and post work—without the
+                  noise of general chatter.
                 </p>
-                <p className="lead mb-2">
+                {/* <p className="lead mb-2">
                   Members can <strong>post production roles</strong> and browse
                   open briefs here. Applying requires a Canma{" "}
                   <strong>member account</strong> (sign up with your phone, then
                   verify with OTP)—posters stay in charge of reviewing
                   applicants themselves.
-                </p>
+                </p> */}
                 <p className="small text-muted mb-0">
                   Questions about moderation or spam? Reach the Canma team on
                   the contact page.
@@ -77,72 +75,12 @@ export default async function ProductionJobsPage() {
       <JobsMemberStrip />
 
       <section
-        id="how-production-jobs-work"
-        className="why-us section"
-        aria-labelledby="howItWorksHeading"
-      >
-        <div className="container" data-aos="fade-up">
-          <div className="row justify-content-center">
-            <div className="col-lg-10">
-              <div className="intro-content text-center text-lg-start">
-                <h2 id="howItWorksHeading" className="h3">
-                  How postings and applications work
-                </h2>
-                <p className="lead">
-                  Create an account as a Canma member, post a structured
-                  production brief, and applicants sign in with the same hub
-                  account you use across the community. Employers see
-                  applicants—including contact channel—on a private applicant
-                  list tied to each job.
-                </p>
-                <div className="checklist">
-                  <div className="check-item">
-                    <i className="bi bi-arrow-right-circle-fill" />
-                    <div>
-                      <h5>Poster</h5>
-                      <p>
-                        Any signed-in Canma member can publish an open brief.
-                        Closed or filled roles stay visible to you while new
-                        applicants pause.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="check-item">
-                    <i className="bi bi-arrow-right-circle-fill" />
-                    <div>
-                      <h5>Applicant</h5>
-                      <p>
-                        Only <strong>member</strong> accounts (not staff admin
-                        logins) can send an application—with a note and
-                        portfolio links—for each open role once.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="check-item">
-                    <i className="bi bi-arrow-right-circle-fill" />
-                    <div>
-                      <h5>Transparency</h5>
-                      <p>
-                        Public listings show poster name counts and scope;
-                        applicant contact details are shared only with the
-                        poster and platform administrators.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section
         id="open-roles"
         className="services section"
         aria-labelledby="openRolesHeading"
       >
         <div className="container section-title" data-aos="fade-up">
-          <h2 id="openRolesHeading">Open production roles</h2>
+          <h2 id="openRolesHeading">Open gigs</h2>
           <p>
             Live briefs submitted by Canma members. Read the scope, modalility,
             then open a role for full detail and member-only applications.
@@ -205,11 +143,12 @@ export default async function ProductionJobsPage() {
             <div className="row mt-4">
               <div className="col-12">
                 <div className="info-box text-center py-5">
-                  <p className="lead mb-2">No production roles listed yet.</p>
+                  <p className="lead mb-2">No gigs listed yet.</p>
                   <p className="text-muted mb-3">
                     Be the first to publish a scoped brief—or check back soon.
                   </p>
                   <Link href="/jobs/new" className="btn btn-accent">
+                    <i className="bi bi-plus-circle me-2" aria-hidden="true" />
                     Publish a brief
                   </Link>
                 </div>
@@ -224,7 +163,7 @@ export default async function ProductionJobsPage() {
                   <div className="col-lg-8">
                     <h3>Membership unlocks applicants and postings</h3>
                     <p>
-                      Canma ties production jobs to verified community
+                      Canma ties creative gigs to verified community
                       accounts—you can register with your phone from the ballot
                       flow if you already have not elsewhere.
                     </p>

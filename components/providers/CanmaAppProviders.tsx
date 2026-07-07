@@ -3,6 +3,7 @@
 import { ApolloProvider } from "@apollo/client/react";
 import { useMemo, useState } from "react";
 import { Provider } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
 
 import { PageViewTracker } from "@/components/analytics/PageViewTracker";
 import {
@@ -10,8 +11,11 @@ import {
   createCanmaApolloClient,
 } from "@/lib/canma-apollo-client";
 import type { AppStore } from "@/lib/store";
-import { makeCanmaStore } from "@/lib/store";
-import { bindCanmaReduxStore } from "@/lib/store/store-ref";
+import { makeCanmaPersistor, makeCanmaStore } from "@/lib/store";
+import {
+  bindCanmaReduxPersistor,
+  bindCanmaReduxStore,
+} from "@/lib/store/store-ref";
 import { useAppSelector } from "@/lib/store/hooks";
 
 /**
@@ -30,18 +34,22 @@ function CanmaApolloBinder({ children }: { children: React.ReactNode }) {
 
 /** Redux root + Apollo (Lela-style `StoreProvider` + `MyApolloProvider`). */
 export function CanmaAppProviders({ children }: { children: React.ReactNode }) {
-  const [store] = useState<AppStore>(() => {
-    const s = makeCanmaStore();
-    bindCanmaReduxStore(s);
-    return s;
+  const [{ store, persistor }] = useState(() => {
+    const nextStore: AppStore = makeCanmaStore();
+    const nextPersistor = makeCanmaPersistor(nextStore);
+    bindCanmaReduxStore(nextStore);
+    bindCanmaReduxPersistor(nextPersistor);
+    return { store: nextStore, persistor: nextPersistor };
   });
 
   return (
     <Provider store={store}>
-      <CanmaApolloBinder>
-        <PageViewTracker />
-        {children}
-      </CanmaApolloBinder>
+      <PersistGate loading={null} persistor={persistor}>
+        <CanmaApolloBinder>
+          <PageViewTracker />
+          {children}
+        </CanmaApolloBinder>
+      </PersistGate>
     </Provider>
   );
 }

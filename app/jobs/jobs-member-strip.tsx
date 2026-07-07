@@ -44,10 +44,7 @@ export function JobsMemberStrip() {
             >
               Sign in
             </Link>
-            <Link
-              className="btn btn-sm btn-outline-secondary"
-              href="/election/register"
-            >
+            <Link className="btn btn-sm btn-ghost" href="/election/register">
               Register
             </Link>
           </div>
@@ -76,7 +73,7 @@ export function JobsMemberStrip() {
           <Link className="btn btn-sm btn-accent" href="/jobs/mine">
             My postings & applications
           </Link>
-          <Link className="btn btn-sm btn-outline-secondary" href="/jobs/new">
+          <Link className="btn btn-sm btn-ghost" href="/jobs/new">
             Post a role
           </Link>
         </div>
