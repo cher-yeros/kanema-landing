@@ -7,12 +7,14 @@ import {
   type PublicCommunityMember,
   type PublicTeamMember,
 } from "@/lib/public-graphql";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { TeamLeadersSwiper } from "./TeamLeadersSwiper";
 
 type MemberCard = {
   key: string;
+  href: string;
   img: string;
   name: string;
   role: string;
@@ -65,6 +67,7 @@ export function TeamSection({
       const role = m.city ? `${roleLabel} · ${m.city}` : roleLabel;
       return {
         key: m.id,
+        href: `/community/${m.id}`,
         img: memberImageSrc(m.avatar_url, "person/person-m-2.webp"),
         name: m.full_name,
         role,
@@ -144,34 +147,33 @@ export function TeamSection({
                 data-aos="fade-up"
                 data-aos-delay={m.delay}
               >
-                <div className="member-card">
+                <Link
+                  href={m.href}
+                  className="member-card member-card--link"
+                  aria-label={`View ${m.name}'s profile`}
+                >
                   <div className="member-photo">
                     <img src={m.img} className="img-fluid" alt={m.name} />
                     <div className="social-links">
                       {m.portfolioUrl ? (
-                        <a
-                          href={m.portfolioUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          aria-label="Portfolio"
-                        >
+                        <span aria-hidden>
                           <i className="bi bi-link-45deg" />
-                        </a>
+                        </span>
                       ) : (
-                        <a href="#join" aria-label="Join community">
-                          <i className="bi bi-people" />
-                        </a>
+                        <span aria-hidden>
+                          <i className="bi bi-person" />
+                        </span>
                       )}
-                      <a href="#join" aria-label="Join community">
-                        <i className="bi bi-envelope" />
-                      </a>
+                      <span aria-hidden>
+                        <i className="bi bi-arrow-right" />
+                      </span>
                     </div>
                   </div>
                   <div className="member-details">
                     <h5>{m.name}</h5>
                     <span>{m.role}</span>
                   </div>
-                </div>
+                </Link>
               </div>
             ))}
           </div>

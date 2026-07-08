@@ -96,6 +96,9 @@ export function SiteFooter() {
                 <Link href="/events">Events and trainings</Link>
               </li>
               <li>
+                <Link href="/marketplace">Marketplace</Link>
+              </li>
+              <li>
                 <a href="#why-us">Resources</a>
               </li>
               <li>

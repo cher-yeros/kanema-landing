@@ -1121,18 +1121,21 @@ section,
 
 .hero .hero-bg {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  aspect-ratio: 16 / 9;
+  height: auto;
   z-index: 0;
   overflow: hidden;
   pointer-events: none;
+  background-color: var(--brand-navy-deep);
 }
 
 .hero .hero-bg-image {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center center;
   display: block;
   transform: translateZ(0);
@@ -2573,7 +2576,8 @@ section,
   transition: all 0.3s ease;
 }
 
-.team .member-card .member-photo .social-links a {
+.team .member-card .member-photo .social-links a,
+.team .member-card .member-photo .social-links span {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -2589,6 +2593,18 @@ section,
   background: var(--accent-color);
   color: var(--contrast-color);
   transform: scale(1.1);
+}
+
+.team .member-card--link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.team .member-card--link:hover {
+  transform: translateY(-4px);
 }
 
 .team .member-card .member-photo:hover img {
@@ -5780,4 +5796,148 @@ section,
   border-radius: 10px;
   background: #000;
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+}
+
+/*--------------------------------------------------------------
+# Profile & community member pages — branded buttons
+--------------------------------------------------------------*/
+.profile-page .btn,
+.profile-page .dispatch-btn,
+.profile-page .contact .form-panel .dispatch-btn,
+.community-member-page .btn,
+.community-member-page .dispatch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 14px 28px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.profile-page .btn.btn-sm,
+.profile-page .dispatch-btn.btn-sm,
+.community-member-page .btn.btn-sm,
+.community-member-page .dispatch-btn.btn-sm {
+  padding: 10px 20px;
+  font-size: 0.875rem;
+}
+
+.profile-page .btn.btn-accent,
+.profile-page .dispatch-btn,
+.profile-page .contact .form-panel .dispatch-btn,
+.community-member-page .btn.btn-accent,
+.community-member-page .dispatch-btn {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+}
+
+.profile-page .btn.btn-accent:hover,
+.profile-page .btn.btn-accent:focus-visible,
+.profile-page .dispatch-btn:hover:not(:disabled),
+.profile-page .dispatch-btn:focus-visible:not(:disabled),
+.profile-page .contact .form-panel .dispatch-btn:hover:not(:disabled),
+.profile-page .contact .form-panel .dispatch-btn:focus-visible:not(:disabled),
+.community-member-page .btn.btn-accent:hover,
+.community-member-page .btn.btn-accent:focus-visible,
+.community-member-page .dispatch-btn:hover:not(:disabled),
+.community-member-page .dispatch-btn:focus-visible:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color), black 15%);
+  color: var(--contrast-color);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px
+    color-mix(in srgb, var(--accent-color), transparent 60%);
+}
+
+.profile-page .btn.btn-accent:disabled,
+.profile-page .dispatch-btn:disabled,
+.profile-page .contact .form-panel .dispatch-btn:disabled,
+.community-member-page .btn.btn-accent:disabled,
+.community-member-page .dispatch-btn:disabled {
+  opacity: 0.65;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.profile-page .btn.btn-ghost,
+.profile-page .btn.btn-outline-secondary,
+.community-member-page .btn.btn-ghost,
+.community-member-page .btn.btn-outline-secondary {
+  background: transparent;
+  color: var(--default-color);
+  border-color: color-mix(in srgb, var(--default-color), transparent 75%);
+}
+
+.profile-page .btn.btn-ghost:hover,
+.profile-page .btn.btn-ghost:focus-visible,
+.profile-page .btn.btn-outline-secondary:hover,
+.profile-page .btn.btn-outline-secondary:focus-visible,
+.community-member-page .btn.btn-ghost:hover,
+.community-member-page .btn.btn-ghost:focus-visible,
+.community-member-page .btn.btn-outline-secondary:hover,
+.community-member-page .btn.btn-outline-secondary:focus-visible {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+  transform: translateY(-3px);
+}
+
+.profile-page .btn.btn-outline-danger,
+.community-member-page .btn.btn-outline-danger {
+  background: transparent;
+  color: #c0392b;
+  border-color: color-mix(in srgb, #c0392b, transparent 50%);
+}
+
+.profile-page .btn.btn-outline-danger:hover,
+.profile-page .btn.btn-outline-danger:focus-visible,
+.community-member-page .btn.btn-outline-danger:hover,
+.community-member-page .btn.btn-outline-danger:focus-visible {
+  background: color-mix(in srgb, #c0392b, transparent 90%);
+  border-color: #c0392b;
+  color: #c0392b;
+  transform: translateY(-3px);
+}
+
+.profile-page .dispatch-btn,
+.profile-page .contact .form-panel .dispatch-btn,
+.community-member-page .dispatch-btn {
+  gap: 10px;
+  padding: 14px 32px;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+.profile-page .dispatch-btn i,
+.profile-page .contact .form-panel .dispatch-btn i,
+.community-member-page .dispatch-btn i {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.profile-page .dispatch-btn:hover:not(:disabled) i,
+.profile-page .dispatch-btn:focus-visible:not(:disabled) i,
+.profile-page .contact .form-panel .dispatch-btn:hover:not(:disabled) i,
+.profile-page .contact .form-panel .dispatch-btn:focus-visible:not(:disabled) i,
+.community-member-page .dispatch-btn:hover:not(:disabled) i,
+.community-member-page .dispatch-btn:focus-visible:not(:disabled) i {
+  transform: translateX(4px);
+}
+
+@media (max-width: 768px) {
+  .profile-page .dispatch-btn,
+  .profile-page .contact .form-panel .dispatch-btn,
+  .community-member-page .dispatch-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }

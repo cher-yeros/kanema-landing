@@ -1,0 +1,97 @@
+.community-member-profile__back a {
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+.community-member-profile__back a:hover {
+  color: var(--accent-color);
+}
+
+.community-member-hero {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.75rem;
+}
+
+.community-member-hero__avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.community-member-hero__bio {
+  margin: 0.75rem 0 0;
+  line-height: 1.6;
+}
+
+.community-member-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+.community-member-interests {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.community-member-interest {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+  color: var(--heading-color);
+}
+
+.community-portfolio-card {
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--surface-color);
+  box-shadow: 0 4px 20px
+    color-mix(in srgb, var(--default-color), transparent 92%);
+}
+
+.community-portfolio-card__media {
+  aspect-ratio: 4 / 3;
+  background: color-mix(in srgb, var(--default-color), transparent 94%);
+}
+
+.community-portfolio-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.community-portfolio-card__placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: color-mix(in srgb, var(--default-color), transparent 55%);
+}
+
+.community-portfolio-card__body {
+  padding: 1rem 1.1rem 1.25rem;
+}
+
+@media (max-width: 768px) {
+  .community-member-hero {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .community-member-interests {
+    justify-content: center;
+  }
+}

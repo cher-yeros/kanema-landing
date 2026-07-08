@@ -1,0 +1,132 @@
+/* Portaled crop modal — matches Canma navy / yellow landing theme. */
+.square-photo-crop-dialog {
+  --bs-modal-zindex: 100000;
+}
+
+.square-photo-crop-dialog__backdrop {
+  background-color: color-mix(
+    in srgb,
+    var(--brand-navy, #061428),
+    transparent 12%
+  );
+  opacity: 1 !important;
+}
+
+.square-photo-crop-dialog .modal-content {
+  background: var(--surface-color, #0a2345);
+  color: var(--default-color, #ffffff);
+  border: 1px solid
+    color-mix(in srgb, var(--default-color, #fff), transparent 85%);
+  border-radius: 12px;
+  box-shadow: 0 24px 64px
+    color-mix(in srgb, var(--brand-navy, #061428), transparent 35%);
+}
+
+.square-photo-crop-dialog .modal-header,
+.square-photo-crop-dialog .modal-footer {
+  border-color: color-mix(in srgb, var(--default-color, #fff), transparent 88%);
+}
+
+.square-photo-crop-dialog .modal-title {
+  color: var(--heading-color, #ffffff);
+  font-family: var(--heading-font, inherit);
+  font-weight: 700;
+}
+
+.square-photo-crop-dialog .modal-body .text-muted {
+  color: color-mix(
+    in srgb,
+    var(--default-color, #fff),
+    transparent 38%
+  ) !important;
+}
+
+.square-photo-crop-dialog .form-label {
+  color: var(--heading-color, #ffffff);
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.square-photo-crop-dialog__crop-stage {
+  height: 320px;
+  background: var(--background-color, #061428);
+  border: 1px solid
+    color-mix(in srgb, var(--default-color, #fff), transparent 85%);
+  border-radius: 8px;
+}
+
+.square-photo-crop-dialog .reactEasyCrop_CropArea {
+  border-color: color-mix(
+    in srgb,
+    var(--accent-color, #ddb82a),
+    transparent 25%
+  );
+  color: color-mix(in srgb, var(--background-color, #061428), transparent 8%);
+}
+
+.square-photo-crop-dialog .form-range {
+  accent-color: var(--accent-color, #ddb82a);
+}
+
+.square-photo-crop-dialog .form-range::-webkit-slider-runnable-track {
+  background: color-mix(in srgb, var(--default-color, #fff), transparent 82%);
+  border-radius: 999px;
+  height: 6px;
+}
+
+.square-photo-crop-dialog .form-range::-webkit-slider-thumb {
+  background: var(--accent-color, #ddb82a);
+  border: 2px solid var(--surface-color, #0a2345);
+  box-shadow: 0 0 0 2px
+    color-mix(in srgb, var(--accent-color, #ddb82a), transparent 70%);
+}
+
+.square-photo-crop-dialog .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+}
+
+.square-photo-crop-dialog .btn.btn-accent {
+  background: var(--accent-color, #ddb82a);
+  color: var(--contrast-color, #061428);
+  border-color: var(--accent-color, #ddb82a);
+}
+
+.square-photo-crop-dialog .btn.btn-accent:hover,
+.square-photo-crop-dialog .btn.btn-accent:focus-visible {
+  background: color-mix(in srgb, var(--accent-color, #ddb82a), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color, #ddb82a), black 15%);
+  color: var(--contrast-color, #061428);
+  box-shadow: 0 10px 30px
+    color-mix(in srgb, var(--accent-color, #ddb82a), transparent 60%);
+}
+
+.square-photo-crop-dialog .btn.btn-accent:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.square-photo-crop-dialog .btn.btn-ghost {
+  background: transparent;
+  color: var(--default-color, #ffffff);
+  border-color: color-mix(in srgb, var(--default-color, #fff), transparent 75%);
+}
+
+.square-photo-crop-dialog .btn.btn-ghost:hover,
+.square-photo-crop-dialog .btn.btn-ghost:focus-visible {
+  border-color: var(--accent-color, #ddb82a);
+  color: var(--accent-color, #ddb82a);
+  background: color-mix(in srgb, var(--accent-color, #ddb82a), transparent 92%);
+}

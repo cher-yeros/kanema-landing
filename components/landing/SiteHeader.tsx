@@ -20,6 +20,7 @@ type NavKey =
   | "election"
   | "community"
   | "forum"
+  | "marketplace"
   | "jobs"
   | "learn"
   | "events"
@@ -49,6 +50,7 @@ export function SiteHeader() {
     if (pathname.startsWith("/election")) return "election";
     if (pathname.startsWith("/community")) return "community";
     if (pathname.startsWith("/forum")) return "forum";
+    if (pathname.startsWith("/marketplace")) return "marketplace";
     if (pathname.startsWith("/jobs")) return "jobs";
     if (pathname.startsWith("/learn")) return "learn";
     if (pathname.startsWith("/events")) return "events";
@@ -162,6 +164,16 @@ export function SiteHeader() {
                 onClick={closeMobileForPage}
               >
                 Forum
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/marketplace"
+                className={navClass("marketplace")}
+                aria-current={activeNav === "marketplace" ? "page" : undefined}
+                onClick={closeMobileForPage}
+              >
+                Marketplace
               </Link>
             </li>
             <li>

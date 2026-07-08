@@ -1,0 +1,449 @@
+/* Clear fixed site header on marketplace routes without a hero */
+.marketplace-page section,
+.marketplace-page .section {
+  scroll-margin-top: calc(var(--site-header-height) + 3rem);
+}
+
+.main.marketplace-page > *:first-child:not(.hero) {
+  padding-top: var(--page-header-clearance);
+}
+
+.marketplace-page .marketplace-hero-actions {
+  flex-wrap: wrap;
+}
+
+/* ——— Branded buttons (jobs / forum pattern) ——— */
+.marketplace-page .btn,
+.marketplace-page .dispatch-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 14px 28px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.marketplace-page .btn.btn-sm,
+.marketplace-page .dispatch-btn.btn-sm {
+  padding: 10px 20px;
+  font-size: 0.875rem;
+}
+
+.marketplace-page .btn.btn-accent,
+.marketplace-page .dispatch-btn {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+}
+
+.marketplace-page .btn.btn-accent:hover,
+.marketplace-page .btn.btn-accent:focus-visible,
+.marketplace-page .dispatch-btn:hover:not(:disabled),
+.marketplace-page .dispatch-btn:focus-visible:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color), black 15%);
+  color: var(--contrast-color);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 30px
+    color-mix(in srgb, var(--accent-color), transparent 60%);
+}
+
+.marketplace-page .btn.btn-accent:disabled,
+.marketplace-page .dispatch-btn:disabled {
+  opacity: 0.65;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.marketplace-page .btn.btn-ghost,
+.marketplace-page .btn.btn-outline-secondary,
+.marketplace-page .btn.btn-outline-danger,
+.marketplace-page .btn.btn-outline-primary {
+  background: transparent;
+  color: var(--default-color);
+  border-color: color-mix(in srgb, var(--default-color), transparent 75%);
+}
+
+.marketplace-page .btn.btn-ghost:hover,
+.marketplace-page .btn.btn-ghost:focus-visible,
+.marketplace-page .btn.btn-outline-secondary:hover,
+.marketplace-page .btn.btn-outline-secondary:focus-visible,
+.marketplace-page .btn.btn-outline-primary:hover,
+.marketplace-page .btn.btn-outline-primary:focus-visible {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+  transform: translateY(-3px);
+}
+
+.marketplace-page .btn.btn-outline-danger {
+  color: #c0392b;
+  border-color: color-mix(in srgb, #c0392b, transparent 50%);
+}
+
+.marketplace-page .btn.btn-outline-danger:hover,
+.marketplace-page .btn.btn-outline-danger:focus-visible {
+  background: color-mix(in srgb, #c0392b, transparent 90%);
+  border-color: #c0392b;
+  color: #c0392b;
+}
+
+.marketplace-page .btn.btn-success {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.marketplace-page .btn.btn-success:hover,
+.marketplace-page .btn.btn-success:focus-visible {
+  background: color-mix(in srgb, var(--accent-color), black 15%);
+  border-color: color-mix(in srgb, var(--accent-color), black 15%);
+  transform: translateY(-2px);
+}
+
+.marketplace-page .explore-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  text-decoration: none;
+  border: 2px solid color-mix(in srgb, var(--accent-color), transparent 60%);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent-color), transparent 94%);
+  transition: all 0.3s ease;
+}
+
+.marketplace-page .explore-btn i {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.marketplace-page .explore-btn:hover,
+.marketplace-page .explore-btn:focus-visible {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px
+    color-mix(in srgb, var(--accent-color), transparent 55%);
+}
+
+.marketplace-page .explore-btn:hover i,
+.marketplace-page .explore-btn:focus-visible i {
+  transform: translateX(3px);
+}
+
+.marketplace-page .hero .hero-actions .btn.btn-accent {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+  border-color: var(--accent-color);
+}
+
+.marketplace-page .hero .hero-actions .btn.btn-ghost {
+  background: transparent;
+  color: var(--default-color);
+  border-color: color-mix(in srgb, var(--default-color), transparent 75%);
+}
+
+/* ——— Form controls (contact page pattern) ——— */
+.marketplace-page .form-panel {
+  background: var(--surface-color);
+  padding: 2rem 1.75rem;
+  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+.marketplace-page .form-panel.form-panel--compact {
+  padding: 1.25rem 1.5rem;
+}
+
+.marketplace-page .form-panel .form-label,
+.marketplace-page .php-email-form .form-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--heading-color);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.marketplace-page .form-panel .php-email-form .form-control,
+.marketplace-page .php-email-form .form-control {
+  height: 48px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  background-color: var(--background-color);
+  color: var(--default-color);
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.marketplace-page .form-panel .php-email-form .form-control:focus,
+.marketplace-page .php-email-form .form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color), transparent 88%);
+  outline: none;
+}
+
+.marketplace-page .form-panel .php-email-form .form-control::placeholder,
+.marketplace-page .php-email-form .form-control::placeholder {
+  color: color-mix(in srgb, var(--default-color), transparent 60%);
+}
+
+.marketplace-page .form-panel .php-email-form .form-select,
+.marketplace-page .php-email-form .form-select {
+  height: 48px;
+  padding: 12px 2.75rem 12px 16px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  background-color: var(--background-color);
+  color: var(--default-color);
+  font-size: 14px;
+  line-height: 1.25;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23737373' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px 12px;
+}
+
+.marketplace-page .form-panel .php-email-form .form-select:focus,
+.marketplace-page .php-email-form .form-select:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color), transparent 88%);
+  outline: none;
+}
+
+.marketplace-page .form-panel .php-email-form textarea.form-control,
+.marketplace-page .php-email-form textarea.form-control {
+  height: auto;
+  min-height: 120px;
+  resize: vertical;
+}
+
+.marketplace-page .form-panel .php-email-form .form-control-sm,
+.marketplace-page .php-email-form .form-control-sm {
+  height: 42px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.marketplace-page .form-panel .php-email-form textarea.form-control-sm,
+.marketplace-page .php-email-form textarea.form-control-sm {
+  height: auto;
+  min-height: 96px;
+}
+
+/* ——— Listing cards: image on top, text below (event-card pattern) ——— */
+.services .marketplace-listing-card,
+.marketplace-listing-card {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0 !important;
+  gap: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.marketplace-listing-card__media {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--default-color), transparent 90%);
+  border-radius: 0;
+}
+
+.marketplace-listing-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  border-radius: 0;
+  transition: transform 0.35s ease;
+}
+
+.marketplace-listing-card:hover .marketplace-listing-card__media img {
+  transform: scale(1.03);
+}
+
+.marketplace-listing-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  font-size: 2.5rem;
+  color: var(--accent-color);
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+}
+
+.marketplace-listing-card .offering-body {
+  flex: 1;
+  min-width: 0;
+  padding: 1.25rem 1.5rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.marketplace-listing-card .offering-body h4 {
+  font-size: 1.05rem;
+  line-height: 1.35;
+}
+
+.marketplace-listing-card .offering-body .offering-header {
+  margin-bottom: 0.5rem;
+}
+
+.marketplace-listing-card__desc,
+.marketplace-listing-card .text-truncate-3-lines {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--default-color), transparent 25%);
+  font-size: 14px;
+  line-height: 1.65;
+  min-height: 4.5rem;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+.marketplace-listing-card .explore-btn {
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+/* Detail page hero image */
+.marketplace-page .marketplace-detail-cover {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent-color), transparent 92%);
+}
+
+.marketplace-page .marketplace-detail-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.marketplace-page .marketplace-detail-thumb {
+  width: 80px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.marketplace-page .marketplace-detail-thumb:hover,
+.marketplace-page .marketplace-detail-thumb.is-active {
+  border-color: var(--accent-color);
+}
+
+.marketplace-page .module-card {
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  border-radius: var(--card-radius, 12px);
+  padding: 1.5rem;
+  height: 100%;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.marketplace-page .module-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 8px 24px
+    color-mix(in srgb, var(--accent-color), transparent 85%);
+}
+
+.marketplace-page .seller-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--accent-color);
+}
+
+.marketplace-page .inquiry-thread {
+  max-height: 360px;
+  overflow-y: auto;
+  background: var(--background-color);
+  border-color: color-mix(
+    in srgb,
+    var(--default-color),
+    transparent 88%
+  ) !important;
+}
+
+.marketplace-page .inquiry-bubble {
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  max-width: 85%;
+}
+
+.marketplace-page .inquiry-bubble.is-mine {
+  margin-left: auto;
+  background: color-mix(in srgb, var(--accent-color), transparent 88%);
+}
+
+.marketplace-page .inquiry-bubble.is-theirs {
+  background: color-mix(in srgb, var(--default-color), transparent 92%);
+}
+
+.marketplace-page .list-group-item .btn.active,
+.marketplace-page .list-group-item button.active {
+  background: color-mix(in srgb, var(--accent-color), transparent 90%);
+  color: var(--heading-color);
+  border-color: var(--accent-color);
+}
+
+.marketplace-page .nav-tabs .nav-link {
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-weight: 600;
+}
+
+.marketplace-page .nav-tabs .nav-link.active {
+  color: var(--accent-color);
+  border-bottom-color: var(--accent-color);
+  background: transparent;
+}
+
+.marketplace-page .alert-light {
+  background: var(--surface-color);
+  border-color: color-mix(in srgb, var(--default-color), transparent 88%);
+}
+
+@media (max-width: 1199px) {
+  .marketplace-page .form-panel {
+    padding: 1.5rem 1.25rem;
+  }
+}

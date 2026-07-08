@@ -9,6 +9,7 @@ import {
   type PublicTeamMember,
 } from "@/lib/public-graphql";
 import { landingImage } from "@/lib/landing-assets";
+import Link from "next/link";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useEffect, useMemo, useState } from "react";
@@ -46,6 +47,7 @@ type LeaderSlide = {
   role: string;
   name: string;
   text: string;
+  profileHref?: string;
 };
 
 function mapAdvisor(member: PublicTeamMember): LeaderSlide {
@@ -69,6 +71,7 @@ function mapFeaturedMember(member: PublicCommunityMember): LeaderSlide {
     text:
       member.message?.trim() ||
       "Featured Canma community member sharing craft and industry perspective.",
+    profileHref: `/community/${member.id}`,
   };
 }
 
@@ -169,12 +172,24 @@ export function TeamLeadersSwiper({
               <div className="col-sm-7">
                 <div className="panel-info">
                   <span className="role-tag">{leader.role}</span>
-                  <h5>{leader.name}</h5>
+                  {leader.profileHref ? (
+                    <h5>
+                      <Link href={leader.profileHref}>{leader.name}</Link>
+                    </h5>
+                  ) : (
+                    <h5>{leader.name}</h5>
+                  )}
                   <p>{leader.text}</p>
                   <div className="panel-socials">
-                    <a href="mailto:info@canmaet.net" aria-label="Email">
-                      <i className="bi bi-envelope" />
-                    </a>
+                    {leader.profileHref ? (
+                      <Link href={leader.profileHref} aria-label="View profile">
+                        <i className="bi bi-person" />
+                      </Link>
+                    ) : (
+                      <a href="mailto:info@canmaet.net" aria-label="Email">
+                        <i className="bi bi-envelope" />
+                      </a>
+                    )}
                     <a href="#" aria-label="LinkedIn">
                       <i className="bi bi-linkedin" />
                     </a>

@@ -118,6 +118,7 @@ export async function fetchTeamMembers(): Promise<PublicTeamMember[]> {
 
 export type PublicCommunityMember = {
   id: string;
+  user_id: string | null;
   full_name: string;
   role: string;
   city: string | null;
@@ -126,6 +127,15 @@ export type PublicCommunityMember = {
   portfolio_url: string | null;
   interests: string[];
   is_featured: boolean;
+};
+
+export type PublicPortfolioProject = {
+  id: string;
+  title: string;
+  description: string | null;
+  cover_url: string | null;
+  media_json: string | null;
+  display_order: number;
 };
 
 export async function fetchCommunityMembers(options?: {
@@ -138,6 +148,7 @@ export async function fetchCommunityMembers(options?: {
       query CommunityMembers($featuredOnly: Boolean) {
         communityMembers(featuredOnly: $featuredOnly) {
           id
+          user_id
           full_name
           role
           city
@@ -152,6 +163,56 @@ export async function fetchCommunityMembers(options?: {
     { featuredOnly: options?.featuredOnly ?? false },
   );
   return data.communityMembers ?? [];
+}
+
+export async function fetchCommunityMember(
+  id: string,
+): Promise<PublicCommunityMember | null> {
+  const data = await fetchGraphQL<{
+    communityMember: PublicCommunityMember | null;
+  }>(
+    `
+      query CommunityMember($id: ID!) {
+        communityMember(id: $id) {
+          id
+          user_id
+          full_name
+          role
+          city
+          avatar_url
+          message
+          portfolio_url
+          interests
+          is_featured
+        }
+      }
+    `,
+    { id },
+  );
+  return data.communityMember ?? null;
+}
+
+export async function fetchUserPortfolioProjects(
+  userId: string,
+): Promise<PublicPortfolioProject[]> {
+  const data = await fetchGraphQL<{
+    userPortfolioProjects: PublicPortfolioProject[];
+  }>(
+    `
+      query UserPortfolioProjects($user_id: ID!) {
+        userPortfolioProjects(user_id: $user_id) {
+          id
+          title
+          description
+          cover_url
+          media_json
+          display_order
+        }
+      }
+    `,
+    { user_id: userId },
+  );
+  return data.userPortfolioProjects ?? [];
 }
 
 export type PublicTalent = {

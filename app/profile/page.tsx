@@ -6,9 +6,9 @@ import { useQuery } from "@apollo/client/react";
 import { useEffect } from "react";
 
 import { COMMUNITY_JOIN_INTEREST_OPTIONS } from "@/components/community/join-community-form-schema";
+import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
-import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
 import { memberImageSrc } from "@/lib/member-image";
 import type { GqlUser } from "@/types/election-apollo";
 
@@ -38,6 +38,13 @@ type MyProfileQuery = {
   me: ProfileUser | null;
   myCommunityJoin: CommunityJoinProfile | null;
 };
+
+const QUICK_LINKS = [
+  { href: "/jobs/mine", label: "My gigs", icon: "bi-briefcase" },
+  { href: "/events", label: "Events", icon: "bi-calendar-event" },
+  { href: "/forum", label: "Forum", icon: "bi-chat-dots" },
+  { href: "/community", label: "Community", icon: "bi-people" },
+] as const;
 
 function interestLabel(id: string): string {
   return (
@@ -111,8 +118,10 @@ export default function ProfilePage() {
 
   if (loading || !me) {
     return (
-      <section className="section py-5 text-center">
-        <p className="text-muted">Loading your profile…</p>
+      <section className="profile-section profile-section--loading">
+        <div className="container text-center py-5">
+          <p className="text-muted mb-0">Loading your profile…</p>
+        </div>
       </section>
     );
   }
@@ -126,79 +135,95 @@ export default function ProfilePage() {
     : me.role === "admin"
       ? "Administrator"
       : "Canma member";
+  const communityMemberId =
+    communityJoin?.status === "APPROVED" ? communityJoin.id : null;
 
   return (
-    <section className="services section profile-section">
-      <div className="container section-title" data-aos="fade-up">
+    <section className="profile-section">
+      <div className="container profile-section__header" data-aos="fade-up">
+        <p className="profile-section__eyebrow">Member dashboard</p>
         <h1>My profile</h1>
-        <p>Your Canma account and community details in one place.</p>
+        <p className="profile-section__lede">
+          Manage your account, community presence, and public showcase.
+        </p>
       </div>
 
       <div className="container pb-5">
-        <div className="profile-hero offering-block" data-aos="fade-up">
-          <div className="profile-hero__avatar-wrap">
-            <img
-              src={avatarSrc}
-              alt=""
-              width={112}
-              height={112}
-              className="profile-hero__avatar"
-            />
-          </div>
-          <div className="profile-hero__body">
-            <div className="profile-hero__head">
-              <div>
+        <div className="profile-hero" data-aos="fade-up" data-aos-delay="50">
+          <div className="profile-hero__accent" aria-hidden />
+          <div className="profile-hero__inner">
+            <div className="profile-hero__identity">
+              <div className="profile-hero__avatar-wrap">
+                <img
+                  src={avatarSrc}
+                  alt=""
+                  width={128}
+                  height={128}
+                  className="profile-hero__avatar"
+                />
+              </div>
+              <div className="profile-hero__intro">
                 <h2 className="profile-hero__name">{me.full_name}</h2>
                 <p className="profile-hero__role">{displayRole}</p>
-              </div>
-              <div className="profile-hero__badges">
-                {me.is_verified ? (
-                  <span className="profile-badge profile-badge--success">
-                    <i className="bi bi-patch-check" aria-hidden />
-                    Verified
-                  </span>
-                ) : (
-                  <span className="profile-badge profile-badge--pending">
-                    <i className="bi bi-shield-exclamation" aria-hidden />
-                    Not verified
-                  </span>
-                )}
-                {communityJoin ? (
-                  <span className={communityStatusClass(communityJoin.status)}>
-                    {communityStatusLabel(communityJoin.status)}
-                  </span>
-                ) : null}
-                {me.role === "admin" ? (
-                  <span className="profile-badge profile-badge--accent">
-                    Admin
-                  </span>
-                ) : null}
+                <div className="profile-hero__badges">
+                  {me.is_verified ? (
+                    <span className="profile-badge profile-badge--success">
+                      <i className="bi bi-patch-check" aria-hidden />
+                      Verified
+                    </span>
+                  ) : (
+                    <span className="profile-badge profile-badge--pending">
+                      <i className="bi bi-shield-exclamation" aria-hidden />
+                      Not verified
+                    </span>
+                  )}
+                  {communityJoin ? (
+                    <span
+                      className={communityStatusClass(communityJoin.status)}
+                    >
+                      {communityStatusLabel(communityJoin.status)}
+                    </span>
+                  ) : null}
+                  {me.role === "admin" ? (
+                    <span className="profile-badge profile-badge--accent">
+                      Admin
+                    </span>
+                  ) : null}
+                  {communityJoin?.is_featured ? (
+                    <span className="profile-badge profile-badge--featured">
+                      <i className="bi bi-stars" aria-hidden />
+                      Featured
+                    </span>
+                  ) : null}
+                </div>
               </div>
             </div>
-            <div className="profile-hero__actions">
-              <Link className="btn btn-sm btn-accent" href="/jobs/mine">
-                My gigs
-              </Link>
-              <Link className="btn btn-sm btn-outline-secondary" href="/events">
-                Events
-              </Link>
-              <Link className="btn btn-sm btn-outline-secondary" href="/forum">
-                Forum
-              </Link>
-              <Link
-                className="btn btn-sm btn-outline-secondary"
-                href="/community"
-              >
-                Community
-              </Link>
-            </div>
+
+            {communityMemberId ? (
+              <div className="profile-hero__cta">
+                <Link
+                  className="btn btn-accent"
+                  href={`/community/${communityMemberId}`}
+                >
+                  <i className="bi bi-box-arrow-up-right" aria-hidden />
+                  View public profile
+                </Link>
+              </div>
+            ) : null}
           </div>
         </div>
 
-        <div className="row gy-4 mt-1">
-          <div className="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-            <div className="offering-block profile-card h-100">
-              <h3 className="profile-card__title">Account</h3>
+        <div className="row profile-layout g-4">
+          <aside
+            className="col-lg-4 profile-sidebar"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            <div className="profile-card">
+              <div className="profile-card__head">
+                <i className="bi bi-person-vcard" aria-hidden />
+                <h3 className="profile-card__title">Account</h3>
+              </div>
               <dl className="profile-fields">
                 <ProfileField label="Full name" value={me.full_name} />
                 <ProfileField label="Email" value={me.email} />
@@ -209,63 +234,61 @@ export default function ProfilePage() {
                 />
               </dl>
             </div>
-          </div>
 
-          <div className="col-lg-6" data-aos="fade-up" data-aos-delay="150">
-            <div className="offering-block profile-card h-100">
-              <h3 className="profile-card__title">Community profile</h3>
+            <div className="profile-card">
+              <div className="profile-card__head">
+                <i className="bi bi-people" aria-hidden />
+                <h3 className="profile-card__title">Community</h3>
+              </div>
               {communityJoin ? (
-                <>
-                  <dl className="profile-fields">
-                    <ProfileField label="City" value={communityJoin.city} />
-                    <ProfileField
-                      label="Role"
-                      value={communityRoleLabel(communityJoin.role)}
-                    />
-                    <ProfileField label="Portfolio">
-                      {communityJoin.portfolio_url ? (
-                        <a
-                          href={communityJoin.portfolio_url}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          {communityJoin.portfolio_url}
-                        </a>
-                      ) : (
-                        "—"
-                      )}
-                    </ProfileField>
-                    <ProfileField
-                      label="Applied"
-                      value={formatDate(communityJoin.createdAt)}
-                    />
-                    <ProfileField label="About">
-                      {communityJoin.message?.trim()
-                        ? communityJoin.message
-                        : "—"}
-                    </ProfileField>
-                    <ProfileField label="Interests">
-                      {communityJoin.interests.length > 0 ? (
-                        <ul className="profile-interest-list">
-                          {communityJoin.interests.map((interest) => (
-                            <li key={interest}>{interestLabel(interest)}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        "—"
-                      )}
-                    </ProfileField>
-                  </dl>
-                </>
+                <dl className="profile-fields">
+                  <ProfileField label="City" value={communityJoin.city} />
+                  <ProfileField
+                    label="Role"
+                    value={communityRoleLabel(communityJoin.role)}
+                  />
+                  <ProfileField label="Portfolio">
+                    {communityJoin.portfolio_url ? (
+                      <a
+                        href={communityJoin.portfolio_url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {communityJoin.portfolio_url}
+                      </a>
+                    ) : (
+                      "—"
+                    )}
+                  </ProfileField>
+                  <ProfileField
+                    label="Applied"
+                    value={formatDate(communityJoin.createdAt)}
+                  />
+                  <ProfileField label="About">
+                    {communityJoin.message?.trim()
+                      ? communityJoin.message
+                      : "—"}
+                  </ProfileField>
+                  <ProfileField label="Interests">
+                    {communityJoin.interests.length > 0 ? (
+                      <ul className="profile-interest-list">
+                        {communityJoin.interests.map((interest) => (
+                          <li key={interest}>{interestLabel(interest)}</li>
+                        ))}
+                      </ul>
+                    ) : (
+                      "—"
+                    )}
+                  </ProfileField>
+                </dl>
               ) : (
                 <div className="profile-empty">
                   <p className="text-muted mb-3">
-                    You have not submitted a community application yet. Join the
-                    network to appear on the community page and unlock member
-                    features.
+                    Join the network to appear on the community page and unlock
+                    member features.
                   </p>
                   <Link
-                    className="btn btn-sm btn-accent"
+                    className="btn btn-accent btn-sm"
                     href="/community#join"
                   >
                     Join the community
@@ -273,9 +296,67 @@ export default function ProfilePage() {
                 </div>
               )}
             </div>
-          </div>
 
-          <ProfileEditorSection userId={me.id} />
+            <nav
+              className="profile-card profile-quick-nav"
+              aria-label="Quick links"
+            >
+              <div className="profile-card__head">
+                <i className="bi bi-grid" aria-hidden />
+                <h3 className="profile-card__title">Quick links</h3>
+              </div>
+              <ul className="profile-quick-nav__list">
+                {QUICK_LINKS.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="profile-quick-nav__link">
+                      <i className={`bi ${link.icon}`} aria-hidden />
+                      <span>{link.label}</span>
+                      <i
+                        className="bi bi-chevron-right profile-quick-nav__chevron"
+                        aria-hidden
+                      />
+                    </Link>
+                  </li>
+                ))}
+                {communityMemberId ? (
+                  <li>
+                    <Link
+                      href={`/community/${communityMemberId}`}
+                      className="profile-quick-nav__link"
+                    >
+                      <i className="bi bi-easel" aria-hidden />
+                      <span>Public showcase</span>
+                      <i
+                        className="bi bi-chevron-right profile-quick-nav__chevron"
+                        aria-hidden
+                      />
+                    </Link>
+                  </li>
+                ) : null}
+                <li>
+                  <Link
+                    href={`/forum/u/${me.id}`}
+                    className="profile-quick-nav__link"
+                  >
+                    <i className="bi bi-chat-square-text" aria-hidden />
+                    <span>Forum profile</span>
+                    <i
+                      className="bi bi-chevron-right profile-quick-nav__chevron"
+                      aria-hidden
+                    />
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          </aside>
+
+          <div
+            className="col-lg-8 profile-main"
+            data-aos="fade-up"
+            data-aos-delay="150"
+          >
+            <ProfileEditorSection communityMemberId={communityMemberId} />
+          </div>
         </div>
       </div>
     </section>

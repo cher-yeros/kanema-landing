@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useQuery } from "@apollo/client/react";
+import { useState } from "react";
 import { USER_PROFILE_QUERY } from "@/lib/forum-graphql";
 import { ThreadList } from "@/components/forum/ThreadCard";
 import {
@@ -9,8 +10,10 @@ import {
   tierBadgeClass,
 } from "@/components/forum/forum-utils";
 import { ForumPageShell } from "@/components/forum/ForumPageShell";
+import { MarketplaceProfileSection } from "@/components/marketplace/MarketplaceProfileSection";
 
 export function PublicUserProfileClient({ userId }: { userId: string }) {
+  const [tab, setTab] = useState<"forum" | "marketplace">("forum");
   const { data } = useQuery(USER_PROFILE_QUERY, {
     variables: { user_id: userId },
   });
@@ -108,8 +111,38 @@ export function PublicUserProfileClient({ userId }: { userId: string }) {
         </div>
       </div>
 
-      <h2 className="h5 mb-3">Recent threads</h2>
-      <ThreadList threads={profile.userForumThreads ?? []} />
+      <ul className="nav nav-tabs mb-3">
+        <li className="nav-item">
+          <button
+            type="button"
+            className={`nav-link${tab === "forum" ? " active" : ""}`}
+            onClick={() => setTab("forum")}
+          >
+            Forum
+          </button>
+        </li>
+        <li className="nav-item">
+          <button
+            type="button"
+            className={`nav-link${tab === "marketplace" ? " active" : ""}`}
+            onClick={() => setTab("marketplace")}
+          >
+            Marketplace
+          </button>
+        </li>
+      </ul>
+
+      {tab === "forum" ? (
+        <>
+          <h2 className="h5 mb-3">Recent threads</h2>
+          <ThreadList threads={profile.userForumThreads ?? []} />
+        </>
+      ) : (
+        <>
+          <h2 className="h5 mb-3">Marketplace</h2>
+          <MarketplaceProfileSection userId={userId} />
+        </>
+      )}
       <Link href="/forum" className="btn btn-ghost mt-3">
         <i className="bi bi-arrow-left" />
         Back to forum

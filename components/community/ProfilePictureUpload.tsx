@@ -1,12 +1,11 @@
 "use client";
 
-import {
-  isSquareDimensions,
-  loadImageFileDimensions,
-  squareImageErrorMessage,
-} from "@/lib/image-dimensions";
+import { cropImageToSquareFile } from "@/lib/crop-image";
 import { communityAvatarUploadUrl } from "@/lib/graphql-env";
 import { useId, useRef, useState } from "react";
+import type { Area } from "react-easy-crop";
+
+import { SquarePhotoCropModal } from "./SquarePhotoCropModal";
 
 type ProfilePictureUploadProps = {
   value: string | null;
@@ -14,6 +13,8 @@ type ProfilePictureUploadProps = {
   disabled?: boolean;
   error?: string | null;
 };
+
+const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
 export function ProfilePictureUpload({
   value,
@@ -26,30 +27,38 @@ export function ProfilePictureUpload({
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [preview, setPreview] = useState<string | null>(value);
+  const [cropSource, setCropSource] = useState<string | null>(null);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   const displayError = error ?? uploadError;
 
-  async function onFile(file: File | null) {
+  function resetCropState() {
+    if (cropSource?.startsWith("blob:")) URL.revokeObjectURL(cropSource);
+    setCropSource(null);
+    setPendingFile(null);
+    if (fileRef.current) fileRef.current.value = "";
+  }
+
+  function onFileSelected(file: File | null) {
     if (!file) return;
     setUploadError(null);
 
-    let dimensions: { width: number; height: number };
-    try {
-      dimensions = await loadImageFileDimensions(file);
-    } catch {
-      setUploadError("Could not read image. Try another file.");
+    if (file.size > MAX_IMAGE_BYTES) {
+      setUploadError("File too large (max 5 MB).");
       if (fileRef.current) fileRef.current.value = "";
       return;
     }
 
-    if (!isSquareDimensions(dimensions.width, dimensions.height)) {
-      setUploadError(
-        squareImageErrorMessage(dimensions.width, dimensions.height),
-      );
-      if (fileRef.current) fileRef.current.value = "";
-      return;
-    }
+    const localPreview = URL.createObjectURL(file);
+    setPendingFile(file);
+    setCropSource(localPreview);
+  }
 
+  function onCropCancel() {
+    resetCropState();
+  }
+
+  async function uploadCroppedFile(file: File) {
     const localPreview = URL.createObjectURL(file);
     setPreview(localPreview);
     setUploading(true);
@@ -96,7 +105,40 @@ export function ProfilePictureUpload({
       onChange(null);
     } finally {
       setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
+      resetCropState();
+    }
+  }
+
+  async function onCropConfirm(croppedAreaPixels: Area) {
+    if (!pendingFile || !cropSource) return;
+
+    setUploading(true);
+    setUploadError(null);
+
+    try {
+      const croppedFile = await cropImageToSquareFile(
+        cropSource,
+        croppedAreaPixels,
+        pendingFile,
+      );
+
+      if (croppedFile.size > MAX_IMAGE_BYTES) {
+        throw new Error(
+          "Cropped image is too large (max 5 MB). Try zooming in.",
+        );
+      }
+
+      if (cropSource.startsWith("blob:")) URL.revokeObjectURL(cropSource);
+      setCropSource(null);
+      setPendingFile(null);
+
+      await uploadCroppedFile(croppedFile);
+    } catch (err) {
+      setUploading(false);
+      setUploadError(
+        err instanceof Error ? err.message : "Could not crop photo.",
+      );
+      resetCropState();
     }
   }
 
@@ -104,79 +146,90 @@ export function ProfilePictureUpload({
     setUploadError(null);
     setPreview(null);
     onChange(null);
-    if (fileRef.current) fileRef.current.value = "";
+    resetCropState();
   }
 
   return (
-    <div>
-      <span className="form-label d-block">Profile picture (optional)</span>
-      <div className="d-flex align-items-center gap-3 flex-wrap">
-        <div
-          className="rounded-circle overflow-hidden border bg-light flex-shrink-0"
-          style={{ width: 72, height: 72 }}
-        >
-          {preview ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={preview}
-              alt=""
-              className="w-100 h-100"
-              style={{ objectFit: "cover" }}
-            />
-          ) : (
-            <div
-              className="w-100 h-100 d-flex align-items-center justify-content-center text-secondary"
-              aria-hidden
-            >
-              <i
-                className="bi bi-person-fill"
-                style={{ fontSize: "1.75rem" }}
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="d-flex flex-wrap gap-2">
-          <button
-            type="button"
-            className="btn btn-outline-secondary btn-sm"
-            disabled={disabled || uploading}
-            onClick={() => fileRef.current?.click()}
+    <>
+      <div>
+        <span className="form-label d-block">Profile picture (optional)</span>
+        <div className="d-flex align-items-center gap-3 flex-wrap">
+          <div
+            className="rounded-circle overflow-hidden border bg-light flex-shrink-0"
+            style={{ width: 72, height: 72 }}
           >
-            {uploading
-              ? "Uploading…"
-              : preview
-                ? "Change photo"
-                : "Upload photo"}
-          </button>
-          {preview ? (
+            {preview ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={preview}
+                alt=""
+                className="w-100 h-100"
+                style={{ objectFit: "cover" }}
+              />
+            ) : (
+              <div
+                className="w-100 h-100 d-flex align-items-center justify-content-center text-secondary"
+                aria-hidden
+              >
+                <i
+                  className="bi bi-person-fill"
+                  style={{ fontSize: "1.75rem" }}
+                />
+              </div>
+            )}
+          </div>
+
+          <div className="d-flex flex-wrap gap-2">
             <button
               type="button"
-              className="btn btn-outline-danger btn-sm"
+              className="btn btn-outline-secondary btn-sm"
               disabled={disabled || uploading}
-              onClick={clearPhoto}
+              onClick={() => fileRef.current?.click()}
             >
-              Remove
+              {uploading
+                ? "Uploading…"
+                : preview
+                  ? "Change photo"
+                  : "Upload photo"}
             </button>
-          ) : null}
-        </div>
+            {preview ? (
+              <button
+                type="button"
+                className="btn btn-outline-danger btn-sm"
+                disabled={disabled || uploading}
+                onClick={clearPhoto}
+              >
+                Remove
+              </button>
+            ) : null}
+          </div>
 
-        <input
-          id={inputId}
-          ref={fileRef}
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-          className="visually-hidden"
-          disabled={disabled || uploading}
-          onChange={(e) => void onFile(e.target.files?.[0] ?? null)}
-        />
+          <input
+            id={inputId}
+            ref={fileRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            className="visually-hidden"
+            disabled={disabled || uploading}
+            onChange={(e) => onFileSelected(e.target.files?.[0] ?? null)}
+          />
+        </div>
+        <p className="small text-secondary mb-0 mt-2">
+          Any photo can be cropped to square · JPEG, PNG, WebP, or GIF · max 5
+          MB
+        </p>
+        {displayError ? (
+          <div className="invalid-feedback d-block">{displayError}</div>
+        ) : null}
       </div>
-      <p className="small text-secondary mb-0 mt-2">
-        Square image only (1:1) · JPEG, PNG, WebP, or GIF · max 5 MB
-      </p>
-      {displayError ? (
-        <div className="invalid-feedback d-block">{displayError}</div>
-      ) : null}
-    </div>
+
+      <SquarePhotoCropModal
+        open={Boolean(cropSource && pendingFile)}
+        imageSrc={cropSource ?? ""}
+        loading={uploading}
+        onCancel={onCropCancel}
+        onConfirm={(area) => void onCropConfirm(area)}
+      />
+    </>
   );
 }

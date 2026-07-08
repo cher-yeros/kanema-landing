@@ -62,6 +62,10 @@ export function forumMediaUploadUrl(): string {
   return `${canmaApiBaseUrl()}/api/forum-media`;
 }
 
+export function marketplaceMediaUploadUrl(): string {
+  return `${canmaApiBaseUrl()}/api/marketplace-media`;
+}
+
 /**
  * GraphQL HTTP URL when code runs on the Next server (RSC server fetches).
  * Uses the same resolution as {@link graphqlHttpUrl} on the server (including `KANEMA_GRAPHQL_URL`).

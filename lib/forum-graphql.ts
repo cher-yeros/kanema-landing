@@ -522,6 +522,28 @@ export const UPSERT_PORTFOLIO_MUTATION = gql`
     upsertPortfolioProject(input: $input) {
       id
       title
+      description
+      cover_url
+      display_order
+    }
+  }
+`;
+
+export const DELETE_PORTFOLIO_MUTATION = gql`
+  mutation DeletePortfolioProject($id: ID!) {
+    deletePortfolioProject(id: $id)
+  }
+`;
+
+export const USER_PORTFOLIO_QUERY = gql`
+  query UserPortfolioProjects($user_id: ID!) {
+    userPortfolioProjects(user_id: $user_id) {
+      id
+      title
+      description
+      cover_url
+      media_json
+      display_order
     }
   }
 `;
