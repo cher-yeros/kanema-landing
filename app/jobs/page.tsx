@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { landingImage } from "@/lib/landing-assets";
 import { fetchProductionJobs } from "@/lib/public-graphql";
 
 import { JobsMemberStrip } from "./jobs-member-strip";
@@ -62,7 +61,7 @@ export default async function ProductionJobsPage() {
             <div className="col-lg-5" data-aos="fade-left" data-aos-delay="200">
               <div className="showcase-image">
                 <img
-                  src={landingImage("illustration/illustration-15.webp")}
+                  src="/img/about/about-us.png"
                   alt=""
                   className="img-fluid"
                 />

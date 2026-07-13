@@ -1,6 +1,5 @@
-import { landingImage } from "@/lib/landing-assets";
-
 const HERO_BG_IMAGE = "/img/hero/hero-bg.png";
+const HERO_SHOWCASE_IMAGE = "/img/about/about-wide-2.png";
 
 export function HeroSection() {
   return (
@@ -47,7 +46,7 @@ export function HeroSection() {
           <div className="col-lg-10" data-aos="fade-up" data-aos-delay="200">
             <div className="hero-showcase">
               <img
-                src={landingImage("about/about-wide-2.webp")}
+                src={HERO_SHOWCASE_IMAGE}
                 alt="Ethiopian visual storytellers and creative work on Canma"
                 className="img-fluid"
               />

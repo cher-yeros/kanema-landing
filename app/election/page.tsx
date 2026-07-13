@@ -15,7 +15,6 @@ import {
 import { defaultElectionId } from "@/lib/graphql-env";
 import { apolloErrorMessage } from "@/lib/apollo-error";
 import { isTruthyFlag } from "@/lib/election-utils";
-import { landingImage } from "@/lib/landing-assets";
 import type {
   CandidatesQuery,
   CastVoteMutation,
@@ -280,7 +279,7 @@ function ElectionPageInner() {
             <div className="col-lg-5" data-aos="fade-left" data-aos-delay="200">
               <div className="showcase-image">
                 <img
-                  src={landingImage("illustration/illustration-15.webp")}
+                  src="/img/illustration/illustration-15.png"
                   alt=""
                   className="img-fluid"
                 />

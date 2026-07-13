@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
 import { CANDIDATE_QUERY } from "@/lib/election-graphql";
-import { landingImage } from "@/lib/landing-assets";
 import type { CandidateQuery } from "@/types/election-apollo";
 
 function parsePortfolio(raw: string | null | undefined): string[] {
@@ -72,7 +71,7 @@ export default function CandidateProfilePage() {
                   />
                 ) : (
                   <img
-                    src={landingImage("illustration/illustration-15.webp")}
+                    src="/img/illustration/illustration-15.png"
                     alt=""
                     className="img-fluid"
                   />

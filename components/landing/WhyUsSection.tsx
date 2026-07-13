@@ -1,5 +1,3 @@
-import { landingImage } from "@/lib/landing-assets";
-
 export function WhyUsSection() {
   return (
     <section id="why-us" className="why-us section">
@@ -74,7 +72,7 @@ export function WhyUsSection() {
           <div className="col-lg-6" data-aos="fade-left" data-aos-delay="300">
             <div className="showcase-image">
               <img
-                src={landingImage("illustration/illustration-15.webp")}
+                src="/img/illustration/illustration-15.png"
                 alt=""
                 className="img-fluid"
               />
