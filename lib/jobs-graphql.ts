@@ -10,6 +10,11 @@ export const PRODUCTION_JOB_FIELDS = gql`
     location
     role_tag
     status
+    posting_fee_amount
+    posting_fee_currency
+    posting_payment_status
+    chapa_tx_ref
+    boost_ids
     poster {
       id
       full_name
@@ -38,6 +43,48 @@ export const PRODUCTION_JOB_QUERY = gql`
   ${PRODUCTION_JOB_FIELDS}
 `;
 
+export const JOB_POSTING_QUOTA_QUERY = gql`
+  query JobPostingQuota {
+    jobPostingQuota {
+      free_posts_used_this_month
+      free_posts_limit
+      next_post_fee_amount
+      next_post_fee_currency
+      active_subscription_plan
+      subscription_jobs_used_this_month
+      subscription_jobs_limit
+      subscription_expires_at
+      subscription_quota_exceeded
+    }
+  }
+`;
+
+export const MY_EMPLOYER_JOB_PAYMENT_BY_TX_REF_QUERY = gql`
+  query MyEmployerJobPaymentByTxRef($tx_ref: String!) {
+    myEmployerJobPaymentByTxRef(tx_ref: $tx_ref) {
+      id
+      product_type
+      product_id
+      billing_period
+      payment_status
+      product_label
+      amount
+      currency
+    }
+  }
+`;
+
+export const INITIATE_EMPLOYER_JOB_PAYMENT_MUTATION = gql`
+  mutation InitiateEmployerJobPayment($input: InitiateEmployerJobPaymentInput!) {
+    initiateEmployerJobPayment(input: $input) {
+      status
+      message
+      checkout_url
+      tx_ref
+    }
+  }
+`;
+
 export const MY_POSTED_JOBS_QUERY = gql`
   query MyPostedJobs {
     myPostedJobs {
@@ -45,6 +92,17 @@ export const MY_POSTED_JOBS_QUERY = gql`
     }
   }
   ${PRODUCTION_JOB_FIELDS}
+`;
+
+export const MY_PRODUCTION_JOB_BY_TX_REF_QUERY = gql`
+  query MyProductionJobByTxRef($tx_ref: String!) {
+    myProductionJobByTxRef(tx_ref: $tx_ref) {
+      id
+      title
+      posting_payment_status
+      chapa_tx_ref
+    }
+  }
 `;
 
 export const MY_JOB_APPLICATIONS_QUERY = gql`
@@ -87,10 +145,27 @@ export const JOB_APPLICANTS_QUERY = gql`
 export const CREATE_PRODUCTION_JOB_MUTATION = gql`
   mutation CreateProductionJob($input: CreateProductionJobInput!) {
     createProductionJob(input: $input) {
-      ...ProductionJobFields
+      status
+      message
+      checkout_url
+      tx_ref
+      job {
+        ...ProductionJobFields
+      }
     }
   }
   ${PRODUCTION_JOB_FIELDS}
+`;
+
+export const INITIATE_JOB_POSTING_PAYMENT_MUTATION = gql`
+  mutation InitiateJobPostingPayment($job_id: ID!) {
+    initiateJobPostingPayment(job_id: $job_id) {
+      status
+      message
+      checkout_url
+      tx_ref
+    }
+  }
 `;
 
 export const UPDATE_MY_PRODUCTION_JOB_MUTATION = gql`
@@ -111,3 +186,20 @@ export const APPLY_TO_PRODUCTION_JOB_MUTATION = gql`
     }
   }
 `;
+
+export type ChapaCheckoutResponse = {
+  status?: string;
+  checkout_url?: string | null;
+  message?: string;
+};
+
+export function redirectToChapaCheckout(
+  data: ChapaCheckoutResponse | undefined,
+): boolean {
+  const url = data?.checkout_url?.trim();
+  if (url) {
+    window.location.assign(url);
+    return true;
+  }
+  return false;
+}

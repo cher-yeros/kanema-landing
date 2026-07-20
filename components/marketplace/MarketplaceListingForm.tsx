@@ -11,13 +11,14 @@ import { marketplaceMediaUploadUrl } from "@/lib/graphql-env";
 import {
   MARKETPLACE_LISTING_TYPE,
   MARKETPLACE_PRODUCTS_ONLY,
+  type MarketplaceListingType,
 } from "@/lib/marketplace-config";
 import {
   CREATE_MARKETPLACE_LISTING_MUTATION,
   PUBLISH_MARKETPLACE_LISTING_MUTATION,
 } from "@/lib/marketplace-graphql";
 
-const LISTING_TYPES = [
+const LISTING_TYPES: { value: MarketplaceListingType; label: string }[] = [
   { value: "PRODUCT", label: "Physical product" },
   { value: "RENTAL", label: "Equipment rental" },
   { value: "DIGITAL", label: "Digital asset" },
@@ -31,7 +32,7 @@ export function MarketplaceListingForm() {
   const { data: meData, loading: meLoading } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
 
-  const [listingType, setListingType] = useState(
+  const [listingType, setListingType] = useState<MarketplaceListingType>(
     MARKETPLACE_PRODUCTS_ONLY ? MARKETPLACE_LISTING_TYPE : "PRODUCT",
   );
   const [title, setTitle] = useState("");
@@ -166,7 +167,9 @@ export function MarketplaceListingForm() {
               <select
                 className="form-select"
                 value={listingType}
-                onChange={(e) => setListingType(e.target.value)}
+                onChange={(e) =>
+                  setListingType(e.target.value as MarketplaceListingType)
+                }
               >
                 {LISTING_TYPES.map((t) => (
                   <option key={t.value} value={t.value}>

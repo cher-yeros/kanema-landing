@@ -381,6 +381,7 @@ The backend sends notifications for marketplace events (e.g. new auction bids) v
 | `lib/marketplace-public.ts`                           | Server-side public GraphQL fetchers     |
 | `lib/marketplace-graphql.ts`                          | Apollo mutations/queries for auth flows |
 | `components/marketplace/MarketplaceListingForm.tsx`   | Create listing form                     |
+| `components/marketplace/MarketplaceSellerPricing.tsx` | Seller pricing tables & plan cards      |
 | `components/marketplace/ListingActionsPanel.tsx`      | Contact, bid, offer, report actions     |
 | `components/marketplace/MarketplaceBrowseSection.tsx` | Shared browse UI per module             |
 
@@ -410,3 +411,39 @@ The backend sends notifications for marketplace events (e.g. new auction bids) v
 The landing app connects to the Canma backend GraphQL API configured in `.env` (via `lib/graphql-env.ts`). Marketplace media uploads use the same API base URL.
 
 Authentication reuses the **election/member auth** stack: JWT stored client-side, `ME_QUERY` for session state, and community join approval gating write operations.
+
+---
+
+## 16. Seller pricing
+
+Public pricing lives at **`/marketplace/pricing`** and is defined in `lib/marketplace-pricing-config.ts` (single source of truth for UI and future billing).
+
+### Pay per listing
+
+| Plan                 | Price                 | Features                                         |
+| -------------------- | --------------------- | ------------------------------------------------ |
+| **Free**             | Free                  | Up to **2 active listings**, standard visibility |
+| **Standard Listing** | **100 ETB / listing** | Single marketplace listing                       |
+
+### Seller subscription plans
+
+**Save 30% with annual billing**
+
+| Plan                | Monthly       | Yearly (30% off)      | Active listings           |
+| ------------------- | ------------- | --------------------- | ------------------------- |
+| **Starter Seller**  | **1,000 ETB** | **8,400 ETB / year**  | 30 active listings        |
+| **Business Seller** | **2,000 ETB** | **16,800 ETB / year** | 100 active listings       |
+| **Pro Seller**      | **4,000 ETB** | **33,600 ETB / year** | Unlimited active listings |
+
+Every subscription includes a seller storefront, buyer messaging, listing dashboard, analytics, order management, priority support, and reduced transaction fees where applicable.
+
+### Optional listing boosts
+
+| Add-on                          | Price     |
+| ------------------------------- | --------- |
+| Featured Listing                | 300 ETB   |
+| Homepage Spotlight              | 500 ETB   |
+| Category Top Placement (7 Days) | 400 ETB   |
+| Social Media Promotion          | 1,500 ETB |
+
+Billing uses **Chapa** (same flow as event registration): `initiateMarketplacePayment` creates a pending `marketplace_payments` row, redirects to Chapa, and confirms via `/api/verify-payment/:tx_ref` and the shared `/payment-success/[tx_ref]` page.

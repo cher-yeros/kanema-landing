@@ -64,6 +64,13 @@ export function MarketplaceHeroActions() {
           {link.label}
         </Link>
       ))}
+      <Link
+        href="/marketplace/pricing"
+        className={navClass(pathname, "/marketplace/pricing")}
+      >
+        <i className="bi bi-tags" aria-hidden />
+        Seller pricing
+      </Link>
       <Link href="/marketplace/new" className="btn btn-accent">
         <i className="bi bi-plus-circle" aria-hidden />
         Sell

@@ -51,6 +51,10 @@ export default async function ProductionJobsPage() {
                     <i className="bi bi-plus-circle me-2" />
                     Post a role
                   </Link>
+                  <Link href="/jobs/pricing" className="btn btn-ghost">
+                    <i className="bi bi-tags me-2" />
+                    Employer pricing
+                  </Link>
                   <Link href="/" className="btn btn-ghost">
                     <i className="bi bi-house me-2" />
                     Home
