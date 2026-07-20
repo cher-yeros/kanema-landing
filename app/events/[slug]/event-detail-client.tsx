@@ -324,7 +324,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
                   Join the community
                 </Link>
               </div>
-            ) : !eventStarted && me.role !== "member" ? (
+            ) : !eventStarted && me != null && me.role !== "member" ? (
               <div className="alert alert-warning">
                 Only Canma members can register for events.
               </div>
