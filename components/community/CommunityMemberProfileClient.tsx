@@ -4,9 +4,11 @@ import { useQuery } from "@apollo/client/react";
 import Link from "next/link";
 
 import { COMMUNITY_JOIN_INTEREST_OPTIONS } from "@/components/community/join-community-form-schema";
+import { PortfolioProjectMedia } from "@/components/community/PortfolioProjectMedia";
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
 import { memberImageSrc } from "@/lib/member-image";
+import { portfolioYoutubeEmbed } from "@/lib/portfolio-media";
 import type {
   PublicCommunityMember,
   PublicPortfolioProject,
@@ -20,18 +22,6 @@ function interestLabel(id: string): string {
     COMMUNITY_JOIN_INTEREST_OPTIONS.find((option) => option.id === id)?.label ??
     id
   );
-}
-
-function portfolioImage(project: PublicPortfolioProject): string | null {
-  if (project.cover_url) return project.cover_url;
-  if (!project.media_json) return null;
-  try {
-    const media = JSON.parse(project.media_json) as Array<{ url?: string }>;
-    const first = media.find((item) => item.url);
-    return first?.url ?? null;
-  } catch {
-    return null;
-  }
 }
 
 function formatDate(value: string | null | undefined): string | null {
@@ -275,32 +265,29 @@ export function CommunityMemberProfileClient({
                 </div>
               ) : (
                 <div className="row g-4">
-                  {projects.map((project) => {
-                    const image = portfolioImage(project);
-                    return (
-                      <div key={project.id} className="col-md-6 col-lg-4">
-                        <article className="community-portfolio-card h-100">
-                          <div className="community-portfolio-card__media">
-                            {image ? (
-                              <img src={image} alt="" className="img-fluid" />
-                            ) : (
-                              <div className="community-portfolio-card__placeholder">
-                                <i className="bi bi-image" aria-hidden />
-                              </div>
-                            )}
-                          </div>
-                          <div className="community-portfolio-card__body">
-                            <h3 className="h6 mb-2">{project.title}</h3>
-                            {project.description ? (
-                              <p className="small text-muted mb-0">
-                                {project.description}
-                              </p>
-                            ) : null}
-                          </div>
-                        </article>
-                      </div>
-                    );
-                  })}
+                  {projects.map((project) => (
+                    <div key={project.id} className="col-md-6 col-lg-4">
+                      <article className="community-portfolio-card h-100">
+                        <div
+                          className={`community-portfolio-card__media${
+                            portfolioYoutubeEmbed(project.media_json)
+                              ? " community-portfolio-card__media--video"
+                              : ""
+                          }`}
+                        >
+                          <PortfolioProjectMedia project={project} />
+                        </div>
+                        <div className="community-portfolio-card__body">
+                          <h3 className="h6 mb-2">{project.title}</h3>
+                          {project.description ? (
+                            <p className="small text-muted mb-0">
+                              {project.description}
+                            </p>
+                          ) : null}
+                        </div>
+                      </article>
+                    </div>
+                  ))}
                 </div>
               )}
             </div>

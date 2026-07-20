@@ -529,6 +529,7 @@ export const UPSERT_PORTFOLIO_MUTATION = gql`
       title
       description
       cover_url
+      media_json
       display_order
     }
   }
