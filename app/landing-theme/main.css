@@ -3200,6 +3200,47 @@ section,
   color: color-mix(in srgb, var(--default-color), transparent 60%);
 }
 
+.contact .form-panel .ethiopia-phone-input .input-group-text {
+  height: 48px;
+  padding: 12px 14px;
+  border-radius: 8px 0 0 8px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  border-right: none;
+  background-color: color-mix(in srgb, var(--default-color), transparent 92%);
+  color: var(--default-color);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.contact .form-panel .ethiopia-phone-input .form-control {
+  border-radius: 0 8px 8px 0;
+}
+
+.contact .form-panel .ethiopia-phone-input .form-control:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color), transparent 88%);
+}
+
+.contact .form-panel .ethiopia-phone-input .form-control.is-invalid {
+  border-color: var(--bs-form-invalid-border-color, #dc3545);
+}
+
+.contact .form-panel .ethiopia-phone-input .form-control.is-invalid:focus {
+  box-shadow: 0 0 0 3px
+    color-mix(
+      in srgb,
+      var(--bs-form-invalid-border-color, #dc3545),
+      transparent 75%
+    );
+}
+
+.contact
+  .form-panel
+  .ethiopia-phone-input:has(.form-control.is-invalid)
+  .input-group-text {
+  border-color: var(--bs-form-invalid-border-color, #dc3545);
+}
+
 .contact .form-panel .php-email-form .form-select {
   height: 48px;
   padding: 12px 2.75rem 12px 16px;
@@ -3260,6 +3301,47 @@ section,
 
 .contact .form-panel .dispatch-btn:hover i {
   transform: translateX(4px);
+}
+
+.contact .community-join-mode-switch {
+  background: var(--surface-color);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 80%);
+}
+
+.contact .community-join-mode-tab {
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.65rem 1rem;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.contact .community-join-mode-tab--active {
+  background: var(--accent-color);
+  color: var(--contrast-color);
+}
+
+.contact .community-join-mode-tab--inactive {
+  background: transparent;
+  color: color-mix(in srgb, var(--default-color), transparent 30%);
+}
+
+.contact .community-join-mode-tab--inactive:hover,
+.contact .community-join-mode-tab--inactive:focus-visible {
+  background: color-mix(in srgb, var(--default-color), transparent 92%);
+  color: var(--default-color);
+}
+
+.contact .community-join-mode-link {
+  color: var(--accent-color);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.contact .community-join-mode-link:hover,
+.contact .community-join-mode-link:focus-visible {
+  color: color-mix(in srgb, var(--accent-color), white 20%);
 }
 
 @media (max-width: 992px) {
@@ -5939,5 +6021,52 @@ section,
   .community-member-page .dispatch-btn {
     width: 100%;
     justify-content: center;
+  }
+}
+
+/*--------------------------------------------------------------
+# Not found
+--------------------------------------------------------------*/
+.not-found-layout {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+.not-found-layout .not-found-main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.not-found-layout .not-found-page.hero {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: calc(var(--site-header-height) + 2.5rem);
+  padding-bottom: 2.5rem;
+}
+
+.not-found-layout .not-found-page > .container {
+  width: 100%;
+}
+
+.not-found-page .hero-heading {
+  max-width: 40rem;
+}
+
+.not-found-page .hero-heading h1 {
+  margin-bottom: 1rem;
+}
+
+.not-found-page .hero-heading p {
+  margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+  .not-found-layout .not-found-page.hero {
+    padding-top: calc(var(--site-header-height) + 1.5rem);
+    padding-bottom: 1.5rem;
   }
 }

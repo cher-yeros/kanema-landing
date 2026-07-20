@@ -6,18 +6,32 @@ import { useQuery } from "@apollo/client/react";
 
 import { ME_QUERY } from "@/lib/election-graphql";
 import type { MeQuery } from "@/types/election-apollo";
+import {
+  MARKETPLACE_PRIMARY_PATH,
+  MARKETPLACE_PRODUCTS_ONLY,
+} from "@/lib/marketplace-config";
 import { selectAuthToken } from "@/lib/store/auth-selectors";
 import { useAppSelector } from "@/lib/store/hooks";
 
-const BROWSE_LINKS = [
-  { href: "/marketplace", label: "Hub", icon: "bi-shop" },
-  { href: "/marketplace/products", label: "Products", icon: "bi-camera" },
-  { href: "/marketplace/rentals", label: "Rentals", icon: "bi-camera-reels" },
-  { href: "/marketplace/digital", label: "Digital", icon: "bi-file-earmark" },
-  { href: "/marketplace/services", label: "Services", icon: "bi-palette" },
-  { href: "/marketplace/wanted", label: "Wanted", icon: "bi-search" },
-  { href: "/marketplace/auctions", label: "Auctions", icon: "bi-hammer" },
-] as const;
+const BROWSE_LINKS = MARKETPLACE_PRODUCTS_ONLY
+  ? [{ href: MARKETPLACE_PRIMARY_PATH, label: "Browse", icon: "bi-camera" }]
+  : ([
+      { href: "/marketplace", label: "Hub", icon: "bi-shop" },
+      { href: "/marketplace/products", label: "Products", icon: "bi-camera" },
+      {
+        href: "/marketplace/rentals",
+        label: "Rentals",
+        icon: "bi-camera-reels",
+      },
+      {
+        href: "/marketplace/digital",
+        label: "Digital",
+        icon: "bi-file-earmark",
+      },
+      { href: "/marketplace/services", label: "Services", icon: "bi-palette" },
+      { href: "/marketplace/wanted", label: "Wanted", icon: "bi-search" },
+      { href: "/marketplace/auctions", label: "Auctions", icon: "bi-hammer" },
+    ] as const);
 
 function navClass(pathname: string, href: string): string {
   const isActive =
@@ -33,6 +47,9 @@ export function MarketplaceHeroActions() {
     fetchPolicy: "cache-first",
   });
   const isLoggedIn = Boolean(token && meData?.me);
+  const loginNext = MARKETPLACE_PRODUCTS_ONLY
+    ? MARKETPLACE_PRIMARY_PATH
+    : "/marketplace";
 
   return (
     <div className="hero-actions marketplace-hero-actions mt-4">
@@ -70,7 +87,7 @@ export function MarketplaceHeroActions() {
         </>
       ) : (
         <Link
-          href={`/election/login?next=${encodeURIComponent("/marketplace")}`}
+          href={`/election/login?next=${encodeURIComponent(loginNext)}`}
           className="btn btn-ghost"
         >
           Sign in to sell

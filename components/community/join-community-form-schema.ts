@@ -1,5 +1,7 @@
 import * as yup from "yup";
 
+import { isValidEthiopiaLocalPhone } from "@/lib/ethiopia-phone";
+
 /** Obscure name + ignore hints so browsers/password managers rarely autofill this honeypot. */
 export const JOIN_COMMUNITY_HONEYPOT_FIELD = "kz_co_join_hp";
 
@@ -40,7 +42,11 @@ export const joinCommunityFormSchema = yup.object({
     .string()
     .trim()
     .required("Please provide your phone number.")
-    .min(9, "Enter a valid phone number."),
+    .test(
+      "ethiopia-mobile",
+      "Enter a valid 9-digit mobile number starting with 9 or 7.",
+      (value) => !value || isValidEthiopiaLocalPhone(value),
+    ),
   password: yup
     .string()
     .required("Please choose a password.")
@@ -65,7 +71,7 @@ export const joinCommunityFormSchema = yup.object({
       (v) => !v || /^https?:\/\/[^\s]+$/.test(v),
     ),
   message: yup.string().trim().default(""),
-  avatarUrl: yup.string().trim().default(""),
+  avatarUrl: yup.string().trim().required("Please upload a profile picture."),
 });
 
 export type JoinCommunityFormValues = yup.InferType<

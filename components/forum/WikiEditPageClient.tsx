@@ -32,7 +32,7 @@ export default function WikiEditPageClient({ slug }: { slug: string }) {
     <ForumPageShell
       title="Edit article"
       description={article.title}
-      backHref={`/forum/wiki/${slug}`}
+      backHref={`/discussion/wiki/${slug}`}
       backLabel="Back to article"
       narrow
     >

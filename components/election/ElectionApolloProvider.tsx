@@ -12,6 +12,7 @@ export {
 export {
   setStoredAuthSession,
   clearStoredAuthSession,
+  logoutCanmaSession,
   setStoredToken,
   getStoredToken,
 } from "@/lib/store/imperative-auth";

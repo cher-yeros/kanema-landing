@@ -12,11 +12,21 @@ import {
   MY_MARKETPLACE_STORE_QUERY,
   UPSERT_MARKETPLACE_STORE_MUTATION,
 } from "@/lib/marketplace-graphql";
+import {
+  MARKETPLACE_PRIMARY_PATH,
+  MARKETPLACE_PRODUCTS_ONLY,
+} from "@/lib/marketplace-config";
 
 export default function NewStorePage() {
   const router = useRouter();
   const { data: meData, loading: meLoading } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
+
+  useEffect(() => {
+    if (MARKETPLACE_PRODUCTS_ONLY) {
+      router.replace(MARKETPLACE_PRIMARY_PATH);
+    }
+  }, [router]);
 
   const { data: storeData } = useQuery<{
     myMarketplaceStore: {
@@ -77,6 +87,8 @@ export default function NewStorePage() {
       setError(err instanceof Error ? err.message : "Failed to save store");
     }
   }
+
+  if (MARKETPLACE_PRODUCTS_ONLY) return null;
 
   if (meLoading) {
     return (

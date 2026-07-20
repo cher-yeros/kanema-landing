@@ -51,6 +51,11 @@ export const FORUM_THREAD_FIELDS = gql`
       name
       icon_url
     }
+    media {
+      id
+      kind
+      url
+    }
   }
 `;
 

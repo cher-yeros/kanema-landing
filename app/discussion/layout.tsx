@@ -8,9 +8,9 @@ import { ScrollTop } from "@/components/landing/ScrollTop";
 import { ForumProviders } from "@/components/forum/ForumProviders";
 
 export const metadata: Metadata = {
-  title: "Forum — Canma",
+  title: "Discussion — Canma",
   description:
-    "Canma creative forum: photography, filmmaking, editing, gear, and more.",
+    "Canma creative discussions: photography, filmmaking, editing, gear, and more.",
 };
 
 export default function ForumLayout({

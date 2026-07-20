@@ -24,11 +24,11 @@ export default async function TagPage({ params }: Props) {
     <ForumPageShell
       title={`#${label}`}
       description={`${threads.total} discussions`}
-      backHref="/forum/search"
+      backHref="/discussion/search"
       backLabel="Search forum"
     >
       <ThreadList threads={threads.threads} />
-      <Link href="/forum/search" className="btn btn-ghost mt-3">
+      <Link href="/discussion/search" className="btn btn-ghost mt-3">
         <i className="bi bi-search" />
         Search all tags
       </Link>
@@ -49,6 +49,7 @@ async function fetchGraphQLThreads(tagSlug: string) {
             author { id full_name }
             community { slug name icon_url }
             tags { slug name }
+            media { id kind url }
           }
           total
         }

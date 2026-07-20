@@ -31,7 +31,7 @@ export default async function CommunityPage({ params }: Props) {
 
   return (
     <ForumPageShell
-      backHref="/forum#forum-communities"
+      backHref="/discussion#discussion-communities"
       backLabel="All communities"
     >
       <div className="offering-block p-4 mb-4">
@@ -47,7 +47,7 @@ export default async function CommunityPage({ params }: Props) {
             </div>
           </div>
           <Link
-            href={`/forum/c/${slug}/new`}
+            href={`/discussion/c/${slug}/new`}
             className="btn btn-accent flex-shrink-0"
           >
             <i className="bi bi-plus-circle" />

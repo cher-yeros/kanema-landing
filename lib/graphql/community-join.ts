@@ -48,6 +48,19 @@ export const MY_COMMUNITY_JOIN_QUERY = gql`
   }
 `;
 
+/** Auth context for client-side community list personalization. */
+export const COMMUNITY_LIST_AUTH_QUERY = gql`
+  query CommunityListAuth {
+    me {
+      id
+    }
+    myCommunityJoin {
+      id
+      status
+    }
+  }
+`;
+
 export const HEADER_USER_QUERY = gql`
   query HeaderUser {
     me {

@@ -6,6 +6,7 @@ import {
   BRAND_LOGO_RECTANGLE,
   BRAND_NAME,
 } from "@/lib/brand-assets";
+import { ELECTIONS_ENABLED } from "@/lib/election-config";
 import { SITE_CONTACT } from "@/lib/site-contact";
 
 import { SocialLinks } from "@/components/landing/SocialLinks";
@@ -74,9 +75,11 @@ export function SiteFooter() {
               <li>
                 <a href="#contact">Membership</a>
               </li>
-              <li>
-                <Link href="/election">Presidential election</Link>
-              </li>
+              {ELECTIONS_ENABLED ? (
+                <li>
+                  <Link href="/election">Presidential election</Link>
+                </li>
+              ) : null}
               <li>
                 <Link href="/jobs">Creative gigs</Link>
               </li>
@@ -96,7 +99,7 @@ export function SiteFooter() {
                 <Link href="/events">Events and trainings</Link>
               </li>
               <li>
-                <Link href="/marketplace">Marketplace</Link>
+                <Link href="/marketplace/products">Marketplace</Link>
               </li>
               <li>
                 <a href="#why-us">Resources</a>

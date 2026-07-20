@@ -9,6 +9,7 @@ export const MY_PROFILE_QUERY = gql`
     }
     myCommunityJoin {
       id
+      slug
       status
       full_name
       email

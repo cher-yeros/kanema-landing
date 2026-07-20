@@ -8,11 +8,12 @@ import {
   formatReputationTier,
   tierBadgeClass,
 } from "@/components/forum/forum-utils";
+import { communityMemberPath } from "@/lib/site-url";
 
 export function ProfileEditorSection({
-  communityMemberId,
+  communityMemberSlug,
 }: {
-  communityMemberId?: string | null;
+  communityMemberSlug?: string | null;
 }) {
   const { data, refetch } = useQuery(MY_PROFILE_QUERY);
   const [updateProfile, { loading }] = useMutation(UPDATE_PROFILE_MUTATION);
@@ -75,7 +76,7 @@ export function ProfileEditorSection({
             <i className="bi bi-pencil-square" aria-hidden />
             <h3 className="profile-card__title">Edit your presence</h3>
             <p className="profile-card__subtitle">
-              Forum bio and links shown alongside your community showcase.
+              Discussion bio and links shown alongside your community showcase.
             </p>
           </div>
           {profile ? (
@@ -114,7 +115,7 @@ export function ProfileEditorSection({
                     id="forum-profile-bio"
                     className="form-control"
                     rows={4}
-                    placeholder="A short introduction for forum and community visitors…"
+                    placeholder="A short introduction for discussion and community visitors…"
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                   />
@@ -189,11 +190,11 @@ export function ProfileEditorSection({
         <div className="contact">
           <PortfolioProjectsEditor />
         </div>
-        {communityMemberId ? (
+        {communityMemberSlug ? (
           <p className="profile-showcase-note">
             <i className="bi bi-info-circle" aria-hidden />
             Showcase items appear on your{" "}
-            <a href={`/community/${communityMemberId}`}>
+            <a href={communityMemberPath(communityMemberSlug)}>
               public community profile
             </a>
             .

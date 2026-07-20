@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client/react";
 import { gql } from "@apollo/client";
 import { MarketplaceListingCard } from "@/components/marketplace/MarketplaceListingCard";
 import type { PublicMarketplaceListing } from "@/lib/marketplace-public";
+import { MARKETPLACE_PRIMARY_PATH } from "@/lib/marketplace-config";
 
 const SELLER_LISTINGS_QUERY = gql`
   query MarketplaceListingsForSeller($seller_user_id: ID!) {
@@ -130,7 +131,10 @@ export function MarketplaceProfileSection({ userId }: { userId: string }) {
         </>
       )}
 
-      <Link href="/marketplace" className="btn btn-ghost btn-sm mt-2">
+      <Link
+        href={MARKETPLACE_PRIMARY_PATH}
+        className="btn btn-ghost btn-sm mt-2"
+      >
         Browse marketplace
       </Link>
     </div>

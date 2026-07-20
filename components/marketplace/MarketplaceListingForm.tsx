@@ -9,6 +9,10 @@ import { ME_QUERY } from "@/lib/election-graphql";
 import type { MeQuery } from "@/types/election-apollo";
 import { marketplaceMediaUploadUrl } from "@/lib/graphql-env";
 import {
+  MARKETPLACE_LISTING_TYPE,
+  MARKETPLACE_PRODUCTS_ONLY,
+} from "@/lib/marketplace-config";
+import {
   CREATE_MARKETPLACE_LISTING_MUTATION,
   PUBLISH_MARKETPLACE_LISTING_MUTATION,
 } from "@/lib/marketplace-graphql";
@@ -27,7 +31,9 @@ export function MarketplaceListingForm() {
   const { data: meData, loading: meLoading } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
 
-  const [listingType, setListingType] = useState("PRODUCT");
+  const [listingType, setListingType] = useState(
+    MARKETPLACE_PRODUCTS_ONLY ? MARKETPLACE_LISTING_TYPE : "PRODUCT",
+  );
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -154,20 +160,22 @@ export function MarketplaceListingForm() {
             e.preventDefault();
           }}
         >
-          <div className="mb-3">
-            <label className="form-label">Listing type</label>
-            <select
-              className="form-select"
-              value={listingType}
-              onChange={(e) => setListingType(e.target.value)}
-            >
-              {LISTING_TYPES.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          {!MARKETPLACE_PRODUCTS_ONLY && (
+            <div className="mb-3">
+              <label className="form-label">Listing type</label>
+              <select
+                className="form-select"
+                value={listingType}
+                onChange={(e) => setListingType(e.target.value)}
+              >
+                {LISTING_TYPES.map((t) => (
+                  <option key={t.value} value={t.value}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
 
           <div className="mb-3">
             <label className="form-label">Title</label>

@@ -5,7 +5,7 @@ export default function NewListingPage() {
   return (
     <MarketplacePageShell
       title="Create listing"
-      description="List equipment, services, digital assets, rentals, wanted posts, or auctions."
+      description="List cameras, lenses, lighting, audio, drones, and other production gear for sale."
       narrow
     >
       <MarketplaceListingForm />

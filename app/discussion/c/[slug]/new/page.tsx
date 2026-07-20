@@ -23,7 +23,7 @@ export default async function NewThreadPage({ params }: Props) {
           Post in <strong>{community.name}</strong>
         </>
       }
-      backHref={`/forum/c/${slug}`}
+      backHref={`/discussion/c/${slug}`}
       backLabel={community.name}
       narrow
     >

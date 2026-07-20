@@ -40,12 +40,12 @@ export function JobsMemberStrip() {
           <div className="d-flex flex-wrap gap-2">
             <Link
               className="btn btn-sm btn-accent"
-              href={`/election/login?next=${encodeURIComponent("/jobs")}`}
+              href={`/community/join?mode=signin&next=${encodeURIComponent("/jobs")}`}
             >
               Sign in
             </Link>
-            <Link className="btn btn-sm btn-ghost" href="/election/register">
-              Register
+            <Link className="btn btn-sm btn-ghost" href="/community/join">
+              Join community
             </Link>
           </div>
         </div>

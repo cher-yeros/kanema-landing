@@ -9,7 +9,7 @@ import { ScrollTop } from "@/components/landing/ScrollTop";
 export const metadata: Metadata = {
   title: "Marketplace — Canma",
   description:
-    "Buy, sell, rent, and discover creative equipment, digital assets, and professional services on the Canma marketplace.",
+    "Buy and sell creative equipment on the Canma marketplace — cameras, lenses, lighting, and production gear from verified members.",
 };
 
 export default function MarketplaceLayout({

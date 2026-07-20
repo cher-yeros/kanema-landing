@@ -7,10 +7,12 @@ import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { SUBMIT_COMMUNITY_JOIN } from "@/lib/graphql/community-join";
+import { formatEthiopiaPhoneForApi } from "@/lib/ethiopia-phone";
 import { setAuthSession } from "@/lib/store/auth-slice";
 import { useAppDispatch } from "@/lib/store/hooks";
 
 import { CommunityInterestsField } from "./CommunityInterestsField";
+import { EthiopiaPhoneInput } from "./EthiopiaPhoneInput";
 import { ProfilePictureUpload } from "./ProfilePictureUpload";
 import {
   JOIN_COMMUNITY_HONEYPOT_FIELD,
@@ -85,7 +87,7 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
           input: {
             full_name: values.fullName.trim(),
             email: values.email.trim(),
-            phone: values.phone?.trim(),
+            phone: formatEthiopiaPhoneForApi(values.phone),
             password: values.password,
             city: values.city?.trim(),
             role: mapCommunityJoinRole(values.role),
@@ -294,13 +296,17 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
                   <label htmlFor="join-community-phone" className="form-label">
                     Phone
                   </label>
-                  <input
-                    id="join-community-phone"
-                    type="tel"
-                    autoComplete="tel"
-                    className={`form-control${errors.phone ? " is-invalid" : ""}`}
-                    placeholder="+251…"
-                    {...register("phone")}
+                  <Controller
+                    name="phone"
+                    control={control}
+                    render={({ field }) => (
+                      <EthiopiaPhoneInput
+                        id="join-community-phone"
+                        value={field.value}
+                        onChange={field.onChange}
+                        invalid={Boolean(errors.phone)}
+                      />
+                    )}
                   />
                   {errors.phone?.message ? (
                     <div className="invalid-feedback d-block">
@@ -379,6 +385,7 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
                         value={field.value || null}
                         onChange={(url) => field.onChange(url ?? "")}
                         disabled={isSubmitting || banner === "sent"}
+                        error={errors.avatarUrl?.message ?? null}
                       />
                     )}
                   />

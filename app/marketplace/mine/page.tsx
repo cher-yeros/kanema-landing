@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { MarketplacePageShell } from "@/components/marketplace/MarketplacePageShell";
 import { ME_QUERY } from "@/lib/election-graphql";
 import type { MeQuery } from "@/types/election-apollo";
+import { MARKETPLACE_PRODUCTS_ONLY } from "@/lib/marketplace-config";
 import {
   MY_MARKETPLACE_LISTINGS_QUERY,
   MY_MARKETPLACE_STORE_QUERY,
@@ -34,7 +35,9 @@ export default function MyListingsPage() {
 
   const { data: storeData } = useQuery<{
     myMarketplaceStore: { slug: string; name: string } | null;
-  }>(MY_MARKETPLACE_STORE_QUERY, { skip: !me });
+  }>(MY_MARKETPLACE_STORE_QUERY, {
+    skip: !me || MARKETPLACE_PRODUCTS_ONLY,
+  });
 
   const [publishListing] = useMutation(PUBLISH_MARKETPLACE_LISTING_MUTATION);
 
@@ -61,18 +64,24 @@ export default function MyListingsPage() {
   return (
     <MarketplacePageShell
       title="My listings"
-      description="Manage drafts, published listings, and your storefront."
+      description={
+        MARKETPLACE_PRODUCTS_ONLY
+          ? "Manage drafts and published product listings."
+          : "Manage drafts, published listings, and your storefront."
+      }
     >
       <div className="d-flex flex-wrap justify-content-end gap-2 mb-4">
         <Link href="/marketplace/new" className="btn btn-accent btn-sm">
           New listing
         </Link>
-        <Link href="/marketplace/stores/new" className="btn btn-ghost btn-sm">
-          {store ? "Edit store" : "Create store"}
-        </Link>
+        {!MARKETPLACE_PRODUCTS_ONLY && (
+          <Link href="/marketplace/stores/new" className="btn btn-ghost btn-sm">
+            {store ? "Edit store" : "Create store"}
+          </Link>
+        )}
       </div>
 
-      {store && (
+      {!MARKETPLACE_PRODUCTS_ONLY && store && (
         <p className="small text-muted mb-4">
           Your store:{" "}
           <Link href={`/marketplace/stores/${store.slug}`}>{store.name}</Link>

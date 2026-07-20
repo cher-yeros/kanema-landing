@@ -163,12 +163,11 @@ export default async function ProductionJobsPage() {
                     <h3>Membership unlocks applicants and postings</h3>
                     <p>
                       Canma ties creative gigs to verified community
-                      accounts—you can register with your phone from the ballot
-                      flow if you already have not elsewhere.
+                      accounts—join the community to post roles and apply.
                     </p>
                   </div>
                   <div className="col-lg-4 text-lg-end text-center">
-                    <Link href="/election/register" className="action-btn">
+                    <Link href="/community/join" className="action-btn">
                       Join as member
                     </Link>
                   </div>

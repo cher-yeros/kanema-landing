@@ -10,6 +10,7 @@ import {
   tierBadgeClass,
 } from "@/components/forum/forum-utils";
 import { ForumPageShell } from "@/components/forum/ForumPageShell";
+import { memberImageSrc } from "@/lib/member-image";
 import { MarketplaceProfileSection } from "@/components/marketplace/MarketplaceProfileSection";
 
 export function PublicUserProfileClient({ userId }: { userId: string }) {
@@ -48,23 +49,13 @@ export function PublicUserProfileClient({ userId }: { userId: string }) {
     <ForumPageShell>
       <div className="offering-block p-4 mb-4">
         <div className="d-flex gap-3 align-items-start">
-          {p.avatar_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={p.avatar_url}
-              alt=""
-              className="rounded-circle"
-              width={72}
-              height={72}
-            />
-          ) : (
-            <div
-              className="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white"
-              style={{ width: 72, height: 72 }}
-            >
-              {p.user.full_name.charAt(0)}
-            </div>
-          )}
+          <img
+            src={memberImageSrc(p.avatar_url)}
+            alt=""
+            className="rounded-circle"
+            width={72}
+            height={72}
+          />
           <div>
             <h1 className="h4 mb-1">{p.user.full_name}</h1>
             <span className={`badge ${tierBadgeClass(p.reputation_tier)}`}>
@@ -118,7 +109,7 @@ export function PublicUserProfileClient({ userId }: { userId: string }) {
             className={`nav-link${tab === "forum" ? " active" : ""}`}
             onClick={() => setTab("forum")}
           >
-            Forum
+            Discussion
           </button>
         </li>
         <li className="nav-item">
@@ -143,9 +134,9 @@ export function PublicUserProfileClient({ userId }: { userId: string }) {
           <MarketplaceProfileSection userId={userId} />
         </>
       )}
-      <Link href="/forum" className="btn btn-ghost mt-3">
+      <Link href="/discussion" className="btn btn-ghost mt-3">
         <i className="bi bi-arrow-left" />
-        Back to forum
+        Back to discussion
       </Link>
     </ForumPageShell>
   );

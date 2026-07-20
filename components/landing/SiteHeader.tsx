@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BRAND_ALT, BRAND_LOGO_RECTANGLE } from "@/lib/brand-assets";
+import { ELECTIONS_ENABLED } from "@/lib/election-config";
 import { HeaderUserMenu } from "@/components/landing/HeaderUserMenu";
 import {
   useCallback,
@@ -19,7 +20,7 @@ type NavKey =
   | "about"
   | "election"
   | "community"
-  | "forum"
+  | "discussion"
   | "marketplace"
   | "jobs"
   | "learn"
@@ -49,7 +50,7 @@ export function SiteHeader() {
   const activeNav = useMemo((): NavKey | null => {
     if (pathname.startsWith("/election")) return "election";
     if (pathname.startsWith("/community")) return "community";
-    if (pathname.startsWith("/forum")) return "forum";
+    if (pathname.startsWith("/discussion")) return "discussion";
     if (pathname.startsWith("/marketplace")) return "marketplace";
     if (pathname.startsWith("/jobs")) return "jobs";
     if (pathname.startsWith("/learn")) return "learn";
@@ -146,29 +147,31 @@ export function SiteHeader() {
                 About
               </Link>
             </li>
-            {/* <li>
-              <Link
-                href="/election"
-                className={navClass("election")}
-                aria-current={activeNav === "election" ? "page" : undefined}
-                onClick={closeMobileForPage}
-              >
-                Election
-              </Link>
-            </li> */}
+            {ELECTIONS_ENABLED ? (
+              <li>
+                <Link
+                  href="/election"
+                  className={navClass("election")}
+                  aria-current={activeNav === "election" ? "page" : undefined}
+                  onClick={closeMobileForPage}
+                >
+                  Election
+                </Link>
+              </li>
+            ) : null}
             <li>
               <Link
-                href="/forum"
-                className={navClass("forum")}
-                aria-current={activeNav === "forum" ? "page" : undefined}
+                href="/discussion"
+                className={navClass("discussion")}
+                aria-current={activeNav === "discussion" ? "page" : undefined}
                 onClick={closeMobileForPage}
               >
-                Forum
+                Discussion
               </Link>
             </li>
             <li>
               <Link
-                href="/marketplace"
+                href="/marketplace/products"
                 className={navClass("marketplace")}
                 aria-current={activeNav === "marketplace" ? "page" : undefined}
                 onClick={closeMobileForPage}

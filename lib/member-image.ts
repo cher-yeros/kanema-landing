@@ -1,17 +1,27 @@
 import { landingImage } from "@/lib/landing-assets";
 
-/** Resolve avatar/photo for member cards (absolute URL or landing stock image). */
+/** Default avatar when a member has no profile photo. */
+export const DEFAULT_AVATAR_SRC = "/img/avatar-placeholder.png";
+
+function resolveImageSrc(path: string): string {
+  if (
+    path.startsWith("http://") ||
+    path.startsWith("https://") ||
+    path.startsWith("/")
+  ) {
+    return path;
+  }
+  return landingImage(path);
+}
+
+/** Resolve avatar/photo for member cards (absolute URL or fallback image). */
 export function memberImageSrc(
   url: string | null | undefined,
-  fallback: string,
+  fallback: string = DEFAULT_AVATAR_SRC,
 ): string {
   const trimmed = url?.trim() ?? "";
-  if (
-    trimmed.startsWith("http://") ||
-    trimmed.startsWith("https://") ||
-    trimmed.startsWith("/")
-  ) {
-    return trimmed;
+  if (trimmed) {
+    return resolveImageSrc(trimmed);
   }
-  return landingImage(fallback);
+  return resolveImageSrc(fallback);
 }

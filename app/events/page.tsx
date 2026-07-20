@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { EventPageLinks } from "@/components/events/EventPageLinks";
+import { EventStatusRibbon } from "@/components/events/EventStatusRibbon";
 import { fetchPublishedEvents } from "@/lib/public-graphql";
 
 function formatEventWhen(start: string, end?: string | null): string {
@@ -37,6 +39,14 @@ function formatEventPrice(event: {
   return `${formatted} ${event.currency}`;
 }
 
+function displayAttendance(event: {
+  attendance_count: number | null;
+  confirmed_registration_count: number;
+}): number {
+  if (event.attendance_count != null) return event.attendance_count;
+  return event.confirmed_registration_count;
+}
+
 export default async function EventsCatalogPage() {
   let events: Awaited<ReturnType<typeof fetchPublishedEvents>> = [];
   try {
@@ -45,13 +55,16 @@ export default async function EventsCatalogPage() {
     events = [];
   }
 
-  const now = Date.now();
-  const upcoming = events.filter(
-    (e) => new Date(e.start_date).getTime() >= now,
-  );
-  const past = events.filter((e) => new Date(e.start_date).getTime() < now);
+  const upcoming = events.filter((e) => !e.is_past);
+  const past = events.filter((e) => e.is_past);
 
-  function EventList({ items }: { items: typeof events }) {
+  function EventList({
+    items,
+    pastSection = false,
+  }: {
+    items: typeof events;
+    pastSection?: boolean;
+  }) {
     if (items.length === 0) return null;
     return (
       <div className="row gy-4">
@@ -59,25 +72,30 @@ export default async function EventsCatalogPage() {
           <div className="col-lg-4 col-md-6" key={ev.id}>
             <article className="offering-block event-card h-100">
               <div className="offering-indicator" />
-              <Link
-                href={`/events/${ev.slug}`}
-                className="event-card__media d-block"
-                tabIndex={-1}
-                aria-hidden
-              >
-                {ev.cover_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={ev.cover_url} alt={ev.title} />
-                ) : (
-                  <div className="event-card__placeholder">
-                    <i className="bi bi-calendar-event" aria-hidden />
-                  </div>
-                )}
-              </Link>
+              <div className="event-card__media-wrap">
+                <EventStatusRibbon isPast={ev.is_past} />
+                <Link
+                  href={`/events/${ev.slug}`}
+                  className="event-card__media d-block"
+                  tabIndex={-1}
+                  aria-hidden
+                >
+                  {ev.cover_url ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={ev.cover_url} alt={ev.title} />
+                  ) : (
+                    <div className="event-card__placeholder">
+                      <i className="bi bi-calendar-event" aria-hidden />
+                    </div>
+                  )}
+                </Link>
+              </div>
               <div className="offering-body">
                 <div className="offering-header">
                   <h4>{ev.title}</h4>
-                  {ev.is_featured ? (
+                  {pastSection && ev.has_recap ? (
+                    <span className="featured-tag">Recap</span>
+                  ) : ev.is_featured ? (
                     <span className="featured-tag">Featured</span>
                   ) : (
                     <span className="featured-tag">{formatEventPrice(ev)}</span>
@@ -87,11 +105,20 @@ export default async function EventsCatalogPage() {
                   {[
                     modalityLabel(ev.modality),
                     ev.location,
-                    formatEventPrice(ev),
+                    pastSection ? null : formatEventPrice(ev),
                   ]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
+                {pastSection && (ev.has_recap || ev.is_past) ? (
+                  <p className="small mb-2">
+                    <i className="bi bi-people me-1" aria-hidden />
+                    {displayAttendance(ev).toLocaleString()} attended
+                    {ev.has_recap && ev.gallery.length > 0
+                      ? ` · ${ev.gallery.length} photo${ev.gallery.length === 1 ? "" : "s"}`
+                      : ""}
+                  </p>
+                ) : null}
                 <p className="small mb-2">
                   <i className="bi bi-clock me-1" aria-hidden />
                   {formatEventWhen(ev.start_date, ev.end_date)}
@@ -100,15 +127,19 @@ export default async function EventsCatalogPage() {
                   className="text-truncate-3-lines"
                   style={{ minHeight: "4.5rem" }}
                 >
-                  {ev.short_description ||
-                    ev.description ||
-                    "Open the event for details."}
+                  {pastSection && ev.has_recap && ev.recap_summary
+                    ? ev.recap_summary
+                    : ev.short_description ||
+                      ev.description ||
+                      (pastSection
+                        ? "View photos and highlights from this event."
+                        : "Open the event for details.")}
                 </p>
                 <Link
-                  href={`/events/${ev.slug}`}
+                  href={`/events/${ev.slug}${pastSection && ev.has_recap ? "#event-recap" : ""}`}
                   className="explore-btn d-inline-flex"
                 >
-                  View event{" "}
+                  {pastSection && ev.has_recap ? "View recap" : "View event"}{" "}
                   <i className="bi bi-chevron-right" aria-hidden="true" />
                 </Link>
               </div>
@@ -127,15 +158,7 @@ export default async function EventsCatalogPage() {
           Workshops, screenings, and community gatherings from Canma and
           partners.
         </p>
-        <p className="small text-muted mb-0">
-          <Link href="/" className="link-body-emphasis">
-            Home
-          </Link>
-          {" · "}
-          <Link href="/community" className="link-body-emphasis">
-            Join the community
-          </Link>
-        </p>
+        <EventPageLinks className="mb-0" />
       </div>
 
       <div className="container" data-aos="fade-up" data-aos-delay="100">
@@ -149,7 +172,7 @@ export default async function EventsCatalogPage() {
         {past.length > 0 ? (
           <div className={upcoming.length > 0 ? "mt-5 pt-2" : ""}>
             <h2 className="h4 mb-4">Past events</h2>
-            <EventList items={past} />
+            <EventList items={past} pastSection />
           </div>
         ) : null}
 

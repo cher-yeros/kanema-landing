@@ -14,6 +14,17 @@ import {
 import { MY_COMMUNITY_JOIN_QUERY } from "@/lib/graphql/community-join";
 import type { PublicEvent } from "@/lib/public-graphql";
 import type { MeQuery } from "@/types/election-apollo";
+import {
+  EventPastSidebar,
+  EventRecapSection,
+} from "@/components/events/EventRecapSection";
+import { EventPageLinks } from "@/components/events/EventPageLinks";
+import { EventStatusRibbon } from "@/components/events/EventStatusRibbon";
+import {
+  eventDetailBodyText,
+  recapSummaryText,
+  shouldShowEventComingSoon,
+} from "@/components/events/event-content";
 
 function formatEventWhen(start: string, end?: string | null): string {
   const s = new Date(start);
@@ -73,7 +84,7 @@ function redirectToChapaCheckout(data: ChapaCheckoutResponse | undefined) {
 }
 
 function communityJoinHref(pathHref: string) {
-  return `/community?next=${encodeURIComponent(pathHref)}#join`;
+  return `/community/join?next=${encodeURIComponent(pathHref)}`;
 }
 
 export function EventDetailClient({ event }: { event: PublicEvent }) {
@@ -110,7 +121,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
 
   const registration = regData?.myEventRegistration;
   const isRegistered = Boolean(registration) || done;
-  const eventStarted = new Date(event.start_date).getTime() < Date.now();
+  const eventStarted = event.is_past;
   const canRegister =
     Boolean(me) && communityApproved && !isRegistered && !eventStarted;
   const showManualPaymentInstructions =
@@ -184,14 +195,19 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
     }
   }
 
+  const bodyText = eventDetailBodyText(event);
+  const showComingSoon = shouldShowEventComingSoon(event);
+  const recapFirst = event.is_past && event.has_recap;
+
   return (
     <section className="services section">
       <div className="container section-title" data-aos="fade-up">
-        <p className="small text-muted mb-2">
-          <Link href="/events" className="link-body-emphasis">
+        <p className="event-page-back mb-2">
+          <Link href="/events" className="event-page-back__link">
             ← All events
           </Link>
         </p>
+        <EventPageLinks className="mb-3" />
         <h1>{event.title}</h1>
         {event.short_description ? <p>{event.short_description}</p> : null}
       </div>
@@ -199,27 +215,40 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
       <div className="container" data-aos="fade-up" data-aos-delay="100">
         <div className="row gy-4">
           <div className="col-lg-8">
-            {event.cover_url ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={event.cover_url}
-                alt={event.title}
-                className="event-detail-cover mb-4"
-              />
-            ) : null}
-            {event.description ? (
+            <div className="event-detail-cover-wrap mb-4">
+              <EventStatusRibbon isPast={event.is_past} />
+              {event.cover_url ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={event.cover_url}
+                  alt={event.title}
+                  className="event-detail-cover"
+                />
+              ) : (
+                <div className="event-detail-cover event-detail-cover--placeholder">
+                  <i className="bi bi-calendar-event" aria-hidden />
+                </div>
+              )}
+            </div>
+            {recapFirst ? <EventRecapSection event={event} /> : null}
+
+            {bodyText ? (
               <div className="info-box">
-                {event.description.split("\n").map((para, i) => (
+                {bodyText.split("\n").map((para, i) => (
                   <p key={i} className={i === 0 ? "mb-3" : "mb-0"}>
                     {para}
                   </p>
                 ))}
               </div>
-            ) : (
+            ) : showComingSoon ? (
               <p className="text-muted">More details coming soon.</p>
-            )}
+            ) : null}
+
+            {!recapFirst ? <EventRecapSection event={event} /> : null}
           </div>
           <div className="col-lg-4">
+            <EventPastSidebar event={event} />
+
             <div className="info-box mb-4">
               <h2 className="h5 mb-3">Event details</h2>
               <ul className="event-meta-list">
@@ -260,7 +289,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
               </div>
             ) : null}
 
-            {!me ? (
+            {!eventStarted && !me ? (
               <div className="info-box">
                 <h3 className="h5 mb-3">Register for this event</h3>
                 <p className="mb-3">
@@ -274,7 +303,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
                   Join the community first
                 </Link>
               </div>
-            ) : communityPending ? (
+            ) : !eventStarted && communityPending ? (
               <div className="info-box">
                 <h3 className="h5 mb-3">Membership pending</h3>
                 <p className="mb-0 text-muted">
@@ -282,7 +311,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
                   register for events once you&apos;re approved.
                 </p>
               </div>
-            ) : !communityApproved ? (
+            ) : !eventStarted && !communityApproved ? (
               <div className="info-box">
                 <h3 className="h5 mb-3">Join the community</h3>
                 <p className="mb-3">
@@ -295,15 +324,9 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
                   Join the community
                 </Link>
               </div>
-            ) : me.role !== "member" ? (
+            ) : !eventStarted && me.role !== "member" ? (
               <div className="alert alert-warning">
                 Only Canma members can register for events.
-              </div>
-            ) : eventStarted ? (
-              <div className="info-box">
-                <p className="mb-0 text-muted">
-                  Registration is closed — this event has already started.
-                </p>
               </div>
             ) : isRegistered ? (
               <div className="info-box">
@@ -368,7 +391,7 @@ export function EventDetailClient({ event }: { event: PublicEvent }) {
                   <span className="badge text-bg-success">Registered</span>
                 )}
               </div>
-            ) : (
+            ) : eventStarted ? null : (
               <div className="info-box">
                 <h3 className="h5 mb-3">Register for this event</h3>
                 {!event.is_free ? (

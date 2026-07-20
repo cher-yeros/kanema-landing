@@ -1,5 +1,6 @@
 "use client";
 
+import { DEFAULT_AVATAR_SRC } from "@/lib/member-image";
 import { cropImageToSquareFile } from "@/lib/crop-image";
 import { communityAvatarUploadUrl } from "@/lib/graphql-env";
 import { useId, useRef, useState } from "react";
@@ -152,7 +153,7 @@ export function ProfilePictureUpload({
   return (
     <>
       <div>
-        <span className="form-label d-block">Profile picture (optional)</span>
+        <span className="form-label d-block">Profile picture</span>
         <div className="d-flex align-items-center gap-3 flex-wrap">
           <div
             className="rounded-circle overflow-hidden border bg-light flex-shrink-0"
@@ -167,15 +168,13 @@ export function ProfilePictureUpload({
                 style={{ objectFit: "cover" }}
               />
             ) : (
-              <div
-                className="w-100 h-100 d-flex align-items-center justify-content-center text-secondary"
-                aria-hidden
-              >
-                <i
-                  className="bi bi-person-fill"
-                  style={{ fontSize: "1.75rem" }}
-                />
-              </div>
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={DEFAULT_AVATAR_SRC}
+                alt=""
+                className="w-100 h-100"
+                style={{ objectFit: "cover" }}
+              />
             )}
           </div>
 

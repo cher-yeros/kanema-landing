@@ -65,7 +65,7 @@ export function ThreadComposer({
       });
       const id = (data as { createForumThread: { id: string } })
         .createForumThread.id;
-      router.push(`/forum/c/${communitySlug}/t/${id}`);
+      router.push(`/discussion/c/${communitySlug}/t/${id}`);
     } catch (err) {
       showApolloError(err, "Failed to create thread");
     }

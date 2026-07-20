@@ -39,10 +39,10 @@ export function ForumSearchClient({
 
   return (
     <ForumPageShell
-      title="Search forum"
+      title="Search discussions"
       description="Find threads, tags, gear discussions, and wiki articles."
-      backHref="/forum"
-      backLabel="Back to forum"
+      backHref="/discussion"
+      backLabel="Back to discussion"
     >
       <div className="form-panel form-panel--compact mb-4">
         <form className="php-email-form" onSubmit={search}>
@@ -99,7 +99,7 @@ export function ForumSearchClient({
               <ul className="list-unstyled">
                 {result.forumSearch.wiki_articles.map((a) => (
                   <li key={a.id} className="mb-2">
-                    <Link href={`/forum/wiki/${a.slug}`}>{a.title}</Link>
+                    <Link href={`/discussion/wiki/${a.slug}`}>{a.title}</Link>
                   </li>
                 ))}
               </ul>

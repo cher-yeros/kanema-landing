@@ -5,15 +5,22 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
 import { useEffect } from "react";
 
+import { communityMemberPath } from "@/lib/site-url";
 import { COMMUNITY_JOIN_INTEREST_OPTIONS } from "@/components/community/join-community-form-schema";
 import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
 import { memberImageSrc } from "@/lib/member-image";
+import {
+  selectAuthToken,
+  selectIsAuthenticated,
+} from "@/lib/store/auth-selectors";
+import { useAppSelector } from "@/lib/store/hooks";
 import type { GqlUser } from "@/types/election-apollo";
 
 type CommunityJoinProfile = {
   id: string;
+  slug: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
   full_name: string;
   email: string;
@@ -42,7 +49,7 @@ type MyProfileQuery = {
 const QUICK_LINKS = [
   { href: "/jobs/mine", label: "My gigs", icon: "bi-briefcase" },
   { href: "/events", label: "Events", icon: "bi-calendar-event" },
-  { href: "/forum", label: "Forum", icon: "bi-chat-dots" },
+  { href: "/discussion", label: "Discussion", icon: "bi-chat-dots" },
   { href: "/community", label: "Community", icon: "bi-people" },
 ] as const;
 
@@ -106,17 +113,25 @@ function ProfileField({
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { data, loading } = useQuery<MyProfileQuery>(MY_PROFILE_QUERY);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const token = useAppSelector(selectAuthToken);
+  const { data, loading } = useQuery<MyProfileQuery>(MY_PROFILE_QUERY, {
+    skip: !token,
+  });
   const me = data?.me;
   const communityJoin = data?.myCommunityJoin;
 
   useEffect(() => {
-    if (!loading && !me) {
-      router.replace(`/community?next=${encodeURIComponent("/profile")}`);
+    if (!isAuthenticated) {
+      router.replace(`/community/join?next=${encodeURIComponent("/profile")}`);
+      return;
     }
-  }, [loading, me, router]);
+    if (!loading && !me) {
+      router.replace(`/community/join?next=${encodeURIComponent("/profile")}`);
+    }
+  }, [isAuthenticated, loading, me, router]);
 
-  if (loading || !me) {
+  if (!isAuthenticated || loading || !me) {
     return (
       <section className="profile-section profile-section--loading">
         <div className="container text-center py-5">
@@ -126,17 +141,14 @@ export default function ProfilePage() {
     );
   }
 
-  const avatarSrc = memberImageSrc(
-    communityJoin?.avatar_url,
-    "person/person-m-1.webp",
-  );
+  const avatarSrc = memberImageSrc(communityJoin?.avatar_url);
   const displayRole = communityJoin
     ? communityRoleLabel(communityJoin.role)
     : me.role === "admin"
       ? "Administrator"
       : "Canma member";
-  const communityMemberId =
-    communityJoin?.status === "APPROVED" ? communityJoin.id : null;
+  const communityMemberSlug =
+    communityJoin?.status === "APPROVED" ? communityJoin.slug : null;
 
   return (
     <section className="profile-section">
@@ -199,11 +211,11 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {communityMemberId ? (
+            {communityMemberSlug ? (
               <div className="profile-hero__cta">
                 <Link
                   className="btn btn-accent"
-                  href={`/community/${communityMemberId}`}
+                  href={communityMemberPath(communityMemberSlug)}
                 >
                   <i className="bi bi-box-arrow-up-right" aria-hidden />
                   View public profile
@@ -289,7 +301,7 @@ export default function ProfilePage() {
                   </p>
                   <Link
                     className="btn btn-accent btn-sm"
-                    href="/community#join"
+                    href="/community/join"
                   >
                     Join the community
                   </Link>
@@ -318,10 +330,10 @@ export default function ProfilePage() {
                     </Link>
                   </li>
                 ))}
-                {communityMemberId ? (
+                {communityMemberSlug ? (
                   <li>
                     <Link
-                      href={`/community/${communityMemberId}`}
+                      href={communityMemberPath(communityMemberSlug)}
                       className="profile-quick-nav__link"
                     >
                       <i className="bi bi-easel" aria-hidden />
@@ -335,11 +347,11 @@ export default function ProfilePage() {
                 ) : null}
                 <li>
                   <Link
-                    href={`/forum/u/${me.id}`}
+                    href={`/discussion/u/${me.id}`}
                     className="profile-quick-nav__link"
                   >
                     <i className="bi bi-chat-square-text" aria-hidden />
-                    <span>Forum profile</span>
+                    <span>Discussion profile</span>
                     <i
                       className="bi bi-chevron-right profile-quick-nav__chevron"
                       aria-hidden
@@ -355,7 +367,7 @@ export default function ProfilePage() {
             data-aos="fade-up"
             data-aos-delay="150"
           >
-            <ProfileEditorSection communityMemberId={communityMemberId} />
+            <ProfileEditorSection communityMemberSlug={communityMemberSlug} />
           </div>
         </div>
       </div>

@@ -1,13 +1,22 @@
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   fetchMarketplaceListings,
   fetchMarketplaceStores,
 } from "@/lib/marketplace-public";
+import {
+  MARKETPLACE_PRIMARY_PATH,
+  MARKETPLACE_PRODUCTS_ONLY,
+} from "@/lib/marketplace-config";
 import { MarketplaceListingCard } from "@/components/marketplace/MarketplaceListingCard";
 import { MarketplaceModuleCard } from "@/components/marketplace/MarketplaceModuleCard";
 import { MarketplaceHeroActions } from "@/components/marketplace/MarketplaceHeroActions";
 
 export default async function MarketplaceHubPage() {
+  if (MARKETPLACE_PRODUCTS_ONLY) {
+    redirect(MARKETPLACE_PRIMARY_PATH);
+  }
+
   let featured: Awaited<ReturnType<typeof fetchMarketplaceListings>> = [];
   let stores: Awaited<ReturnType<typeof fetchMarketplaceStores>> = [];
   try {

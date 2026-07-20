@@ -1,6 +1,12 @@
 import Link from "next/link";
 import { timeAgo } from "./forum-utils";
 
+export type ThreadCardMedia = {
+  id: string;
+  kind: string;
+  url: string;
+};
+
 export type ThreadCardData = {
   id: string;
   title: string;
@@ -12,10 +18,53 @@ export type ThreadCardData = {
   author: { id: string; full_name: string };
   community: { slug: string; name: string; icon_url?: string | null };
   tags?: Array<{ slug: string; name: string }>;
+  media?: ThreadCardMedia[];
 };
+
+function threadPreviewMedia(
+  media: ThreadCardMedia[] | undefined,
+): ThreadCardMedia | null {
+  if (!media?.length) return null;
+  return (
+    media.find((item) => item.kind === "image") ??
+    media.find((item) => item.kind === "video") ??
+    null
+  );
+}
+
+function ThreadCardMediaPreview({ media }: { media: ThreadCardMedia }) {
+  if (media.kind === "image") {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img src={media.url} alt="" loading="lazy" />
+    );
+  }
+
+  if (media.kind === "video") {
+    return (
+      <>
+        <video
+          src={media.url}
+          muted
+          playsInline
+          preload="metadata"
+          aria-hidden
+        />
+        <span className="forum-thread-card__media-play" aria-hidden>
+          <i className="bi bi-play-fill" />
+        </span>
+      </>
+    );
+  }
+
+  return null;
+}
 
 export function ThreadCard({ thread }: { thread: ThreadCardData }) {
   const excerpt = (thread.body_md ?? "").slice(0, 160);
+  const previewMedia = threadPreviewMedia(thread.media);
+  const threadHref = `/discussion/c/${thread.community.slug}/t/${thread.id}`;
+
   return (
     <article className="offering-block p-3 mb-3">
       <div className="d-flex gap-3">
@@ -23,7 +72,7 @@ export function ThreadCard({ thread }: { thread: ThreadCardData }) {
           <div className="fw-bold text-success">{thread.score}</div>
           <div className="small text-muted">votes</div>
         </div>
-        <div className="flex-grow-1">
+        <div className="flex-grow-1 min-w-0">
           <div className="d-flex flex-wrap gap-2 align-items-center mb-1 small text-muted">
             <span>
               {thread.community.icon_url} {thread.community.name}
@@ -38,7 +87,7 @@ export function ThreadCard({ thread }: { thread: ThreadCardData }) {
           </div>
           <h3 className="h5 mb-1">
             <Link
-              href={`/forum/c/${thread.community.slug}/t/${thread.id}`}
+              href={threadHref}
               className="text-decoration-none forum-thread-title"
             >
               {thread.title}
@@ -49,7 +98,7 @@ export function ThreadCard({ thread }: { thread: ThreadCardData }) {
             {thread.tags?.map((t) => (
               <Link
                 key={t.slug}
-                href={`/forum/tags/${t.slug}`}
+                href={`/discussion/tags/${t.slug}`}
                 className="badge forum-tag-badge text-decoration-none"
               >
                 {t.name}
@@ -61,6 +110,20 @@ export function ThreadCard({ thread }: { thread: ThreadCardData }) {
             </span>
           </div>
         </div>
+        {previewMedia ? (
+          <Link
+            href={threadHref}
+            className={`forum-thread-card__media${
+              previewMedia.kind === "video"
+                ? " forum-thread-card__media--video"
+                : ""
+            }`}
+            aria-label={`View thread: ${thread.title}`}
+            tabIndex={-1}
+          >
+            <ThreadCardMediaPreview media={previewMedia} />
+          </Link>
+        ) : null}
       </div>
     </article>
   );

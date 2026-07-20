@@ -17,11 +17,11 @@ export default async function WikiIndexPage() {
     <ForumPageShell
       title="Knowledge base"
       description="Community-maintained guides with full version history."
-      backHref="/forum"
-      backLabel="Back to forum"
+      backHref="/discussion"
+      backLabel="Back to discussion"
     >
       <div className="d-flex justify-content-end mb-4">
-        <Link href="/forum/wiki/new" className="btn btn-accent">
+        <Link href="/discussion/wiki/new" className="btn btn-accent">
           <i className="bi bi-plus-circle" />
           New article
         </Link>
@@ -30,7 +30,7 @@ export default async function WikiIndexPage() {
         {articles.articles.map((a) => (
           <div key={a.id} className="col-md-6">
             <Link
-              href={`/forum/wiki/${a.slug}`}
+              href={`/discussion/wiki/${a.slug}`}
               className="offering-block p-3 text-decoration-none d-block h-100 forum-community-card"
             >
               <h2 className="h6 mb-1">{a.title}</h2>

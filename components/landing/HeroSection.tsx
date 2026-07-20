@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const HERO_BG_IMAGE = "/img/hero/hero-bg.png";
 const HERO_SHOWCASE_IMAGE = "/img/about/about-wide-2.png";
 
@@ -30,13 +32,13 @@ export function HeroSection() {
                 together in one creative ecosystem.
               </p>
               <div className="hero-actions">
-                <a href="#contact" className="btn btn-accent">
+                <Link href="/community/join" className="btn btn-accent">
                   <i className="bi bi-arrow-right-circle me-2" />
                   Join the Community
-                </a>
-                <a href="#showcase" className="btn btn-ghost">
+                </Link>
+                <Link href="/community#team" className="btn btn-ghost">
                   Explore Talent
-                </a>
+                </Link>
               </div>
             </div>
           </div>
