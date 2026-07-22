@@ -47,7 +47,7 @@ type MyProfileQuery = {
 };
 
 const QUICK_LINKS = [
-  { href: "/jobs/mine", label: "My gigs", icon: "bi-briefcase" },
+  { href: "/jobs/mine", label: "My Jobs", icon: "bi-briefcase" },
   { href: "/events", label: "Events", icon: "bi-calendar-event" },
   { href: "/discussion", label: "Discussion", icon: "bi-chat-dots" },
   { href: "/community", label: "Community", icon: "bi-people" },

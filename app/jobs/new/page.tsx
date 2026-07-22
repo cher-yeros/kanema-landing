@@ -6,19 +6,31 @@ import { useMutation, useQuery } from "@apollo/client/react";
 import { useEffect, useMemo, useState } from "react";
 
 import { ME_QUERY } from "@/lib/election-graphql";
-import { PAYMENT_SETTINGS_QUERY } from "@/lib/events-graphql";
 import {
   CREATE_PRODUCTION_JOB_MUTATION,
   JOB_POSTING_QUOTA_QUERY,
-  redirectToChapaCheckout,
 } from "@/lib/jobs-graphql";
 import {
-  JOBS_BOOST_ADDONS,
+  JOB_EMPLOYMENT_CATEGORY_LABELS,
+  JOB_WORK_TYPE_LABELS,
+} from "@/lib/jobs-filter-config";
+import {
   JOBS_FREE_MONTHLY_POST_LIMIT,
   JOBS_STANDARD_PER_JOB_PRICE,
   formatJobsPrice,
 } from "@/lib/jobs-pricing-config";
 import type { MeQuery } from "@/types/election-apollo";
+import { JobSkillsInput } from "@/components/jobs/JobSkillsInput";
+
+const JOB_SKILL_SUGGESTIONS = [
+  ...JOB_WORK_TYPE_LABELS.slice(0, 8),
+  "DaVinci Resolve",
+  "Premiere Pro",
+  "After Effects",
+  "Lighting",
+  "Sound",
+  "Drone",
+];
 
 type CreateJobData = {
   createProductionJob: {
@@ -34,10 +46,6 @@ export default function NewProductionJobPage() {
   const router = useRouter();
   const { data: meData, loading: meLoading } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
-  const { data: paymentData } = useQuery<{
-    paymentSettings: { chapaEnabled: boolean };
-  }>(PAYMENT_SETTINGS_QUERY);
-  const chapaEnabled = paymentData?.paymentSettings.chapaEnabled === true;
   const { data: quotaData } = useQuery<{
     jobPostingQuota: {
       free_posts_used_this_month: number;
@@ -59,30 +67,25 @@ export default function NewProductionJobPage() {
   const [modality, setModality] = useState("");
   const [location, setLocation] = useState("");
   const [roleTag, setRoleTag] = useState("");
-  const [selectedBoosts, setSelectedBoosts] = useState<string[]>([]);
+  const [budgetType, setBudgetType] = useState("");
+  const [budgetMin, setBudgetMin] = useState("");
+  const [budgetMax, setBudgetMax] = useState("");
+  const [skills, setSkills] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const quota = quotaData?.jobPostingQuota;
-  const estimatedTotal = useMemo(() => {
+  const estimatedBaseFee = useMemo(() => {
     const base = Number.parseFloat(quota?.next_post_fee_amount ?? "0");
-    const boosts = selectedBoosts.reduce((sum, id) => {
-      const addon = JOBS_BOOST_ADDONS.find((b) => b.id === id);
-      return sum + (addon?.price ?? 0);
-    }, 0);
-    return base + boosts;
-  }, [quota?.next_post_fee_amount, selectedBoosts]);
+    return Number.isFinite(base) ? Math.max(0, base) : 0;
+  }, [quota?.next_post_fee_amount]);
 
   useEffect(() => {
     if (!meLoading && !me) {
-      router.replace(`/election/login?next=${encodeURIComponent("/jobs/new")}`);
+      router.replace(
+        `/community/join?mode=signin&next=${encodeURIComponent("/jobs/new")}`,
+      );
     }
   }, [me, meLoading, router]);
-
-  function toggleBoost(id: string) {
-    setSelectedBoosts((prev) =>
-      prev.includes(id) ? prev.filter((b) => b !== id) : [...prev, id],
-    );
-  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -96,7 +99,11 @@ export default function NewProductionJobPage() {
             modality: modality.trim() || null,
             location: location.trim() || null,
             role_tag: roleTag.trim() || null,
-            boost_ids: selectedBoosts.length > 0 ? selectedBoosts : null,
+            skills: skills.length > 0 ? skills : null,
+            budget_type: budgetType.trim() || null,
+            budget_min: budgetMin.trim() || null,
+            budget_max: budgetMax.trim() || null,
+            budget_currency: "ETB",
           },
         },
       });
@@ -105,28 +112,9 @@ export default function NewProductionJobPage() {
         throw new Error(payload?.message || "Could not create posting.");
       }
 
-      const needsPayment = payload.job.posting_payment_status === "PENDING";
-      if (needsPayment && chapaEnabled) {
-        if (
-          !redirectToChapaCheckout({
-            checkout_url: payload.checkout_url,
-            message: payload.message,
-            status: payload.status,
-          })
-        ) {
-          router.push("/jobs/mine");
-          return;
-        }
-        return;
-      }
-
-      if (needsPayment) {
-        throw new Error(
-          "Posting saved but online payment is required before it goes live.",
-        );
-      }
-
-      router.push(`/jobs/${payload.job.id}`);
+      router.push(
+        `/jobs/mine?submitted=1&msg=${encodeURIComponent(payload.message)}`,
+      );
     } catch (err: unknown) {
       setError(
         err instanceof Error ? err.message : "Could not create posting.",
@@ -153,8 +141,9 @@ export default function NewProductionJobPage() {
       <div className="container section-title" data-aos="fade-up">
         <h1>Post a production role</h1>
         <p>
-          Signed in as <strong>{me.full_name}</strong>. Paid postings go live
-          after Chapa confirms payment; free-tier posts publish immediately.
+          Signed in as <strong>{me.full_name}</strong>. Submissions go to admin
+          review first. After approval, free/subscription posts go live; paid
+          posts need payment before they appear on the board.
         </p>
         {quota ? (
           <p className="small text-muted mb-2">
@@ -181,7 +170,7 @@ export default function NewProductionJobPage() {
                 Number.parseFloat(quota.next_post_fee_amount) > 0 ? (
                   <>
                     {" · "}
-                    Next post estimate (incl. boosts):{" "}
+                    Next post estimate:{" "}
                     <strong>
                       {formatJobsPrice(
                         Number.parseFloat(quota.next_post_fee_amount),
@@ -223,14 +212,12 @@ export default function NewProductionJobPage() {
             )}
           </p>
         ) : null}
-        <p className="small text-muted mb-0">
-          <Link href="/jobs/pricing" className="link-body-emphasis">
-            Employer pricing
-          </Link>
-          {" · "}
-          <Link href="/jobs" className="link-body-emphasis">
-            Back to job center
-          </Link>
+        <p className="jobs-page-links">
+          <Link href="/jobs/pricing">Employer pricing</Link>
+          <span className="jobs-page-links__sep" aria-hidden>
+            ·
+          </span>
+          <Link href="/jobs">Back to job center</Link>
         </p>
       </div>
 
@@ -271,27 +258,98 @@ export default function NewProductionJobPage() {
                 </div>
                 <div className="row g-3">
                   <div className="col-md-6">
-                    <label className="form-label" htmlFor="tag">
-                      Lane tag
+                    <label className="form-label" htmlFor="category">
+                      Category
                     </label>
-                    <input
-                      id="tag"
-                      className="form-control"
-                      value={roleTag}
-                      onChange={(e) => setRoleTag(e.target.value)}
-                      placeholder="On set · Post · Hybrid"
-                    />
-                  </div>
-                  <div className="col-md-6">
-                    <label className="form-label" htmlFor="modality">
-                      Modality
-                    </label>
-                    <input
-                      id="modality"
-                      className="form-control"
+                    <select
+                      id="category"
+                      className="form-select"
                       value={modality}
                       onChange={(e) => setModality(e.target.value)}
-                      placeholder="Remote-first, hybrid…"
+                    >
+                      <option value="">Select employment type…</option>
+                      {JOB_EMPLOYMENT_CATEGORY_LABELS.map((label) => (
+                        <option key={label} value={label}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label" htmlFor="work-type">
+                      Work type
+                    </label>
+                    <select
+                      id="work-type"
+                      className="form-select"
+                      value={roleTag}
+                      onChange={(e) => setRoleTag(e.target.value)}
+                    >
+                      <option value="">Select creative role…</option>
+                      {JOB_WORK_TYPE_LABELS.map((label) => (
+                        <option key={label} value={label}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="col-12">
+                    <label className="form-label" htmlFor="budget-type">
+                      Budget type
+                    </label>
+                    <select
+                      id="budget-type"
+                      className="form-select"
+                      value={budgetType}
+                      onChange={(e) => setBudgetType(e.target.value)}
+                    >
+                      <option value="">Select budget type…</option>
+                      <option value="Fixed">Fixed price</option>
+                      <option value="Hourly">Hourly</option>
+                      <option value="Negotiable">Negotiable</option>
+                    </select>
+                  </div>
+                  {budgetType && budgetType !== "Negotiable" ? (
+                    <div className="col-md-6">
+                      <label className="form-label" htmlFor="budget-min">
+                        {budgetType === "Hourly"
+                          ? "Rate min (ETB/hr)"
+                          : "Budget min (ETB)"}
+                      </label>
+                      <input
+                        id="budget-min"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        className="form-control"
+                        value={budgetMin}
+                        onChange={(e) => setBudgetMin(e.target.value)}
+                        placeholder="0"
+                      />
+                    </div>
+                  ) : null}
+                  {budgetType === "Fixed" ? (
+                    <div className="col-md-6">
+                      <label className="form-label" htmlFor="budget-max">
+                        Budget max (ETB)
+                      </label>
+                      <input
+                        id="budget-max"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        className="form-control"
+                        value={budgetMax}
+                        onChange={(e) => setBudgetMax(e.target.value)}
+                        placeholder="Optional"
+                      />
+                    </div>
+                  ) : null}
+                  <div className="col-12">
+                    <JobSkillsInput
+                      value={skills}
+                      onChange={setSkills}
+                      suggestions={JOB_SKILL_SUGGESTIONS}
                     />
                   </div>
                   <div className="col-12">
@@ -308,46 +366,17 @@ export default function NewProductionJobPage() {
                   </div>
                 </div>
 
-                <div className="mt-4">
-                  <h2 className="h6 mb-2">Optional boosts</h2>
-                  <p className="small text-muted mb-3">
-                    Add visibility when you need to fill a role faster.
-                  </p>
-                  <div className="d-flex flex-column gap-2">
-                    {JOBS_BOOST_ADDONS.map((addon) => (
-                      <label
-                        key={addon.id}
-                        className="d-flex align-items-start gap-2 small"
-                      >
-                        <input
-                          type="checkbox"
-                          className="form-check-input mt-1"
-                          checked={selectedBoosts.includes(addon.id)}
-                          onChange={() => toggleBoost(addon.id)}
-                        />
-                        <span>
-                          <strong>{addon.name}</strong>
-                          <span className="text-muted">
-                            {" "}
-                            — {formatJobsPrice(addon.price)}
-                          </span>
-                        </span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="info-box mt-4 mb-0">
                   <p className="mb-0 small">
-                    Estimated total for this post:{" "}
+                    Estimated base fee after approval (informational):{" "}
                     <strong>
-                      {estimatedTotal <= 0
+                      {estimatedBaseFee <= 0
                         ? "Free"
-                        : formatJobsPrice(estimatedTotal)}
+                        : formatJobsPrice(estimatedBaseFee)}
                     </strong>
-                    {estimatedTotal > 0 && chapaEnabled
-                      ? " · you will be redirected to Chapa after saving"
-                      : null}
+                    {" · "}
+                    Optional boosts are chosen later at checkout after admin
+                    approval.
                   </p>
                 </div>
 
@@ -360,13 +389,7 @@ export default function NewProductionJobPage() {
                   disabled={loading}
                 >
                   <i className="bi bi-check2-circle" />
-                  <span>
-                    {loading
-                      ? "Saving…"
-                      : estimatedTotal > 0
-                        ? "Save & pay with Chapa"
-                        : "Publish open role"}
-                  </span>
+                  <span>{loading ? "Submitting…" : "Submit for review"}</span>
                 </button>
               </form>
             </div>

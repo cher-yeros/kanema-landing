@@ -9,6 +9,11 @@ export const PRODUCTION_JOB_FIELDS = gql`
     modality
     location
     role_tag
+    skills
+    budget_type
+    budget_min
+    budget_max
+    budget_currency
     status
     posting_fee_amount
     posting_fee_currency
@@ -18,6 +23,7 @@ export const PRODUCTION_JOB_FIELDS = gql`
     poster {
       id
       full_name
+      is_verified
     }
     application_count
     createdAt
@@ -75,7 +81,9 @@ export const MY_EMPLOYER_JOB_PAYMENT_BY_TX_REF_QUERY = gql`
 `;
 
 export const INITIATE_EMPLOYER_JOB_PAYMENT_MUTATION = gql`
-  mutation InitiateEmployerJobPayment($input: InitiateEmployerJobPaymentInput!) {
+  mutation InitiateEmployerJobPayment(
+    $input: InitiateEmployerJobPaymentInput!
+  ) {
     initiateEmployerJobPayment(input: $input) {
       status
       message
@@ -158,8 +166,8 @@ export const CREATE_PRODUCTION_JOB_MUTATION = gql`
 `;
 
 export const INITIATE_JOB_POSTING_PAYMENT_MUTATION = gql`
-  mutation InitiateJobPostingPayment($job_id: ID!) {
-    initiateJobPostingPayment(job_id: $job_id) {
+  mutation InitiateJobPostingPayment($job_id: ID!, $boost_ids: [String!]) {
+    initiateJobPostingPayment(job_id: $job_id, boost_ids: $boost_ids) {
       status
       message
       checkout_url

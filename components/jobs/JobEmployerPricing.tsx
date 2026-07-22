@@ -154,8 +154,8 @@ export function JobEmployerPricing({
           <h2 id="subscriptionHeading">Employer subscription plans</h2>
           <p>
             Save {JOBS_ANNUAL_BILLING_DISCOUNT_PERCENT}% with annual billing.
-            Frequent hirers get included postings each month—no per-job fee until
-            quota is used.
+            Frequent hirers get included postings each month—no per-job fee
+            until quota is used.
           </p>
         </div>
 
@@ -246,8 +246,9 @@ export function JobEmployerPricing({
         <div className="container section-title" data-aos="fade-up">
           <h2 id="boostsHeading">Optional job boosts</h2>
           <p>
-            Add visibility when you need to fill a role fast—select boosts when
-            posting a role; they are charged on top of any base posting fee.
+            Add visibility when you need to fill a role fast—select boosts at
+            checkout after your posting is approved; they are charged on top of
+            any base posting fee.
           </p>
         </div>
 
@@ -284,9 +285,9 @@ export function JobEmployerPricing({
         <div className="container section-title" data-aos="fade-up">
           <h2 id="valueComparisonHeading">Value comparison</h2>
           <p>
-            At {formatJobsPrice(JOBS_STANDARD_PER_JOB_PRICE)} per individual job,
-            anyone posting more than {breakEven} jobs per month already saves
-            with Starter—subscriptions stay attractive as volume grows.
+            At {formatJobsPrice(JOBS_STANDARD_PER_JOB_PRICE)} per individual
+            job, anyone posting more than {breakEven} jobs per month already
+            saves with Starter—subscriptions stay attractive as volume grows.
           </p>
         </div>
 

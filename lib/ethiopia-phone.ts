@@ -16,3 +16,15 @@ export function formatEthiopiaPhoneForApi(local: string): string {
   const digits = sanitizeEthiopiaLocalPhoneInput(local);
   return `${ETHIOPIA_PHONE_COUNTRY_CODE}${digits}`;
 }
+
+/** Parse stored +251… or local digits into 9-digit local form for inputs. */
+export function parseEthiopiaPhoneFromApi(
+  phone: string | null | undefined,
+): string {
+  if (!phone?.trim()) return "";
+  const digits = phone.replace(/\D/g, "");
+  if (digits.startsWith("251") && digits.length >= 12) {
+    return digits.slice(3, 12);
+  }
+  return sanitizeEthiopiaLocalPhoneInput(digits);
+}

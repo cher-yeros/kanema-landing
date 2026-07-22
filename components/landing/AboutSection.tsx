@@ -45,8 +45,8 @@ export function AboutSection() {
                   <span className="point-number">03</span>
                   <div className="point-text">
                     <h5>
-                      Job and gig opportunities scattered across chats and word
-                      of mouth.
+                      Job opportunities scattered across chats and word of
+                      mouth.
                     </h5>
                   </div>
                 </div>

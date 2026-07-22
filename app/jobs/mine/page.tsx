@@ -1,17 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useMutation, useQuery } from "@apollo/client/react";
-import { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useQuery } from "@apollo/client/react";
+import { Suspense, useEffect } from "react";
 
+import { JobPaymentBoostsPanel } from "@/components/jobs/JobPaymentBoostsPanel";
 import { ME_QUERY } from "@/lib/election-graphql";
 import { PAYMENT_SETTINGS_QUERY } from "@/lib/events-graphql";
 import {
-  INITIATE_JOB_POSTING_PAYMENT_MUTATION,
   MY_JOB_APPLICATIONS_QUERY,
   MY_POSTED_JOBS_QUERY,
-  redirectToChapaCheckout,
 } from "@/lib/jobs-graphql";
 import { formatJobsPrice } from "@/lib/jobs-pricing-config";
 import type { MeQuery } from "@/types/election-apollo";
@@ -38,8 +37,28 @@ type AppsMineData = {
   }[];
 };
 
-export default function JobsMinePage() {
+function jobStatusLabel(status: string): string {
+  switch (status) {
+    case "PENDING_REVIEW":
+      return "Under review";
+    case "REJECTED":
+      return "Rejected";
+    case "OPEN":
+      return "Open";
+    case "CLOSED":
+      return "Closed";
+    case "FILLED":
+      return "Filled";
+    default:
+      return status;
+  }
+}
+
+function JobsMinePageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const submitted = searchParams.get("submitted") === "1";
+  const submittedMsg = searchParams.get("msg");
   const { data: meData, loading: meLoading } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
   const { data: paymentData } = useQuery<{
@@ -55,35 +74,14 @@ export default function JobsMinePage() {
     MY_JOB_APPLICATIONS_QUERY,
     { skip: !me },
   );
-  const [initiatePayment, { loading: paying }] = useMutation<{
-    initiateJobPostingPayment: {
-      status: string;
-      message: string;
-      checkout_url?: string | null;
-    };
-  }>(INITIATE_JOB_POSTING_PAYMENT_MUTATION);
 
   useEffect(() => {
     if (!meLoading && !me) {
       router.replace(
-        `/election/login?next=${encodeURIComponent("/jobs/mine")}`,
+        `/community/join?mode=signin&next=${encodeURIComponent("/jobs/mine")}`,
       );
     }
   }, [me, meLoading, router]);
-
-  async function payForJob(jobId: string) {
-    try {
-      const { data } = await initiatePayment({ variables: { job_id: jobId } });
-      const payload = data?.initiateJobPostingPayment;
-      if (!redirectToChapaCheckout(payload)) {
-        throw new Error(payload?.message || "Could not start checkout.");
-      }
-    } catch (err: unknown) {
-      window.alert(
-        err instanceof Error ? err.message : "Could not start payment.",
-      );
-    }
-  }
 
   if (meLoading || !me) {
     return (
@@ -115,6 +113,13 @@ export default function JobsMinePage() {
       </div>
 
       <div className="container pb-5">
+        {submitted ? (
+          <div className="alert alert-success mb-4" role="status">
+            {submittedMsg?.trim() ||
+              "Your job posting was submitted and is under review."}
+          </div>
+        ) : null}
+
         <div className="row gy-5">
           <div className="col-lg-6">
             <h2 className="h4 mb-3">My postings</h2>
@@ -123,7 +128,16 @@ export default function JobsMinePage() {
             ) : null}
             <ul className="list-unstyled d-flex flex-column gap-3">
               {myJobs.map((j) => {
-                const pendingPayment = j.posting_payment_status === "PENDING";
+                const underReview = j.status === "PENDING_REVIEW";
+                const rejected = j.status === "REJECTED";
+                const pendingPayment =
+                  j.status === "OPEN" && j.posting_payment_status === "PENDING";
+                const liveFree =
+                  j.status === "OPEN" && j.posting_payment_status === "FREE";
+                const live =
+                  j.status === "OPEN" &&
+                  (j.posting_payment_status === "FREE" ||
+                    j.posting_payment_status === "CONFIRMED");
                 const fee = Number.parseFloat(j.posting_fee_amount);
                 const feeLabel = Number.isFinite(fee)
                   ? formatJobsPrice(fee)
@@ -133,52 +147,72 @@ export default function JobsMinePage() {
                   <li key={j.id} className="offering-block p-4">
                     <div className="d-flex justify-content-between flex-wrap gap-2 mb-2">
                       <strong>{j.title}</strong>
-                      <span className="small text-muted text-uppercase">
-                        {j.status}
+                      <span className="small text-muted">
+                        {jobStatusLabel(j.status)}
                       </span>
                     </div>
+                    {underReview ? (
+                      <p className="small mb-2">
+                        <span className="badge text-bg-warning">
+                          Under review
+                        </span>
+                        <span className="text-muted ms-2">
+                          An admin will approve this before it can go live.
+                        </span>
+                      </p>
+                    ) : null}
+                    {rejected ? (
+                      <p className="small mb-2">
+                        <span className="badge text-bg-danger">Rejected</span>
+                        <span className="text-muted ms-2">
+                          This posting was not approved.
+                        </span>
+                      </p>
+                    ) : null}
                     {pendingPayment ? (
                       <p className="small mb-2">
                         <span className="badge text-bg-warning">
                           Awaiting payment
                         </span>
                         <span className="text-muted ms-2">
-                          {feeLabel} to publish on the board
+                          Base fee {feeLabel} · add optional boosts below
                         </span>
                       </p>
-                    ) : (
+                    ) : null}
+                    {live ? (
                       <p className="small mb-3">
                         {j.application_count} applicant
                         {j.application_count === 1 ? "" : "s"}
                       </p>
-                    )}
+                    ) : null}
+                    {pendingPayment || liveFree ? (
+                      <div className="mb-3">
+                        <JobPaymentBoostsPanel
+                          jobId={j.id}
+                          baseFeeAmount={
+                            pendingPayment ? j.posting_fee_amount : "0"
+                          }
+                          chapaEnabled={chapaEnabled}
+                          onPaid={() => void refetch()}
+                        />
+                      </div>
+                    ) : null}
                     <div className="d-flex flex-wrap gap-2">
-                      {pendingPayment && chapaEnabled ? (
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-accent"
-                          disabled={paying}
-                          onClick={() => void payForJob(j.id)}
+                      <Link
+                        className="btn btn-sm btn-outline-secondary"
+                        href={`/jobs/${j.id}`}
+                      >
+                        View
+                      </Link>
+                      {live ? (
+                        <Link
+                          className="btn btn-sm btn-outline-primary"
+                          href={`/jobs/${j.id}/applicants`}
                         >
-                          {paying ? "Starting…" : "Pay with Chapa"}
-                        </button>
+                          Applicants
+                        </Link>
                       ) : null}
-                      {!pendingPayment ? (
-                        <>
-                          <Link
-                            className="btn btn-sm btn-accent"
-                            href={`/jobs/${j.id}`}
-                          >
-                            View
-                          </Link>
-                          <Link
-                            className="btn btn-sm btn-outline-primary"
-                            href={`/jobs/${j.id}/applicants`}
-                          >
-                            Applicants
-                          </Link>
-                        </>
-                      ) : (
+                      {pendingPayment || underReview ? (
                         <button
                           type="button"
                           className="btn btn-sm btn-outline-secondary"
@@ -186,7 +220,7 @@ export default function JobsMinePage() {
                         >
                           Refresh status
                         </button>
-                      )}
+                      ) : null}
                     </div>
                   </li>
                 );
@@ -220,5 +254,19 @@ export default function JobsMinePage() {
         </div>
       </div>
     </section>
+  );
+}
+
+export default function JobsMinePage() {
+  return (
+    <Suspense
+      fallback={
+        <section className="section py-5 text-center">
+          <p className="text-muted">Loading dashboard…</p>
+        </section>
+      }
+    >
+      <JobsMinePageInner />
+    </Suspense>
   );
 }

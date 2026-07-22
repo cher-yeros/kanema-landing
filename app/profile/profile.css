@@ -374,6 +374,19 @@
   text-decoration: underline;
 }
 
+.profile-page .profile-save-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--accent-color), black 10%);
+}
+
+.profile-page .profile-save-notice .bi {
+  color: var(--accent-color);
+}
+
 /* Contact-page form pattern inside profile cards */
 .profile-page .contact .form-panel--embedded {
   background: transparent;

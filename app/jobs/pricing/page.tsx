@@ -4,7 +4,7 @@ import Link from "next/link";
 import { JobEmployerPricing } from "@/components/jobs/JobEmployerPricing";
 
 export const metadata: Metadata = {
-  title: "Employer pricing — Creative gigs — Canma",
+  title: "Employer pricing — Creative Jobs — Canma",
   description:
     "Canma employer pricing for creative job postings: free tier, pay-per-job, subscription plans, optional boosts, and value comparison in ETB.",
 };
@@ -31,7 +31,7 @@ export default function JobEmployerPricingPage() {
                   </Link>
                   <Link href="/jobs" className="btn btn-ghost">
                     <i className="bi bi-briefcase me-2" aria-hidden />
-                    Browse gigs
+                    Browse Jobs
                   </Link>
                 </div>
               </div>

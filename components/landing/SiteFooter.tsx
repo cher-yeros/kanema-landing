@@ -81,7 +81,7 @@ export function SiteFooter() {
                 </li>
               ) : null}
               <li>
-                <Link href="/jobs">Creative gigs</Link>
+                <Link href="/jobs">Creative Jobs</Link>
               </li>
             </ul>
           </div>

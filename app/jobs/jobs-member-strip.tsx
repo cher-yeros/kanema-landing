@@ -12,7 +12,7 @@ export function JobsMemberStrip() {
   if (loading) {
     return (
       <section
-        className="section py-4"
+        className="jobs-member-strip section"
         style={{ background: "rgba(0,0,0,.02)" }}
       >
         <div className="container">
@@ -27,7 +27,7 @@ export function JobsMemberStrip() {
   if (!me) {
     return (
       <section
-        className="section py-4"
+        className="jobs-member-strip section"
         style={{ background: "rgba(0,0,0,.02)" }}
       >
         <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
@@ -38,11 +38,8 @@ export function JobsMemberStrip() {
             </span>
           </div>
           <div className="d-flex flex-wrap gap-2">
-            <Link
-              className="btn btn-sm btn-accent"
-              href={`/community/join?mode=signin&next=${encodeURIComponent("/jobs")}`}
-            >
-              Sign in
+            <Link className="btn btn-sm btn-accent" href="/jobs/new">
+              Post a job
             </Link>
             <Link className="btn btn-sm btn-ghost" href="/community/join">
               Join community
@@ -54,7 +51,10 @@ export function JobsMemberStrip() {
   }
 
   return (
-    <section className="section py-4" style={{ background: "rgba(0,0,0,.02)" }}>
+    <section
+      className="jobs-member-strip section"
+      style={{ background: "rgba(0,0,0,.02)" }}
+    >
       <div className="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
         <div>
           <strong>Signed in as {me.full_name}</strong>
@@ -65,7 +65,7 @@ export function JobsMemberStrip() {
                 views below.
               </>
             ) : (
-              <>Browse open roles above or jump to your dashboard.</>
+              <>Browse open roles below or jump to your dashboard.</>
             )}
           </span>
         </div>

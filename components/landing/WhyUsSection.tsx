@@ -17,7 +17,7 @@ export function WhyUsSection() {
               <h3>A centralized home for visual storytellers</h3>
               <p className="lead">
                 Many talented creatives struggle with limited reach, fragmented
-                networks, and gigs that never leave private chats. Canma brings
+                networks, and jobs that never leave private chats. Canma brings
                 portfolios, opportunities, events, and learning into one trusted
                 ecosystem.
               </p>
@@ -40,7 +40,7 @@ export function WhyUsSection() {
                     <h5>Connect talent with demand</h5>
                     <p>
                       From weddings to commercial campaigns, post and discover
-                      roles, freelance gigs, collaborations, and funding leads.
+                      roles, freelance jobs, collaborations, and funding leads.
                     </p>
                   </div>
                 </div>
@@ -133,7 +133,7 @@ export function WhyUsSection() {
                   <span className="counter-unit">opportunity types</span>
                 </div>
               </div>
-              <h4>Jobs, gigs, grants</h4>
+              <h4>Jobs and grants</h4>
               <p>
                 Full-time roles, freelance briefs, collaborations, and funding
                 signals—structured so demand meets skilled visual storytellers.

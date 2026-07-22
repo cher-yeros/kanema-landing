@@ -280,8 +280,16 @@ export type PublicProductionJob = {
   modality: string | null;
   location: string | null;
   role_tag: string | null;
+  skills: string[];
+  budget_type: string | null;
+  budget_min: string | null;
+  budget_max: string | null;
+  budget_currency: string | null;
   status: string;
-  poster: { id: string; full_name: string };
+  posting_payment_status?: string | null;
+  posting_fee_amount?: string | null;
+  posting_fee_currency?: string | null;
+  poster: { id: string; full_name: string; is_verified: boolean };
   application_count: number;
   createdAt: string;
   updatedAt: string;
@@ -298,10 +306,16 @@ export async function fetchProductionJobs(): Promise<PublicProductionJob[]> {
           modality
           location
           role_tag
+          skills
+          budget_type
+          budget_min
+          budget_max
+          budget_currency
           status
           poster {
             id
             full_name
+            is_verified
           }
           application_count
           createdAt
@@ -328,10 +342,19 @@ export async function fetchProductionJob(
           modality
           location
           role_tag
+          skills
+          budget_type
+          budget_min
+          budget_max
+          budget_currency
           status
+          posting_payment_status
+          posting_fee_amount
+          posting_fee_currency
           poster {
             id
             full_name
+            is_verified
           }
           application_count
           createdAt

@@ -229,7 +229,7 @@ export function SiteHeader() {
                 aria-current={activeNav === "jobs" ? "page" : undefined}
                 onClick={closeMobileForPage}
               >
-                Gigs
+                Jobs
               </Link>
             </li>
           </ul>
