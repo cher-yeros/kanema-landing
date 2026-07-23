@@ -9,21 +9,13 @@
 # Font & Color Variables
 --------------------------------------------------------------*/
 /* Fonts */
-@font-face {
-  font-family: "Arial Black";
-  src: url("/fonts/ariblk.ttf") format("truetype");
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   --default-font:
-    "Roboto", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    "DM Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --heading-font: "Arial Black", sans-serif;
-  --nav-font: "Poppins", sans-serif;
+  --heading-font: "Space Grotesk", sans-serif;
+  --nav-font: "DM Sans", sans-serif;
 }
 
 /* Brand palette — Deep Royal Navy, Vibrant Yellow, Pure White */
@@ -131,6 +123,7 @@ h5,
 h6 {
   color: var(--heading-color);
   font-family: var(--heading-font);
+  font-weight: 700;
 }
 
 /* PHP Email Form Messages
@@ -1162,10 +1155,10 @@ section,
 
 .hero .hero-heading h1 {
   font-size: 3.2rem;
-  font-weight: 800;
+  font-weight: 700;
   line-height: 1.15;
   margin-bottom: 1.25rem;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.02em;
 }
 
 @media (max-width: 768px) {

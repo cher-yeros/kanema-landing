@@ -8,6 +8,12 @@ import { ME_QUERY } from "@/lib/election-graphql";
 import { PAYMENT_SETTINGS_QUERY } from "@/lib/events-graphql";
 import type { MeQuery } from "@/types/election-apollo";
 import { JobPaymentBoostsPanel } from "@/components/jobs/JobPaymentBoostsPanel";
+import { JobWorkStars } from "@/components/jobs/JobWorkReviewForm";
+import { apolloErrorMessage } from "@/lib/apollo-error";
+import {
+  applicationDisplayLabel,
+  resolveApplicationDisplayStatus,
+} from "@/lib/job-application-status";
 import {
   APPLY_TO_PRODUCTION_JOB_MUTATION,
   MY_JOB_APPLICATIONS_QUERY,
@@ -16,9 +22,11 @@ import type { PublicProductionJob } from "@/lib/public-graphql";
 import {
   formatApplicantCount,
   formatJobBudget,
+  formatJobSchedule,
   formatPostedLabel,
   getJobTags,
 } from "@/lib/jobs-board-utils";
+import { jobPostingTypeLabel } from "@/lib/jobs-filter-config";
 
 function loginHrefBack(path: string) {
   return `/community/join?mode=signin&next=${encodeURIComponent(path)}`;
@@ -42,7 +50,12 @@ function jobStatusLabel(status: string): string {
 }
 
 type MyAppsData = {
-  myJobApplications: { id: string; job_id: string }[];
+  myJobApplications: {
+    id: string;
+    job_id: string;
+    status?: string | null;
+    job?: { status?: string } | null;
+  }[];
 };
 
 export function JobDetailClient({
@@ -58,12 +71,13 @@ export function JobDetailClient({
     paymentSettings: { chapaEnabled: boolean };
   }>(PAYMENT_SETTINGS_QUERY);
   const chapaEnabled = paymentData?.paymentSettings.chapaEnabled === true;
-  const { data: appsData, refetch } = useQuery<MyAppsData>(
-    MY_JOB_APPLICATIONS_QUERY,
-    {
-      skip: !me,
-    },
-  );
+  const {
+    data: appsData,
+    loading: appsLoading,
+    refetch,
+  } = useQuery<MyAppsData>(MY_JOB_APPLICATIONS_QUERY, {
+    skip: !me,
+  });
   const [apply, { loading: applying }] = useMutation(
     APPLY_TO_PRODUCTION_JOB_MUTATION,
   );
@@ -81,19 +95,35 @@ export function JobDetailClient({
   const liveFree = job.status === "OPEN" && paymentStatus === "FREE";
   const underReview = job.status === "PENDING_REVIEW";
   const rejected = job.status === "REJECTED";
-  const applied = Boolean(
-    appsData?.myJobApplications?.some((a) => a.job_id === job.id),
+  const existingApplication = appsData?.myJobApplications?.find(
+    (a) => a.job_id === job.id,
   );
+  const applied = Boolean(existingApplication) || done;
+  const applicationStatusLabel = existingApplication
+    ? applicationDisplayLabel(
+        resolveApplicationDisplayStatus({
+          status: existingApplication.status,
+          jobStatus: existingApplication.job?.status ?? job.status,
+        }),
+      )
+    : null;
   const canTryApply =
     Boolean(me?.role === "member") &&
     isLive &&
     !isEmployer &&
     !applied &&
-    !done;
+    !appsLoading;
 
   async function onApply(e: React.FormEvent) {
     e.preventDefault();
     setFormError(null);
+
+    if (applied || existingApplication) {
+      setFormError("You have already applied to this role.");
+      setDone(true);
+      return;
+    }
+
     try {
       await apply({
         variables: {
@@ -107,28 +137,68 @@ export function JobDetailClient({
       setDone(true);
       void refetch();
     } catch (err: unknown) {
-      setFormError(err instanceof Error ? err.message : "Apply failed.");
+      const message = apolloErrorMessage(err, "Apply failed.");
+      const alreadyApplied = /already applied/i.test(message);
+      if (alreadyApplied) {
+        setDone(true);
+        void refetch();
+      }
+      setFormError(message);
     }
   }
 
   const tags = getJobTags(job);
+  const postingType = String(job.posting_type ?? "ROLE").toUpperCase();
+  const typeLabel = jobPostingTypeLabel(postingType);
+  const schedule = formatJobSchedule(job);
+  const applyEyebrow =
+    postingType === "SHOOT_CALL"
+      ? "Request to join this shoot"
+      : postingType === "QUICK_GIG"
+        ? "Offer your availability"
+        : "Apply for this role";
+  const applyTitle =
+    postingType === "SHOOT_CALL"
+      ? `Join as ${me?.full_name}`
+      : postingType === "QUICK_GIG"
+        ? `Respond as ${me?.full_name}`
+        : `Apply as ${me?.full_name}`;
+  const applyLede =
+    postingType === "SHOOT_CALL"
+      ? "Tell the production why you fit this shoot. One request per listing—posters see your email and phone from your profile."
+      : postingType === "QUICK_GIG"
+        ? "Confirm kit, rate, and that you can make the date and location. One response per listing."
+        : "One application per role. Keep it concise—posters see your email and phone from your member profile.";
+  const applyPlaceholder =
+    postingType === "QUICK_GIG"
+      ? "Availability, kit, day rate, and any travel notes…"
+      : postingType === "SHOOT_CALL"
+        ? "Your fit for this shoot, kit, and availability…"
+        : "Share your fit for this role, kit, and availability…";
+  const submitLabel =
+    postingType === "SHOOT_CALL"
+      ? "Request to join"
+      : postingType === "QUICK_GIG"
+        ? "Offer availability"
+        : "Submit application";
 
   return (
     <div className="container job-detail-shell" style={{ maxWidth: 800 }}>
       <div className="mb-4">
         <Link href="/jobs" className="explore-btn d-inline-flex mb-4">
           <i className="bi bi-arrow-left-short" aria-hidden />
-          All roles
+          All listings
         </Link>
 
         <div className="d-flex flex-wrap align-items-start gap-2 mb-3">
+          <span className="featured-tag">{typeLabel}</span>
           <span className="featured-tag">{job.role_tag || "Production"}</span>
           <span className="badge rounded-pill text-bg-secondary small">
             {jobStatusLabel(job.status)}
           </span>
           {awaitingPayment ? (
             <span className="badge rounded-pill text-bg-warning small">
-              Awaiting payment
+              Awaiting checkout
             </span>
           ) : null}
         </div>
@@ -136,39 +206,99 @@ export function JobDetailClient({
         <h1 className="h2">{job.title}</h1>
 
         <div className="job-detail-meta mb-4">
-          <p className="text-muted small mb-2">
+          <p className="job-detail-meta__posted">
             {formatPostedLabel(job.createdAt)}
           </p>
-          <div className="job-detail-meta__row">
-            {job.poster.is_verified ? (
-              <span className="job-detail-meta__verified">
-                <i className="bi bi-patch-check-fill" aria-hidden />
-                Member verified
-              </span>
-            ) : (
-              <span className="job-detail-meta__unverified">
-                <i className="bi bi-exclamation-circle" aria-hidden />
-                Member unverified
-              </span>
-            )}
-            <span>{job.poster.full_name}</span>
-            {job.location ? (
-              <span>
-                <i className="bi bi-geo-alt" aria-hidden /> {job.location}
-              </span>
-            ) : null}
+
+          <div className="job-detail-poster">
+            <div className="job-detail-poster__avatar" aria-hidden>
+              {(job.poster.full_name.trim().charAt(0) || "?").toUpperCase()}
+            </div>
+            <div className="job-detail-poster__body">
+              <div className="job-detail-poster__identity">
+                <span className="job-detail-poster__name">
+                  {job.poster.full_name}
+                </span>
+                {job.poster.is_verified ? (
+                  <span className="job-detail-poster__badge job-detail-poster__badge--verified">
+                    <i className="bi bi-patch-check-fill" aria-hidden />
+                    Verified member
+                  </span>
+                ) : (
+                  <span className="job-detail-poster__badge job-detail-poster__badge--unverified">
+                    <i className="bi bi-shield-exclamation" aria-hidden />
+                    Unverified member
+                  </span>
+                )}
+                <JobWorkStars
+                  avg={job.poster.work_rating_avg}
+                  count={job.poster.work_review_count}
+                />
+              </div>
+              {job.location ? (
+                <p className="job-detail-poster__location">
+                  <i className="bi bi-geo-alt-fill" aria-hidden />
+                  {job.location}
+                </p>
+              ) : null}
+            </div>
           </div>
-          {formatJobBudget(job) ? (
-            <p className="text-muted small mb-2 mt-2">{formatJobBudget(job)}</p>
-          ) : null}
-          {job.modality ? (
-            <p className="text-muted small mb-2">Category: {job.modality}</p>
-          ) : null}
-          {job.role_tag ? (
-            <p className="text-muted small mb-2">Work type: {job.role_tag}</p>
-          ) : null}
+
+          <div className="job-detail-facts">
+            {formatJobBudget(job) ? (
+              <div className="job-detail-fact">
+                <span className="job-detail-fact__label">Budget</span>
+                <span className="job-detail-fact__value">
+                  {formatJobBudget(job)}
+                </span>
+              </div>
+            ) : null}
+            {job.production_kind ? (
+              <div className="job-detail-fact">
+                <span className="job-detail-fact__label">Production</span>
+                <span className="job-detail-fact__value">
+                  {job.production_kind}
+                </span>
+              </div>
+            ) : null}
+            {schedule ? (
+              <div className="job-detail-fact">
+                <span className="job-detail-fact__label">
+                  {postingType === "QUICK_GIG" ? "When" : "Dates"}
+                </span>
+                <span className="job-detail-fact__value">{schedule}</span>
+              </div>
+            ) : null}
+            {job.modality ? (
+              <div className="job-detail-fact">
+                <span className="job-detail-fact__label">Category</span>
+                <span className="job-detail-fact__value">{job.modality}</span>
+              </div>
+            ) : null}
+            {job.role_tag ? (
+              <div className="job-detail-fact">
+                <span className="job-detail-fact__label">Craft</span>
+                <span className="job-detail-fact__value">{job.role_tag}</span>
+              </div>
+            ) : null}
+            {(job.open_positions ?? 1) > 0 ? (
+              <div className="job-detail-fact">
+                <span className="job-detail-fact__label">Open positions</span>
+                <span className="job-detail-fact__value">
+                  {job.open_positions ?? 1}
+                </span>
+              </div>
+            ) : null}
+            <div className="job-detail-fact">
+              <span className="job-detail-fact__label">Proposals</span>
+              <span className="job-detail-fact__value">
+                {formatApplicantCount(job.application_count)}
+              </span>
+            </div>
+          </div>
+
           {tags.length > 0 ? (
-            <div className="d-flex flex-wrap gap-2 mt-2">
+            <div className="d-flex flex-wrap gap-2 mt-3">
               {tags.map((tag) => (
                 <span key={tag} className="featured-tag">
                   {tag}
@@ -176,9 +306,6 @@ export function JobDetailClient({
               ))}
             </div>
           ) : null}
-          <p className="text-muted small mb-0 mt-3">
-            {formatApplicantCount(job.application_count)}
-          </p>
         </div>
 
         <div className="offering-body job-detail-description">
@@ -212,14 +339,14 @@ export function JobDetailClient({
 
       {isEmployer && awaitingPayment ? (
         <div className="info-box mb-5">
-          <h3 className="h5 mb-2">Approved — payment required</h3>
+          <h3 className="h5 mb-2">Approved — checkout required</h3>
           <p className="mb-3">
-            Choose optional boosts, then pay to publish this role on the public
-            board.
+            Choose your posting package, then optional boosts, to publish this
+            role on the public board.
           </p>
           <JobPaymentBoostsPanel
             jobId={job.id}
-            baseFeeAmount={job.posting_fee_amount ?? "0"}
+            mode="checkout"
             chapaEnabled={chapaEnabled}
           />
           <div className="mt-3">
@@ -238,7 +365,7 @@ export function JobDetailClient({
           </p>
           <JobPaymentBoostsPanel
             jobId={job.id}
-            baseFeeAmount="0"
+            mode="boosts_only"
             chapaEnabled={chapaEnabled}
           />
           <div className="mt-3">
@@ -300,57 +427,120 @@ export function JobDetailClient({
         </p>
       ) : null}
 
-      {applied || done ? (
-        <div className="alert alert-success">
-          You have already applied to this role. The poster can reach you using
-          the contact details on your Canma profile.
+      {applied ? (
+        <div className="job-apply-done" role="status">
+          <div className="job-apply-done__icon" aria-hidden>
+            <i className="bi bi-check-circle-fill" />
+          </div>
+          <div>
+            <h3 className="job-apply-done__title">
+              {done && !existingApplication
+                ? "Application sent"
+                : "Already applied"}
+            </h3>
+            <p className="job-apply-done__text">
+              {applicationStatusLabel
+                ? `Your application status is ${applicationStatusLabel}. `
+                : "You have already applied to this role. "}
+              The poster can reach you using the contact details on your Canma
+              profile. You cannot submit another application for the same
+              listing.
+            </p>
+            <div className="d-flex flex-wrap gap-2 mt-3">
+              <Link
+                className="btn btn-sm btn-outline-secondary"
+                href="/jobs/applications"
+              >
+                View my applications
+              </Link>
+            </div>
+          </div>
         </div>
       ) : null}
 
+      {me?.role === "member" &&
+      !isEmployer &&
+      isLive &&
+      appsLoading &&
+      !applied ? (
+        <p className="text-muted">Checking your applications…</p>
+      ) : null}
+
       {canTryApply ? (
-        <div className="form-panel mt-4">
-          <div className="form-intro mb-3">
-            <i className="bi bi-send" />
-            <h3 className="h5">Apply as {me?.full_name}</h3>
-            <p className="small text-muted mb-0">
-              One application per role. Be concise—posters see your email and
-              phone from your member profile.
-            </p>
+        <div className="job-apply">
+          <div className="job-apply__header">
+            <div className="job-apply__avatar" aria-hidden>
+              {(me?.full_name?.trim().charAt(0) || "?").toUpperCase()}
+            </div>
+            <div className="job-apply__intro">
+              <p className="job-apply__eyebrow">{applyEyebrow}</p>
+              <h3 className="job-apply__title">{applyTitle}</h3>
+              <p className="job-apply__lede">{applyLede}</p>
+            </div>
           </div>
-          <form className="php-email-form" onSubmit={(e) => void onApply(e)}>
-            <div className="mb-3">
-              <label className="form-label" htmlFor="cover">
+
+          <form className="job-apply__form" onSubmit={(e) => void onApply(e)}>
+            <div className="job-apply__field">
+              <label className="job-apply__label" htmlFor="cover">
                 Message to poster
+                <span className="job-apply__optional">Optional</span>
               </label>
               <textarea
                 id="cover"
-                className="form-control"
-                rows={4}
+                className="job-apply__input"
+                rows={5}
                 value={coverMessage}
                 onChange={(e) => setCoverMessage(e.target.value)}
-                placeholder="Tailor your fit, kit, and availability…"
+                placeholder={applyPlaceholder}
               />
             </div>
-            <div className="mb-3">
-              <label className="form-label" htmlFor="links">
+            <div className="job-apply__field">
+              <label className="job-apply__label" htmlFor="links">
                 Portfolio / reel links
+                <span className="job-apply__optional">Optional</span>
               </label>
               <textarea
                 id="links"
-                className="form-control"
-                rows={2}
+                className="job-apply__input"
+                rows={3}
                 value={portfolioLinks}
                 onChange={(e) => setPortfolioLinks(e.target.value)}
-                placeholder="https://… (one per line or comma-separated)"
+                placeholder="https://… — one per line or comma-separated"
               />
+              <p className="job-apply__hint">
+                Links help posters review your work before they reach out.
+              </p>
             </div>
             {formError ? (
-              <div className="error-message d-block mb-3">{formError}</div>
+              <div className="job-apply__error" role="alert">
+                {formError}
+              </div>
             ) : null}
-            <button type="submit" className="dispatch-btn" disabled={applying}>
-              <i className="bi bi-arrow-right-circle-fill" />
-              <span>{applying ? "Sending…" : "Submit application"}</span>
-            </button>
+            <div className="job-apply__actions">
+              <button
+                type="submit"
+                className="btn btn-accent job-apply__submit"
+                disabled={applying}
+              >
+                {applying ? (
+                  <>
+                    <span
+                      className="spinner-border spinner-border-sm"
+                      aria-hidden
+                    />
+                    Sending…
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-send-fill" aria-hidden />
+                    {submitLabel}
+                  </>
+                )}
+              </button>
+              <p className="job-apply__note">
+                Your profile contact details are shared with the poster.
+              </p>
+            </div>
           </form>
         </div>
       ) : null}

@@ -21,8 +21,6 @@ import {
   type JoinCommunityFormValues,
 } from "./join-community-form-schema";
 
-import "./community-shadcn.css";
-
 const HOME_FEATURE_IMAGE = "/img/about/about-us.png";
 
 const COMMUNITY_JOIN_ROLE_GRAPHQL: Record<string, string> = {

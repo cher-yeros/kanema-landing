@@ -15,6 +15,7 @@ import {
 import {
   countJobsForFilterOption,
   JOB_EMPLOYMENT_CATEGORIES,
+  JOB_POSTING_TYPES,
   JOB_WORK_TYPES,
 } from "@/lib/jobs-filter-config";
 
@@ -28,6 +29,7 @@ type Props = {
 
 const EMPTY_FILTERS: JobsBoardFilters = {
   search: "",
+  postingTypes: [],
   categories: [],
   workTypes: [],
   locations: [],
@@ -85,6 +87,7 @@ export function JobsBoard({ jobs }: Props) {
   }, [filters, jobs, sort]);
 
   const activeFilterCount =
+    filters.postingTypes.length +
     filters.categories.length +
     filters.workTypes.length +
     filters.locations.length +
@@ -104,6 +107,37 @@ export function JobsBoard({ jobs }: Props) {
     <div className="jobs-board">
       <aside className="jobs-board__sidebar" aria-label="Job filters">
         <div className="jobs-board__sidebar-inner">
+          <FilterSection title="Listing type">
+            <ul className="jobs-filter-list">
+              {JOB_POSTING_TYPES.map((type) => {
+                const count = jobs.filter(
+                  (job) =>
+                    String(job.posting_type ?? "ROLE").toUpperCase() ===
+                    type.id,
+                ).length;
+                return (
+                  <li key={type.id}>
+                    <JobsFilterCheckbox
+                      checked={filters.postingTypes.includes(type.id)}
+                      onChange={() =>
+                        setFilters((current) => ({
+                          ...current,
+                          postingTypes: toggleValue(
+                            current.postingTypes,
+                            type.id,
+                          ),
+                        }))
+                      }
+                    >
+                      {type.shortLabel}
+                      <span className="jobs-filter-count">({count})</span>
+                    </JobsFilterCheckbox>
+                  </li>
+                );
+              })}
+            </ul>
+          </FilterSection>
+
           <FilterSection title="Category">
             <ul className="jobs-filter-list">
               {JOB_EMPLOYMENT_CATEGORIES.map((category) => {

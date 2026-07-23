@@ -277,9 +277,14 @@ export type PublicProductionJob = {
   id: string;
   title: string;
   description: string;
+  posting_type?: string | null;
+  production_kind?: string | null;
+  starts_on?: string | null;
+  ends_on?: string | null;
   modality: string | null;
   location: string | null;
   role_tag: string | null;
+  open_positions?: number;
   skills: string[];
   budget_type: string | null;
   budget_min: string | null;
@@ -289,7 +294,13 @@ export type PublicProductionJob = {
   posting_payment_status?: string | null;
   posting_fee_amount?: string | null;
   posting_fee_currency?: string | null;
-  poster: { id: string; full_name: string; is_verified: boolean };
+  poster: {
+    id: string;
+    full_name: string;
+    is_verified: boolean;
+    work_rating_avg?: string | null;
+    work_review_count?: number;
+  };
   application_count: number;
   createdAt: string;
   updatedAt: string;
@@ -303,9 +314,14 @@ export async function fetchProductionJobs(): Promise<PublicProductionJob[]> {
           id
           title
           description
+          posting_type
+          production_kind
+          starts_on
+          ends_on
           modality
           location
           role_tag
+          open_positions
           skills
           budget_type
           budget_min
@@ -316,6 +332,8 @@ export async function fetchProductionJobs(): Promise<PublicProductionJob[]> {
             id
             full_name
             is_verified
+            work_rating_avg
+            work_review_count
           }
           application_count
           createdAt
@@ -339,9 +357,14 @@ export async function fetchProductionJob(
           id
           title
           description
+          posting_type
+          production_kind
+          starts_on
+          ends_on
           modality
           location
           role_tag
+          open_positions
           skills
           budget_type
           budget_min
@@ -355,6 +378,8 @@ export async function fetchProductionJob(
             id
             full_name
             is_verified
+            work_rating_avg
+            work_review_count
           }
           application_count
           createdAt

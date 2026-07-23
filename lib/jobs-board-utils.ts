@@ -5,6 +5,7 @@ export type JobsSort = "best" | "newest" | "oldest" | "fewest_applicants";
 
 export type JobsBoardFilters = {
   search: string;
+  postingTypes: string[];
   categories: string[];
   workTypes: string[];
   locations: string[];
@@ -96,8 +97,43 @@ export function formatJobBudget(job: PublicProductionJob): string | null {
   return null;
 }
 
+export function formatOpenPositions(
+  count: number | null | undefined,
+): string | null {
+  const n = typeof count === "number" ? count : Number(count);
+  if (!Number.isFinite(n) || n < 1) return null;
+  return n === 1 ? "1 open position" : `${n} open positions`;
+}
+
+export function formatJobSchedule(
+  job: Pick<PublicProductionJob, "starts_on" | "ends_on">,
+): string | null {
+  if (!job.starts_on) return null;
+  const start = new Date(`${job.starts_on}T00:00:00`).toLocaleDateString(
+    undefined,
+    { month: "short", day: "numeric", year: "numeric" },
+  );
+  if (!job.ends_on || job.ends_on === job.starts_on) return start;
+  const end = new Date(`${job.ends_on}T00:00:00`).toLocaleDateString(
+    undefined,
+    {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    },
+  );
+  return `${start} – ${end}`;
+}
+
 export function formatJobDetailsLine(job: PublicProductionJob): string {
-  return [job.modality, job.role_tag, formatJobBudget(job)]
+  return [
+    job.modality,
+    job.role_tag,
+    job.production_kind,
+    formatJobSchedule(job),
+    formatOpenPositions(job.open_positions),
+    formatJobBudget(job),
+  ]
     .filter(Boolean)
     .join(" · ");
 }
@@ -111,11 +147,9 @@ export function collectLocationOptions(jobs: PublicProductionJob[]): string[] {
 }
 
 export function getJobTags(job: PublicProductionJob): string[] {
-  const tags = [
-    ...(job.skills ?? []),
-    job.role_tag,
-    job.modality,
-  ].filter((tag): tag is string => Boolean(tag?.trim()));
+  const tags = [...(job.skills ?? []), job.role_tag, job.modality].filter(
+    (tag): tag is string => Boolean(tag?.trim()),
+  );
   return [...new Set(tags.map((tag) => tag.trim()))];
 }
 
@@ -149,6 +183,7 @@ export function filterJobs(
         job.role_tag,
         job.modality,
         job.location,
+        job.production_kind,
         job.poster.full_name,
         ...(job.skills ?? []),
       ]
@@ -156,6 +191,11 @@ export function filterJobs(
         .join(" ")
         .toLowerCase();
       if (!haystack.includes(query)) return false;
+    }
+
+    if (filters.postingTypes.length > 0) {
+      const type = String(job.posting_type ?? "ROLE").toUpperCase();
+      if (!filters.postingTypes.includes(type)) return false;
     }
 
     if (selectedCategories.length > 0) {

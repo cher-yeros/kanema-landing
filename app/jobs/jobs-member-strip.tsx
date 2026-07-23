@@ -71,7 +71,13 @@ export function JobsMemberStrip() {
         </div>
         <div className="d-flex flex-wrap gap-2">
           <Link className="btn btn-sm btn-accent" href="/jobs/mine">
-            My postings & applications
+            My postings
+          </Link>
+          <Link
+            className="btn btn-sm btn-outline-secondary"
+            href="/jobs/applications"
+          >
+            My applications
           </Link>
           <Link className="btn btn-sm btn-ghost" href="/jobs/new">
             Post a role

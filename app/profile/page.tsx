@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { communityMemberPath } from "@/lib/site-url";
 import { COMMUNITY_JOIN_INTEREST_OPTIONS } from "@/components/community/join-community-form-schema";
 import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
+import { ProfileIdentityEditor } from "@/components/profile/ProfileIdentityEditor";
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
 import { memberImageSrc } from "@/lib/member-image";
@@ -156,7 +157,8 @@ export default function ProfilePage() {
         <p className="profile-section__eyebrow">Member dashboard</p>
         <h1>My profile</h1>
         <p className="profile-section__lede">
-          Manage your account, community presence, and public showcase.
+          Manage your personal information, community presence, and public
+          showcase.
         </p>
       </div>
 
@@ -367,7 +369,13 @@ export default function ProfilePage() {
             data-aos="fade-up"
             data-aos-delay="150"
           >
-            <ProfileEditorSection communityMemberSlug={communityMemberSlug} />
+            <div className="profile-editor-stack">
+              <ProfileIdentityEditor
+                me={me}
+                communityJoin={communityJoin ?? null}
+              />
+              <ProfileEditorSection communityMemberSlug={communityMemberSlug} />
+            </div>
           </div>
         </div>
       </div>

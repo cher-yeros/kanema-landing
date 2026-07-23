@@ -6,9 +6,14 @@ export const PRODUCTION_JOB_FIELDS = gql`
     employer_user_id
     title
     description
+    posting_type
+    production_kind
+    starts_on
+    ends_on
     modality
     location
     role_tag
+    open_positions
     skills
     budget_type
     budget_min
@@ -24,6 +29,8 @@ export const PRODUCTION_JOB_FIELDS = gql`
       id
       full_name
       is_verified
+      work_rating_avg
+      work_review_count
     }
     application_count
     createdAt
@@ -120,7 +127,14 @@ export const MY_JOB_APPLICATIONS_QUERY = gql`
       job_id
       cover_message
       portfolio_links
+      status
       createdAt
+      my_review {
+        id
+        rating
+        body
+        createdAt
+      }
       job {
         ...ProductionJobFields
       }
@@ -137,7 +151,14 @@ export const JOB_APPLICANTS_QUERY = gql`
       applicant_user_id
       cover_message
       portfolio_links
+      status
       createdAt
+      my_review {
+        id
+        rating
+        body
+        createdAt
+      }
       applicant {
         id
         full_name
@@ -145,6 +166,58 @@ export const JOB_APPLICANTS_QUERY = gql`
         phone
         role
         is_verified
+        work_rating_avg
+        work_review_count
+      }
+    }
+  }
+`;
+
+export const UPDATE_JOB_APPLICATION_STATUS_MUTATION = gql`
+  mutation UpdateJobApplicationStatus(
+    $id: ID!
+    $status: JobApplicationStatus!
+  ) {
+    updateJobApplicationStatus(id: $id, status: $status) {
+      id
+      status
+      updatedAt
+    }
+  }
+`;
+
+export const CREATE_JOB_WORK_REVIEW_MUTATION = gql`
+  mutation CreateJobWorkReview($input: CreateJobWorkReviewInput!) {
+    createJobWorkReview(input: $input) {
+      id
+      rating
+      communication_rating
+      professionalism_rating
+      body
+      direction
+      createdAt
+    }
+  }
+`;
+
+export const JOB_WORK_REVIEWS_FOR_USER_QUERY = gql`
+  query JobWorkReviewsForUser($user_id: ID!) {
+    jobWorkReviewsForUser(user_id: $user_id) {
+      id
+      rating
+      communication_rating
+      professionalism_rating
+      body
+      direction
+      createdAt
+      reviewer {
+        id
+        full_name
+        is_verified
+      }
+      job {
+        id
+        title
       }
     }
   }
@@ -166,8 +239,16 @@ export const CREATE_PRODUCTION_JOB_MUTATION = gql`
 `;
 
 export const INITIATE_JOB_POSTING_PAYMENT_MUTATION = gql`
-  mutation InitiateJobPostingPayment($job_id: ID!, $boost_ids: [String!]) {
-    initiateJobPostingPayment(job_id: $job_id, boost_ids: $boost_ids) {
+  mutation InitiateJobPostingPayment(
+    $job_id: ID!
+    $billing_source: JobBillingSource
+    $boost_ids: [String!]
+  ) {
+    initiateJobPostingPayment(
+      job_id: $job_id
+      billing_source: $billing_source
+      boost_ids: $boost_ids
+    ) {
       status
       message
       checkout_url

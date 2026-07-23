@@ -25,7 +25,9 @@ export function HeroSection() {
               <span className="badge-label">
                 Empowering Ethiopian Visual Storytellers
               </span>
-              <h1>Canma — the home for Ethiopia&apos;s camera creatives</h1>
+              <h1 className="fw-bold">
+                Canma — the home for Ethiopia&apos;s camera creatives
+              </h1>
               <p>
                 The official digital hub for photographers, videographers, and
                 filmmakers: connect talent, discover opportunities, and grow

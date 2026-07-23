@@ -1,0 +1,112 @@
+.jobs-filter-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.jobs-filter-list.interests-filter-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+}
+
+@media (min-width: 576px) {
+  .jobs-filter-list.interests-filter-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 1rem;
+  }
+}
+
+.jobs-filter-check {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+.jobs-filter-check__input {
+  position: absolute;
+  left: 0;
+  top: 0.12rem;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.jobs-filter-check__box {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-top: 0.12rem;
+  border-radius: 4px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 70%);
+  background-color: var(--background-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.jobs-filter-check__box i {
+  opacity: 0;
+  font-size: 0.72rem;
+  line-height: 1;
+  color: var(--contrast-color);
+  transform: scale(0.75);
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease;
+}
+
+.jobs-filter-check__input:checked + .jobs-filter-check__box {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.jobs-filter-check__input:checked + .jobs-filter-check__box i {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.jobs-filter-check__input:focus-visible + .jobs-filter-check__box {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-color), transparent 88%);
+}
+
+.jobs-filter-check:hover .jobs-filter-check__box {
+  border-color: color-mix(in srgb, var(--accent-color), transparent 35%);
+}
+
+.jobs-filter-check.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.jobs-filter-check.is-disabled .jobs-filter-check__input {
+  cursor: not-allowed;
+}
+
+.jobs-filter-check__text {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: color-mix(in srgb, var(--default-color), transparent 12%);
+}
+
+.jobs-filter-count {
+  margin-left: 0.25rem;
+  color: color-mix(in srgb, var(--default-color), transparent 40%);
+  font-size: 0.8125rem;
+}

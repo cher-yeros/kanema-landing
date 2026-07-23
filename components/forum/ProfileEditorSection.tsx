@@ -69,14 +69,15 @@ export function ProfileEditorSection({
   }
 
   return (
-    <div className="profile-editor-stack">
+    <>
       <div className="profile-card profile-card--editor">
         <div className="profile-card__head profile-card__head--split">
           <div>
             <i className="bi bi-pencil-square" aria-hidden />
-            <h3 className="profile-card__title">Edit your presence</h3>
+            <h3 className="profile-card__title">Discussion and links</h3>
             <p className="profile-card__subtitle">
-              Discussion bio and links shown alongside your community showcase.
+              Update the bio, creative role, and links shown across discussion
+              and your public profile.
             </p>
           </div>
           {profile ? (
@@ -201,6 +202,6 @@ export function ProfileEditorSection({
           </p>
         ) : null}
       </div>
-    </div>
+    </>
   );
 }

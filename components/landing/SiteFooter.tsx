@@ -33,23 +33,21 @@ export function SiteFooter() {
             <div className="footer-contact pt-3">
               <p>{SITE_CONTACT.location}</p>
               <p className="mt-3">
-                <strong>Phone:</strong>{" "}
-                <span>
-                  <a href={SITE_CONTACT.phone.href}>
-                    {SITE_CONTACT.phone.display}
-                  </a>
-                </span>
+                <strong>Phone:</strong>
+                <br />
+                <a href={SITE_CONTACT.phone.href}>
+                  {SITE_CONTACT.phone.display}
+                </a>
               </p>
               <p>
-                <strong>Email:</strong>{" "}
-                <span>
-                  {SITE_CONTACT.emails.map((email, index) => (
-                    <span key={email}>
-                      <a href={`mailto:${email}`}>{email}</a>
-                      {index < SITE_CONTACT.emails.length - 1 ? ", " : null}
-                    </span>
-                  ))}
-                </span>
+                <strong>Email:</strong>
+                <br />
+                {SITE_CONTACT.emails.map((email, index) => (
+                  <span key={email}>
+                    <a href={`mailto:${email}`}>{email}</a>
+                    {index < SITE_CONTACT.emails.length - 1 ? <br /> : null}
+                  </span>
+                ))}
               </p>
             </div>
             <div className="social-links d-flex mt-4">

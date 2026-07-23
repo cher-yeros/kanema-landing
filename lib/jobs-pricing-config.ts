@@ -81,13 +81,43 @@ export type JobsBoostAddon = {
   id: string;
   name: string;
   price: number;
+  description: string;
+  icon: string;
 };
 
 export const JOBS_BOOST_ADDONS: JobsBoostAddon[] = [
-  { id: "featured", name: "Featured Listing", price: 300 },
-  { id: "urgent", name: "Urgent Hiring Badge", price: 500 },
-  { id: "homepage", name: "Homepage Spotlight", price: 800 },
-  { id: "social", name: "Social Media Promotion", price: 1500 },
+  {
+    id: "featured",
+    name: "Featured Listing",
+    price: 300,
+    description:
+      "Pin your role higher in board results so serious applicants see it first.",
+    icon: "bi-star",
+  },
+  {
+    id: "urgent",
+    name: "Urgent Hiring Badge",
+    price: 500,
+    description:
+      "Add a clear urgent signal for roles that need crew on a tight timeline.",
+    icon: "bi-lightning-charge",
+  },
+  {
+    id: "homepage",
+    name: "Homepage Spotlight",
+    price: 800,
+    description:
+      "Surface your posting in Canma’s homepage spotlight for broader reach.",
+    icon: "bi-house-heart",
+  },
+  {
+    id: "social",
+    name: "Social Media Promotion",
+    price: 1500,
+    description:
+      "Promote the role across Canma social channels to attract more applicants.",
+    icon: "bi-share",
+  },
 ];
 
 export type JobsValueComparisonRow = {

@@ -242,38 +242,43 @@ export function JobEmployerPricing({
         </div>
       </section>
 
-      <section className="services section" aria-labelledby="boostsHeading">
+      <section
+        className="services section jobs-boosts"
+        aria-labelledby="boostsHeading"
+      >
         <div className="container section-title" data-aos="fade-up">
           <h2 id="boostsHeading">Optional job boosts</h2>
           <p>
-            Add visibility when you need to fill a role fast—select boosts at
-            checkout after your posting is approved; they are charged on top of
-            any base posting fee.
+            Add visibility when you need to fill a role fast—choose optional
+            boosts at checkout after your posting is approved; they are charged
+            on top of your selected posting package.
           </p>
         </div>
 
         <div className="container" data-aos="fade-up" data-aos-delay="100">
-          <div className="table-responsive">
-            <table className="table table-bordered align-middle mb-0">
-              <thead>
-                <tr>
-                  <th scope="col">Add-on</th>
-                  <th scope="col" className="text-end">
-                    Price
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {JOBS_BOOST_ADDONS.map((addon) => (
-                  <tr key={addon.id}>
-                    <td>{addon.name}</td>
-                    <td className="text-end text-nowrap">
-                      {formatJobsPrice(addon.price)}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="row gy-4">
+            {JOBS_BOOST_ADDONS.map((addon) => (
+              <div className="col-md-6 col-xl-3" key={addon.id}>
+                <article className="jobs-boost-card h-100">
+                  <div className="jobs-boost-card__icon" aria-hidden>
+                    <i className={`bi ${addon.icon}`} />
+                  </div>
+                  <div className="jobs-boost-card__body">
+                    <div className="jobs-boost-card__top">
+                      <h3 className="jobs-boost-card__title">{addon.name}</h3>
+                      <span className="jobs-boost-card__price">
+                        {formatJobsPrice(addon.price)}
+                      </span>
+                    </div>
+                    <p className="jobs-boost-card__desc">{addon.description}</p>
+                    <p className="jobs-boost-card__note">
+                      <i className="bi bi-cart-check" aria-hidden />
+                      Added at checkout
+                    </p>
+                  </div>
+                </article>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -292,27 +297,57 @@ export function JobEmployerPricing({
         </div>
 
         <div className="container" data-aos="fade-up" data-aos-delay="100">
-          <div className="table-responsive">
-            <table className="table table-bordered align-middle mb-0">
-              <thead>
-                <tr>
-                  <th scope="col">Usage</th>
-                  <th scope="col">Pay per job</th>
-                  <th scope="col">Best plan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {JOBS_VALUE_COMPARISON.map((row) => (
-                  <tr key={row.usage}>
-                    <td>{row.usage}</td>
-                    <td>{row.payPerJobCost}</td>
-                    <td>
-                      <strong>{row.bestPlan}</strong>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="jobs-value-compare">
+            <div className="jobs-value-compare__head" aria-hidden="true">
+              <span>Usage</span>
+              <span>Pay per job</span>
+              <span>Best plan</span>
+            </div>
+            <ul className="jobs-value-compare__list">
+              {JOBS_VALUE_COMPARISON.map((row) => {
+                const saves =
+                  row.bestPlan !== "Free" &&
+                  row.payPerJobCost !== "Free" &&
+                  row.payPerJobCost !== "Varies";
+                return (
+                  <li
+                    key={row.usage}
+                    className={`jobs-value-compare__row${saves ? " is-save" : ""}`}
+                  >
+                    <div className="jobs-value-compare__cell">
+                      <span className="jobs-value-compare__label">Usage</span>
+                      <strong className="jobs-value-compare__usage">
+                        {row.usage}
+                      </strong>
+                    </div>
+                    <div className="jobs-value-compare__cell">
+                      <span className="jobs-value-compare__label">
+                        Pay per job
+                      </span>
+                      <span className="jobs-value-compare__pay">
+                        {row.payPerJobCost}
+                      </span>
+                    </div>
+                    <div className="jobs-value-compare__cell jobs-value-compare__cell--best">
+                      <span className="jobs-value-compare__label">
+                        Best plan
+                      </span>
+                      <span className="jobs-value-compare__plan">
+                        {saves ? (
+                          <i className="bi bi-arrow-right-short" aria-hidden />
+                        ) : null}
+                        {row.bestPlan}
+                      </span>
+                      {saves ? (
+                        <span className="jobs-value-compare__badge">
+                          Better value
+                        </span>
+                      ) : null}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
 
           {showPostCta ? (

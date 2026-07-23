@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import type { PublicProductionJob } from "@/lib/public-graphql";
+import { JobWorkStars } from "@/components/jobs/JobWorkReviewForm";
 import {
   formatApplicantCount,
   formatJobDetailsLine,
+  formatJobSchedule,
   formatPostedLabel,
   getJobTags,
 } from "@/lib/jobs-board-utils";
+import { jobPostingTypeLabel } from "@/lib/jobs-filter-config";
 
 const SAVED_JOBS_KEY = "canma-saved-jobs";
 
@@ -37,6 +40,16 @@ export function JobListCard({ job }: Props) {
   const [saved, setSaved] = useState(false);
   const tags = getJobTags(job);
   const detailsLine = formatJobDetailsLine(job);
+  const schedule = formatJobSchedule(job);
+  const postingType = String(job.posting_type ?? "ROLE").toUpperCase();
+  const typeLabel = jobPostingTypeLabel(postingType);
+  const typeTone = postingType.toLowerCase().replace(/_/g, "-");
+  const iconClass =
+    postingType === "QUICK_GIG"
+      ? "bi-lightning-charge"
+      : postingType === "SHOOT_CALL"
+        ? "bi-camera-reels"
+        : "bi-briefcase";
 
   useEffect(() => {
     setSaved(readSavedJobIds().has(job.id));
@@ -54,13 +67,20 @@ export function JobListCard({ job }: Props) {
     <article className="offering-block job-list-card">
       <div className="offering-indicator" />
       <div className="offering-icon-wrap">
-        <i className="bi bi-briefcase" />
+        <i className={`bi ${iconClass}`} />
       </div>
       <div className="offering-body">
         <div className="job-list-card__top">
-          <span className="job-list-card__posted">
-            {formatPostedLabel(job.createdAt)}
-          </span>
+          <div className="job-list-card__badges">
+            <span
+              className={`job-list-card__type job-list-card__type--${typeTone}`}
+            >
+              {typeLabel}
+            </span>
+            <span className="job-list-card__posted">
+              {formatPostedLabel(job.createdAt)}
+            </span>
+          </div>
           <div className="job-list-card__actions">
             <button
               type="button"
@@ -81,6 +101,22 @@ export function JobListCard({ job }: Props) {
           </h4>
         </div>
 
+        {(schedule || job.location) &&
+        (postingType === "QUICK_GIG" || postingType === "SHOOT_CALL") ? (
+          <p className="job-list-card__schedule">
+            {schedule ? (
+              <span>
+                <i className="bi bi-calendar3" aria-hidden /> {schedule}
+              </span>
+            ) : null}
+            {job.location ? (
+              <span>
+                <i className="bi bi-geo-alt" aria-hidden /> {job.location}
+              </span>
+            ) : null}
+          </p>
+        ) : null}
+
         <div className="job-list-card__client">
           {job.poster.is_verified ? (
             <span className="job-list-card__verified">
@@ -96,6 +132,10 @@ export function JobListCard({ job }: Props) {
           <span className="job-list-card__client-name">
             {job.poster.full_name}
           </span>
+          <JobWorkStars
+            avg={job.poster.work_rating_avg}
+            count={job.poster.work_review_count}
+          />
           {job.location ? (
             <span className="job-list-card__location">
               <i className="bi bi-geo-alt" aria-hidden />

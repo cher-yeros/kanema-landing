@@ -171,6 +171,52 @@ export const JOB_EMPLOYMENT_CATEGORY_LABELS = JOB_EMPLOYMENT_CATEGORIES.map(
 
 export const JOB_WORK_TYPE_LABELS = JOB_WORK_TYPES.map((item) => item.label);
 
+export type JobPostingTypeId = "ROLE" | "SHOOT_CALL" | "QUICK_GIG";
+
+export const JOB_POSTING_TYPES: {
+  id: JobPostingTypeId;
+  label: string;
+  shortLabel: string;
+  description: string;
+}[] = [
+  {
+    id: "ROLE",
+    label: "Traditional role",
+    shortLabel: "Role",
+    description:
+      "Hire for an ongoing or project crew role — the classic jobs board listing.",
+  },
+  {
+    id: "SHOOT_CALL",
+    label: "Shoot call",
+    shortLabel: "Shoot call",
+    description:
+      "Invite creatives to join a commercial, film, or branded production shoot.",
+  },
+  {
+    id: "QUICK_GIG",
+    label: "Quick gig",
+    shortLabel: "Quick gig",
+    description:
+      "Need talent soon near a place and date — e.g. camera op in Addis tomorrow.",
+  },
+];
+
+export const JOB_PRODUCTION_KIND_LABELS = [
+  "Commercial",
+  "Film",
+  "Music video",
+  "Documentary",
+  "Branded content",
+  "Event coverage",
+  "Other",
+] as const;
+
+export function jobPostingTypeLabel(type: string | null | undefined): string {
+  const id = String(type ?? "ROLE").toUpperCase() as JobPostingTypeId;
+  return JOB_POSTING_TYPES.find((item) => item.id === id)?.shortLabel ?? "Role";
+}
+
 function jobSearchText(job: {
   title: string;
   description: string;
@@ -207,7 +253,10 @@ export function jobMatchesFilterOption(
     return true;
   }
 
-  if (fieldValue && option.keywords.some((keyword) => fieldValue.includes(keyword))) {
+  if (
+    fieldValue &&
+    option.keywords.some((keyword) => fieldValue.includes(keyword))
+  ) {
     return true;
   }
 
@@ -227,5 +276,6 @@ export function countJobsForFilterOption(
   option: JobFilterOption,
   field: "modality" | "role_tag",
 ): number {
-  return jobs.filter((job) => jobMatchesFilterOption(job, option, field)).length;
+  return jobs.filter((job) => jobMatchesFilterOption(job, option, field))
+    .length;
 }

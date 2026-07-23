@@ -12,9 +12,10 @@ import {
 import { ForumPageShell } from "@/components/forum/ForumPageShell";
 import { memberImageSrc } from "@/lib/member-image";
 import { MarketplaceProfileSection } from "@/components/marketplace/MarketplaceProfileSection";
+import { JobWorkProfileSection } from "@/components/jobs/JobWorkProfileSection";
 
 export function PublicUserProfileClient({ userId }: { userId: string }) {
-  const [tab, setTab] = useState<"forum" | "marketplace">("forum");
+  const [tab, setTab] = useState<"forum" | "marketplace" | "work">("forum");
   const { data } = useQuery(USER_PROFILE_QUERY, {
     variables: { user_id: userId },
   });
@@ -121,6 +122,15 @@ export function PublicUserProfileClient({ userId }: { userId: string }) {
             Marketplace
           </button>
         </li>
+        <li className="nav-item">
+          <button
+            type="button"
+            className={`nav-link${tab === "work" ? " active" : ""}`}
+            onClick={() => setTab("work")}
+          >
+            Work
+          </button>
+        </li>
       </ul>
 
       {tab === "forum" ? (
@@ -128,10 +138,15 @@ export function PublicUserProfileClient({ userId }: { userId: string }) {
           <h2 className="h5 mb-3">Recent threads</h2>
           <ThreadList threads={profile.userForumThreads ?? []} />
         </>
-      ) : (
+      ) : tab === "marketplace" ? (
         <>
           <h2 className="h5 mb-3">Marketplace</h2>
           <MarketplaceProfileSection userId={userId} />
+        </>
+      ) : (
+        <>
+          <h2 className="h5 mb-3">Job work reviews</h2>
+          <JobWorkProfileSection userId={userId} />
         </>
       )}
       <Link href="/discussion" className="btn btn-ghost mt-3">
