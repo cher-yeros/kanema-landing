@@ -3,13 +3,17 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
 import { communityMemberPath } from "@/lib/site-url";
-import { COMMUNITY_JOIN_INTEREST_OPTIONS } from "@/components/community/join-community-form-schema";
 import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
 import { ProfileIdentityEditor } from "@/components/profile/ProfileIdentityEditor";
 import { communityRoleLabel } from "@/lib/community-member-labels";
+import {
+  COMMUNITY_JOIN_INTERESTS_QUERY,
+  communityJoinInterestLabelMap,
+  type CommunityJoinInterestsQuery,
+} from "@/lib/graphql/community-join-interests";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
 import { memberImageSrc } from "@/lib/member-image";
 import {
@@ -53,13 +57,6 @@ const QUICK_LINKS = [
   { href: "/discussion", label: "Discussion", icon: "bi-chat-dots" },
   { href: "/community", label: "Community", icon: "bi-people" },
 ] as const;
-
-function interestLabel(id: string): string {
-  return (
-    COMMUNITY_JOIN_INTEREST_OPTIONS.find((option) => option.id === id)?.label ??
-    id
-  );
-}
 
 function communityStatusLabel(status: CommunityJoinProfile["status"]): string {
   switch (status) {
@@ -119,6 +116,16 @@ export default function ProfilePage() {
   const { data, loading } = useQuery<MyProfileQuery>(MY_PROFILE_QUERY, {
     skip: !token,
   });
+  const { data: interestsData } = useQuery<CommunityJoinInterestsQuery>(
+    COMMUNITY_JOIN_INTERESTS_QUERY,
+    {
+      variables: { activeOnly: false },
+    },
+  );
+  const interestLabels = useMemo(
+    () => communityJoinInterestLabelMap(interestsData?.communityJoinInterests),
+    [interestsData],
+  );
   const me = data?.me;
   const communityJoin = data?.myCommunityJoin;
 
@@ -287,7 +294,9 @@ export default function ProfilePage() {
                     {communityJoin.interests.length > 0 ? (
                       <ul className="profile-interest-list">
                         {communityJoin.interests.map((interest) => (
-                          <li key={interest}>{interestLabel(interest)}</li>
+                          <li key={interest}>
+                            {interestLabels.get(interest) ?? interest}
+                          </li>
                         ))}
                       </ul>
                     ) : (

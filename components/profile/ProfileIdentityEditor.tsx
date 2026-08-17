@@ -1,6 +1,6 @@
 "use client";
 
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useMemo, useState } from "react";
 import { Control, Controller, useForm, type Resolver } from "react-hook-form";
@@ -11,11 +11,16 @@ import { EthiopiaPhoneInput } from "@/components/community/EthiopiaPhoneInput";
 import { ProfilePictureUpload } from "@/components/community/ProfilePictureUpload";
 import {
   COMMUNITY_JOIN_ROLE_FROM_GRAPHQL,
+  createProfileIdentityEditorSchema,
   mapCommunityJoinRole,
-  profileIdentityEditorSchema,
   type ProfileIdentityEditorValues,
 } from "@/components/profile/profile-identity-editor-schema";
 import { HEADER_USER_QUERY } from "@/lib/graphql/community-join";
+import {
+  COMMUNITY_JOIN_INTERESTS_QUERY,
+  mapCommunityJoinInterestOptions,
+  type CommunityJoinInterestsQuery,
+} from "@/lib/graphql/community-join-interests";
 import { MY_PROFILE_QUERY, UPDATE_MY_IDENTITY } from "@/lib/graphql/profile";
 import {
   formatEthiopiaPhoneForApi,
@@ -92,6 +97,23 @@ export function ProfileIdentityEditor({
       ],
     },
   );
+  const { data: interestsData, loading: interestsLoading } =
+    useQuery<CommunityJoinInterestsQuery>(COMMUNITY_JOIN_INTERESTS_QUERY, {
+      variables: { activeOnly: true },
+    });
+  const interestOptions = useMemo(
+    () =>
+      mapCommunityJoinInterestOptions(interestsData?.communityJoinInterests),
+    [interestsData],
+  );
+  const interestIds = useMemo(
+    () => interestOptions.map((option) => option.id),
+    [interestOptions],
+  );
+  const formSchema = useMemo(
+    () => createProfileIdentityEditorSchema(interestIds),
+    [interestIds],
+  );
 
   const defaultValues = useMemo(
     () => buildDefaultValues(me, communityJoin),
@@ -108,9 +130,7 @@ export function ProfileIdentityEditor({
     setError,
     formState: { errors, isDirty },
   } = useForm<ProfileIdentityEditorValues>({
-    resolver: yupResolver(
-      profileIdentityEditorSchema,
-    ) as Resolver<ProfileIdentityEditorValues>,
+    resolver: yupResolver(formSchema) as Resolver<ProfileIdentityEditorValues>,
     defaultValues,
   });
 
@@ -318,6 +338,8 @@ export function ProfileIdentityEditor({
                       control={
                         control as unknown as Control<JoinCommunityFormValues>
                       }
+                      options={interestOptions}
+                      loading={interestsLoading}
                       error={errors.interests}
                     />
                   </div>

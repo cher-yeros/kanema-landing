@@ -1,11 +1,16 @@
 "use client";
 
+import { useMemo } from "react";
 import { useQuery } from "@apollo/client/react";
 import Link from "next/link";
 
-import { COMMUNITY_JOIN_INTEREST_OPTIONS } from "@/components/community/join-community-form-schema";
 import { PortfolioProjectMedia } from "@/components/community/PortfolioProjectMedia";
 import { communityRoleLabel } from "@/lib/community-member-labels";
+import {
+  COMMUNITY_JOIN_INTERESTS_QUERY,
+  communityJoinInterestLabelMap,
+  type CommunityJoinInterestsQuery,
+} from "@/lib/graphql/community-join-interests";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
 import { memberImageSrc } from "@/lib/member-image";
 import { portfolioYoutubeEmbed } from "@/lib/portfolio-media";
@@ -16,13 +21,6 @@ import type {
 } from "@/lib/public-graphql";
 import { selectAuthToken, selectAuthUser } from "@/lib/store/auth-selectors";
 import { useAppSelector } from "@/lib/store/hooks";
-
-function interestLabel(id: string): string {
-  return (
-    COMMUNITY_JOIN_INTEREST_OPTIONS.find((option) => option.id === id)?.label ??
-    id
-  );
-}
 
 function formatDate(value: string | null | undefined): string | null {
   if (!value?.trim()) return null;
@@ -82,6 +80,16 @@ export function CommunityMemberProfileClient({
   }>(MY_PROFILE_QUERY, {
     skip: !isOwnProfile || !token,
   });
+  const { data: interestsData } = useQuery<CommunityJoinInterestsQuery>(
+    COMMUNITY_JOIN_INTERESTS_QUERY,
+    {
+      variables: { activeOnly: false },
+    },
+  );
+  const interestLabels = useMemo(
+    () => communityJoinInterestLabelMap(interestsData?.communityJoinInterests),
+    [interestsData],
+  );
 
   const avatarSrc = memberImageSrc(member.avatar_url);
   const roleLabel = communityRoleLabel(member.role);
@@ -135,7 +143,7 @@ export function CommunityMemberProfileClient({
               <div className="community-member-interests">
                 {member.interests.map((interest) => (
                   <span key={interest} className="community-member-interest">
-                    {interestLabel(interest)}
+                    {interestLabels.get(interest) ?? interest}
                   </span>
                 ))}
               </div>
@@ -171,7 +179,9 @@ export function CommunityMemberProfileClient({
                   {member.interests.length > 0 ? (
                     <ul className="community-member-interest-list">
                       {member.interests.map((interest) => (
-                        <li key={interest}>{interestLabel(interest)}</li>
+                        <li key={interest}>
+                          {interestLabels.get(interest) ?? interest}
+                        </li>
                       ))}
                     </ul>
                   ) : (

@@ -1,12 +1,17 @@
 "use client";
 
-import { useMutation } from "@apollo/client/react";
+import { useMutation, useQuery } from "@apollo/client/react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 import { SUBMIT_COMMUNITY_JOIN } from "@/lib/graphql/community-join";
+import {
+  COMMUNITY_JOIN_INTERESTS_QUERY,
+  mapCommunityJoinInterestOptions,
+  type CommunityJoinInterestsQuery,
+} from "@/lib/graphql/community-join-interests";
 import { formatEthiopiaPhoneForApi } from "@/lib/ethiopia-phone";
 import { setAuthSession } from "@/lib/store/auth-slice";
 import { useAppDispatch } from "@/lib/store/hooks";
@@ -16,8 +21,8 @@ import { EthiopiaPhoneInput } from "./EthiopiaPhoneInput";
 import { ProfilePictureUpload } from "./ProfilePictureUpload";
 import {
   JOIN_COMMUNITY_HONEYPOT_FIELD,
+  createJoinCommunityFormSchema,
   joinCommunityFormDefaultValues,
-  joinCommunityFormSchema,
   type JoinCommunityFormValues,
 } from "./join-community-form-schema";
 
@@ -56,6 +61,23 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const [createCommunityRequest] = useMutation(SUBMIT_COMMUNITY_JOIN);
+  const { data: interestsData, loading: interestsLoading } =
+    useQuery<CommunityJoinInterestsQuery>(COMMUNITY_JOIN_INTERESTS_QUERY, {
+      variables: { activeOnly: true },
+    });
+  const interestOptions = useMemo(
+    () =>
+      mapCommunityJoinInterestOptions(interestsData?.communityJoinInterests),
+    [interestsData],
+  );
+  const interestIds = useMemo(
+    () => interestOptions.map((option) => option.id),
+    [interestOptions],
+  );
+  const formSchema = useMemo(
+    () => createJoinCommunityFormSchema(interestIds),
+    [interestIds],
+  );
 
   const {
     register,
@@ -66,7 +88,7 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
     control,
     formState: { errors, isSubmitting },
   } = useForm<JoinCommunityFormValues>({
-    resolver: yupResolver(joinCommunityFormSchema),
+    resolver: yupResolver(formSchema),
     defaultValues: joinCommunityFormDefaultValues,
   });
 
@@ -415,6 +437,8 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
                 <div className="col-12">
                   <CommunityInterestsField
                     control={control}
+                    options={interestOptions}
+                    loading={interestsLoading}
                     error={errors.interests}
                   />
                 </div>
@@ -488,7 +512,7 @@ export function JoinCommunityForm({ nextUrl }: { nextUrl?: string }) {
               <button
                 type="submit"
                 className="dispatch-btn"
-                disabled={isSubmitting || banner === "sent"}
+                disabled={isSubmitting || banner === "sent" || interestsLoading}
               >
                 <i className="bi bi-arrow-right-circle-fill" />
                 <span>{buttonLabel}</span>
