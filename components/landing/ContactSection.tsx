@@ -120,7 +120,7 @@ export function ContactSection() {
                     </div>
                     <div className="col-4">
                       <div className="single-stat">
-                        <strong>Gigs</strong>
+                        <strong>Jobs</strong>
                         <span>Opportunities</span>
                       </div>
                     </div>

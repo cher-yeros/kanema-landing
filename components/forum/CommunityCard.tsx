@@ -8,7 +8,7 @@ export function CommunityCard({
 }) {
   return (
     <Link
-      href={`/forum/c/${community.slug}`}
+      href={`/discussion/c/${community.slug}`}
       className="offering-block p-3 text-decoration-none d-block h-100 forum-community-card"
     >
       <div className="d-flex align-items-start gap-3">

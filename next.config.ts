@@ -8,6 +8,20 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  async redirects() {
+    return [
+      {
+        source: "/forum",
+        destination: "/discussion",
+        permanent: true,
+      },
+      {
+        source: "/forum/:path*",
+        destination: "/discussion/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

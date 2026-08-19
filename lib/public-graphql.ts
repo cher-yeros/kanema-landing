@@ -118,6 +118,7 @@ export async function fetchTeamMembers(): Promise<PublicTeamMember[]> {
 
 export type PublicCommunityMember = {
   id: string;
+  slug: string;
   user_id: string | null;
   full_name: string;
   role: string;
@@ -127,6 +128,16 @@ export type PublicCommunityMember = {
   portfolio_url: string | null;
   interests: string[];
   is_featured: boolean;
+  createdAt: string;
+  member_since: string | null;
+};
+
+export type PublicUserProfile = {
+  bio: string | null;
+  city: string | null;
+  creative_role: string | null;
+  portfolio_url: string | null;
+  website_url: string | null;
 };
 
 export type PublicPortfolioProject = {
@@ -138,6 +149,22 @@ export type PublicPortfolioProject = {
   display_order: number;
 };
 
+const COMMUNITY_MEMBER_FIELDS = `
+  id
+  slug
+  user_id
+  full_name
+  role
+  city
+  avatar_url
+  message
+  portfolio_url
+  interests
+  is_featured
+  createdAt
+  member_since
+`;
+
 export async function fetchCommunityMembers(options?: {
   featuredOnly?: boolean;
 }): Promise<PublicCommunityMember[]> {
@@ -147,16 +174,7 @@ export async function fetchCommunityMembers(options?: {
     `
       query CommunityMembers($featuredOnly: Boolean) {
         communityMembers(featuredOnly: $featuredOnly) {
-          id
-          user_id
-          full_name
-          role
-          city
-          avatar_url
-          message
-          portfolio_url
-          interests
-          is_featured
+          ${COMMUNITY_MEMBER_FIELDS}
         }
       }
     `,
@@ -174,22 +192,31 @@ export async function fetchCommunityMember(
     `
       query CommunityMember($id: ID!) {
         communityMember(id: $id) {
-          id
-          user_id
-          full_name
-          role
-          city
-          avatar_url
-          message
-          portfolio_url
-          interests
-          is_featured
+          ${COMMUNITY_MEMBER_FIELDS}
         }
       }
     `,
     { id },
   );
   return data.communityMember ?? null;
+}
+
+export async function fetchCommunityMemberBySlug(
+  slug: string,
+): Promise<PublicCommunityMember | null> {
+  const data = await fetchGraphQL<{
+    communityMemberBySlug: PublicCommunityMember | null;
+  }>(
+    `
+      query CommunityMemberBySlug($slug: String!) {
+        communityMemberBySlug(slug: $slug) {
+          ${COMMUNITY_MEMBER_FIELDS}
+        }
+      }
+    `,
+    { slug },
+  );
+  return data.communityMemberBySlug ?? null;
 }
 
 export async function fetchUserPortfolioProjects(
@@ -215,6 +242,28 @@ export async function fetchUserPortfolioProjects(
   return data.userPortfolioProjects ?? [];
 }
 
+export async function fetchPublicUserProfile(
+  userId: string,
+): Promise<PublicUserProfile | null> {
+  const data = await fetchGraphQL<{
+    userProfile: PublicUserProfile | null;
+  }>(
+    `
+      query PublicUserProfile($user_id: ID!) {
+        userProfile(user_id: $user_id) {
+          bio
+          city
+          creative_role
+          portfolio_url
+          website_url
+        }
+      }
+    `,
+    { user_id: userId },
+  );
+  return data.userProfile ?? null;
+}
+
 export type PublicTalent = {
   id: string;
   headline: string | null;
@@ -228,11 +277,30 @@ export type PublicProductionJob = {
   id: string;
   title: string;
   description: string;
+  posting_type?: string | null;
+  production_kind?: string | null;
+  starts_on?: string | null;
+  ends_on?: string | null;
   modality: string | null;
   location: string | null;
   role_tag: string | null;
+  open_positions?: number;
+  skills: string[];
+  budget_type: string | null;
+  budget_min: string | null;
+  budget_max: string | null;
+  budget_currency: string | null;
   status: string;
-  poster: { id: string; full_name: string };
+  posting_payment_status?: string | null;
+  posting_fee_amount?: string | null;
+  posting_fee_currency?: string | null;
+  poster: {
+    id: string;
+    full_name: string;
+    is_verified: boolean;
+    work_rating_avg?: string | null;
+    work_review_count?: number;
+  };
   application_count: number;
   createdAt: string;
   updatedAt: string;
@@ -246,13 +314,26 @@ export async function fetchProductionJobs(): Promise<PublicProductionJob[]> {
           id
           title
           description
+          posting_type
+          production_kind
+          starts_on
+          ends_on
           modality
           location
           role_tag
+          open_positions
+          skills
+          budget_type
+          budget_min
+          budget_max
+          budget_currency
           status
           poster {
             id
             full_name
+            is_verified
+            work_rating_avg
+            work_review_count
           }
           application_count
           createdAt
@@ -276,13 +357,29 @@ export async function fetchProductionJob(
           id
           title
           description
+          posting_type
+          production_kind
+          starts_on
+          ends_on
           modality
           location
           role_tag
+          open_positions
+          skills
+          budget_type
+          budget_min
+          budget_max
+          budget_currency
           status
+          posting_payment_status
+          posting_fee_amount
+          posting_fee_currency
           poster {
             id
             full_name
+            is_verified
+            work_rating_avg
+            work_review_count
           }
           application_count
           createdAt
@@ -518,6 +615,15 @@ export type PublicEvent = {
   price: string;
   currency: string;
   payment_instructions: string | null;
+  registration_count: number;
+  confirmed_registration_count: number;
+  is_past: boolean;
+  has_recap: boolean;
+  recap_summary: string | null;
+  attendance_count: number | null;
+  gallery: string[];
+  recap_highlights: string[];
+  recap_published_at: string | null;
 };
 
 export async function fetchPublishedEvents(): Promise<PublicEvent[]> {
@@ -544,6 +650,15 @@ export async function fetchPublishedEvents(): Promise<PublicEvent[]> {
           price
           currency
           payment_instructions
+          registration_count
+          confirmed_registration_count
+          is_past
+          has_recap
+          recap_summary
+          attendance_count
+          gallery
+          recap_highlights
+          recap_published_at
         }
       }
     `,
@@ -578,6 +693,15 @@ export async function fetchPublishedEventBySlug(
           price
           currency
           payment_instructions
+          registration_count
+          confirmed_registration_count
+          is_past
+          has_recap
+          recap_summary
+          attendance_count
+          gallery
+          recap_highlights
+          recap_published_at
         }
       }
     `,

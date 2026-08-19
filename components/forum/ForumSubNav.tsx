@@ -5,22 +5,25 @@ import { usePathname } from "next/navigation";
 import { NotificationBell } from "./NotificationBell";
 
 const links = [
-  { href: "/forum", label: "Home" },
-  { href: "/forum/search", label: "Search" },
-  { href: "/forum/wiki", label: "Wiki" },
-  { href: "/forum/notifications", label: "Notifications" },
+  { href: "/discussion", label: "Home" },
+  { href: "/discussion/search", label: "Search" },
+  { href: "/discussion/wiki", label: "Wiki" },
+  { href: "/discussion/notifications", label: "Notifications" },
 ];
 
 export function ForumSubNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="forum-subnav border-bottom sticky-top" aria-label="Forum">
+    <nav
+      className="forum-subnav border-bottom sticky-top"
+      aria-label="Discussion"
+    >
       <div className="container py-2 d-flex flex-wrap align-items-center gap-3">
         {links.map((l) => {
           const isActive =
             pathname === l.href ||
-            (l.href !== "/forum" && pathname.startsWith(l.href));
+            (l.href !== "/discussion" && pathname.startsWith(l.href));
           return (
             <Link
               key={l.href}

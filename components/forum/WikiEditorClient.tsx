@@ -38,7 +38,7 @@ export function WikiEditorClient({
           },
         },
       });
-      router.push(`/forum/wiki/${slug}`);
+      router.push(`/discussion/wiki/${slug}`);
       router.refresh();
     } catch (err) {
       showApolloError(err, "Could not save article.");

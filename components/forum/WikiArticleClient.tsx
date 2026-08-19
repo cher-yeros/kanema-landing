@@ -64,11 +64,11 @@ export function WikiArticleClient({ slug }: { slug: string }) {
   return (
     <ForumPageShell>
       <nav className="small mb-3">
-        <Link href="/forum/wiki">Wiki</Link>
+        <Link href="/discussion/wiki">Wiki</Link>
         {article.community ? (
           <>
             {" / "}
-            <Link href={`/forum/c/${article.community.slug}`}>
+            <Link href={`/discussion/c/${article.community.slug}`}>
               {article.community.name}
             </Link>
           </>
@@ -88,7 +88,7 @@ export function WikiArticleClient({ slug }: { slug: string }) {
           {article.tags.map((t) => (
             <Link
               key={t.slug}
-              href={`/forum/tags/${t.slug}`}
+              href={`/discussion/tags/${t.slug}`}
               className="badge forum-tag-badge text-decoration-none"
             >
               {t.name}
@@ -97,14 +97,14 @@ export function WikiArticleClient({ slug }: { slug: string }) {
         </div>
         <div className="mt-3">
           <Link
-            href={`/forum/wiki/${slug}/edit`}
+            href={`/discussion/wiki/${slug}/edit`}
             className="btn btn-sm btn-outline-secondary me-2"
           >
             <i className="bi bi-pencil" />
             Edit
           </Link>
           <Link
-            href={`/forum/wiki/${slug}/history`}
+            href={`/discussion/wiki/${slug}/history`}
             className="btn btn-sm btn-ghost"
           >
             <i className="bi bi-clock-history" />

@@ -1,3 +1,6 @@
+import type { ApolloClient } from "@apollo/client";
+
+import type { AppDispatch } from "@/lib/store";
 import type { AuthUser } from "@/lib/store/auth-slice";
 import {
   clearAuthSession,
@@ -49,8 +52,29 @@ export function setStoredToken(token: string | null) {
 }
 
 /**
+ * Full logout: clear Redux immediately, drop persisted auth, and wipe Apollo cache
+ * so queries stop serving the previous session while the UI re-renders.
+ */
+export async function logoutCanmaSession(options?: {
+  dispatch?: AppDispatch;
+  apolloClient?: ApolloClient;
+}): Promise<void> {
+  const store = getCanmaReduxStore();
+  const dispatch = options?.dispatch ?? store?.dispatch;
+
+  dispatch?.(clearAuthSession());
+  clearCanmaAuthStorage();
+
+  await Promise.all([
+    options?.apolloClient?.clearStore(),
+    getCanmaReduxPersistor()?.purge(),
+  ]);
+}
+
+/**
  * Immediate logout: clear Redux + localStorage synchronously so the header
  * can switch to “Join the community” on the same frame.
+ * @deprecated Prefer {@link logoutCanmaSession} for UI + cache consistency.
  */
 export function clearLocalAuthSession(): void {
   const store = getCanmaReduxStore();
@@ -63,15 +87,16 @@ export function clearLocalAuthSession(): void {
 /**
  * Deferred logout cleanup (persist flush, Apollo cache, etc.). Call after
  * {@link clearLocalAuthSession} so UI is not blocked.
+ * @deprecated Prefer {@link logoutCanmaSession}.
  */
 export function runDeferredAuthLogoutCleanup(onCleanup?: () => void): void {
   queueMicrotask(() => {
-    void getCanmaReduxPersistor()?.flush();
+    void getCanmaReduxPersistor()?.purge();
     onCleanup?.();
   });
 }
 
-/** @deprecated Prefer `clearLocalAuthSession` + `runDeferredAuthLogoutCleanup`. */
+/** @deprecated Prefer {@link logoutCanmaSession}. */
 export function clearStoredAuthSession() {
   clearLocalAuthSession();
   runDeferredAuthLogoutCleanup();

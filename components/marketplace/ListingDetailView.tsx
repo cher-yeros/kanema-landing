@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { SellerBadge } from "./SellerBadge";
+import { MARKETPLACE_PRIMARY_PATH } from "@/lib/marketplace-config";
 
 type Listing = {
   id: string;
@@ -122,7 +123,7 @@ export function ListingDetailView({ listing }: { listing: Listing }) {
   return (
     <div className="container py-4">
       <nav className="small mb-3">
-        <Link href="/marketplace">Marketplace</Link>
+        <Link href={MARKETPLACE_PRIMARY_PATH}>Marketplace</Link>
         {" / "}
         <span>{listing.title}</span>
       </nav>

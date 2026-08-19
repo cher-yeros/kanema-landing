@@ -3,18 +3,29 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@apollo/client/react";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 
-import { COMMUNITY_JOIN_INTEREST_OPTIONS } from "@/components/community/join-community-form-schema";
-import { CommunityInterestsEditor } from "@/components/community/CommunityInterestsEditor";
+import { communityMemberPath } from "@/lib/site-url";
 import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
+import { ProfileIdentityEditor } from "@/components/profile/ProfileIdentityEditor";
 import { communityRoleLabel } from "@/lib/community-member-labels";
+import {
+  COMMUNITY_JOIN_INTERESTS_QUERY,
+  communityJoinInterestLabelMap,
+  type CommunityJoinInterestsQuery,
+} from "@/lib/graphql/community-join-interests";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
 import { memberImageSrc } from "@/lib/member-image";
+import {
+  selectAuthToken,
+  selectIsAuthenticated,
+} from "@/lib/store/auth-selectors";
+import { useAppSelector } from "@/lib/store/hooks";
 import type { GqlUser } from "@/types/election-apollo";
 
 type CommunityJoinProfile = {
   id: string;
+  slug: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
   full_name: string;
   email: string;
@@ -41,18 +52,11 @@ type MyProfileQuery = {
 };
 
 const QUICK_LINKS = [
-  { href: "/jobs/mine", label: "My gigs", icon: "bi-briefcase" },
+  { href: "/jobs/mine", label: "My Jobs", icon: "bi-briefcase" },
   { href: "/events", label: "Events", icon: "bi-calendar-event" },
-  { href: "/forum", label: "Forum", icon: "bi-chat-dots" },
+  { href: "/discussion", label: "Discussion", icon: "bi-chat-dots" },
   { href: "/community", label: "Community", icon: "bi-people" },
 ] as const;
-
-function interestLabel(id: string): string {
-  return (
-    COMMUNITY_JOIN_INTEREST_OPTIONS.find((option) => option.id === id)?.label ??
-    id
-  );
-}
 
 function communityStatusLabel(status: CommunityJoinProfile["status"]): string {
   switch (status) {
@@ -107,17 +111,35 @@ function ProfileField({
 
 export default function ProfilePage() {
   const router = useRouter();
-  const { data, loading } = useQuery<MyProfileQuery>(MY_PROFILE_QUERY);
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+  const token = useAppSelector(selectAuthToken);
+  const { data, loading } = useQuery<MyProfileQuery>(MY_PROFILE_QUERY, {
+    skip: !token,
+  });
+  const { data: interestsData } = useQuery<CommunityJoinInterestsQuery>(
+    COMMUNITY_JOIN_INTERESTS_QUERY,
+    {
+      variables: { activeOnly: false },
+    },
+  );
+  const interestLabels = useMemo(
+    () => communityJoinInterestLabelMap(interestsData?.communityJoinInterests),
+    [interestsData],
+  );
   const me = data?.me;
   const communityJoin = data?.myCommunityJoin;
 
   useEffect(() => {
-    if (!loading && !me) {
-      router.replace(`/community?next=${encodeURIComponent("/profile")}`);
+    if (!isAuthenticated) {
+      router.replace(`/community/join?next=${encodeURIComponent("/profile")}`);
+      return;
     }
-  }, [loading, me, router]);
+    if (!loading && !me) {
+      router.replace(`/community/join?next=${encodeURIComponent("/profile")}`);
+    }
+  }, [isAuthenticated, loading, me, router]);
 
-  if (loading || !me) {
+  if (!isAuthenticated || loading || !me) {
     return (
       <section className="profile-section profile-section--loading">
         <div className="container text-center py-5">
@@ -127,17 +149,14 @@ export default function ProfilePage() {
     );
   }
 
-  const avatarSrc = memberImageSrc(
-    communityJoin?.avatar_url,
-    "person/person-m-1.webp",
-  );
+  const avatarSrc = memberImageSrc(communityJoin?.avatar_url);
   const displayRole = communityJoin
     ? communityRoleLabel(communityJoin.role)
     : me.role === "admin"
       ? "Administrator"
       : "Canma member";
-  const communityMemberId =
-    communityJoin?.status === "APPROVED" ? communityJoin.id : null;
+  const communityMemberSlug =
+    communityJoin?.status === "APPROVED" ? communityJoin.slug : null;
 
   return (
     <section className="profile-section">
@@ -145,7 +164,8 @@ export default function ProfilePage() {
         <p className="profile-section__eyebrow">Member dashboard</p>
         <h1>My profile</h1>
         <p className="profile-section__lede">
-          Manage your account, community presence, and public showcase.
+          Manage your personal information, community presence, and public
+          showcase.
         </p>
       </div>
 
@@ -200,11 +220,11 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {communityMemberId ? (
+            {communityMemberSlug ? (
               <div className="profile-hero__cta">
                 <Link
                   className="btn btn-accent"
-                  href={`/community/${communityMemberId}`}
+                  href={communityMemberPath(communityMemberSlug)}
                 >
                   <i className="bi bi-box-arrow-up-right" aria-hidden />
                   View public profile
@@ -274,7 +294,9 @@ export default function ProfilePage() {
                     {communityJoin.interests.length > 0 ? (
                       <ul className="profile-interest-list">
                         {communityJoin.interests.map((interest) => (
-                          <li key={interest}>{interestLabel(interest)}</li>
+                          <li key={interest}>
+                            {interestLabels.get(interest) ?? interest}
+                          </li>
                         ))}
                       </ul>
                     ) : (
@@ -290,7 +312,7 @@ export default function ProfilePage() {
                   </p>
                   <Link
                     className="btn btn-accent btn-sm"
-                    href="/community#join"
+                    href="/community/join"
                   >
                     Join the community
                   </Link>
@@ -319,10 +341,10 @@ export default function ProfilePage() {
                     </Link>
                   </li>
                 ))}
-                {communityMemberId ? (
+                {communityMemberSlug ? (
                   <li>
                     <Link
-                      href={`/community/${communityMemberId}`}
+                      href={communityMemberPath(communityMemberSlug)}
                       className="profile-quick-nav__link"
                     >
                       <i className="bi bi-easel" aria-hidden />
@@ -336,11 +358,11 @@ export default function ProfilePage() {
                 ) : null}
                 <li>
                   <Link
-                    href={`/forum/u/${me.id}`}
+                    href={`/discussion/u/${me.id}`}
                     className="profile-quick-nav__link"
                   >
                     <i className="bi bi-chat-square-text" aria-hidden />
-                    <span>Forum profile</span>
+                    <span>Discussion profile</span>
                     <i
                       className="bi bi-chevron-right profile-quick-nav__chevron"
                       aria-hidden
@@ -357,12 +379,11 @@ export default function ProfilePage() {
             data-aos-delay="150"
           >
             <div className="profile-editor-stack">
-              {communityJoin ? (
-                <CommunityInterestsEditor
-                  initialInterests={communityJoin.interests}
-                />
-              ) : null}
-              <ProfileEditorSection communityMemberId={communityMemberId} />
+              <ProfileIdentityEditor
+                me={me}
+                communityJoin={communityJoin ?? null}
+              />
+              <ProfileEditorSection communityMemberSlug={communityMemberSlug} />
             </div>
           </div>
         </div>

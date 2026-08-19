@@ -256,3 +256,32 @@ export const FOLLOW_STORE_MUTATION = gql`
     }
   }
 `;
+
+export const MY_MARKETPLACE_PAYMENT_BY_TX_REF_QUERY = gql`
+  query MyMarketplacePaymentByTxRef($tx_ref: String!) {
+    myMarketplacePaymentByTxRef(tx_ref: $tx_ref) {
+      id
+      product_type
+      product_id
+      billing_period
+      product_label
+      amount
+      currency
+      payment_status
+      chapa_tx_ref
+    }
+  }
+`;
+
+export const INITIATE_MARKETPLACE_PAYMENT_MUTATION = gql`
+  mutation InitiateMarketplacePayment(
+    $input: InitiateMarketplacePaymentInput!
+  ) {
+    initiateMarketplacePayment(input: $input) {
+      status
+      message
+      checkout_url
+      tx_ref
+    }
+  }
+`;

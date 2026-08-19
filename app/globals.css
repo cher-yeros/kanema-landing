@@ -1,2 +1,21 @@
 @import "./landing-theme/entry.css";
 @import "./marketplace/marketplace.css";
+
+/* Clear fixed site header on jobs routes without a hero */
+.jobs-page section,
+.jobs-page .section {
+  scroll-margin-top: calc(var(--site-header-height) + 3rem);
+}
+
+.main.jobs-page > *:first-child:not(.hero) {
+  padding-top: var(--page-header-clearance);
+}
+
+.main.jobs-page .job-detail-shell {
+  padding-bottom: 3rem;
+}
+
+.main.jobs-page .jobs-member-strip {
+  padding-top: var(--page-header-clearance);
+  padding-bottom: 1.25rem;
+}

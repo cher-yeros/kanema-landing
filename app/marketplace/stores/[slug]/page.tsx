@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchMarketplaceStoreBySlug } from "@/lib/marketplace-public";
+import { redirectIfMarketplaceProductsOnly } from "@/lib/marketplace-config";
 import { StoreHeader } from "@/components/marketplace/ListingDetailView";
 import { MarketplaceListingCard } from "@/components/marketplace/MarketplaceListingCard";
 
 type Props = { params: Promise<{ slug: string }> };
 
 export default async function StorePage({ params }: Props) {
+  redirectIfMarketplaceProductsOnly();
   const { slug } = await params;
   let store: Awaited<ReturnType<typeof fetchMarketplaceStoreBySlug>> = null;
   try {

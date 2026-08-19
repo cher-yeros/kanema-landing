@@ -32,6 +32,12 @@ export type ForumCommunityPublic = {
   display_order: number;
 };
 
+export type ForumThreadMediaPublic = {
+  id: string;
+  kind: string;
+  url: string;
+};
+
 export type ForumThreadPublic = {
   id: string;
   title: string;
@@ -44,6 +50,7 @@ export type ForumThreadPublic = {
   author: { id: string; full_name: string };
   community: { slug: string; name: string; icon_url: string | null };
   tags: Array<{ slug: string; name: string }>;
+  media?: ForumThreadMediaPublic[];
 };
 
 export async function fetchForumCommunities(): Promise<ForumCommunityPublic[]> {
@@ -90,6 +97,7 @@ export async function fetchForumThreads(opts: {
           author { id full_name }
           community { slug name icon_url }
           tags { slug name }
+          media { id kind url }
         }
         total
       }
@@ -107,6 +115,7 @@ export async function fetchTrendingFeed(sort = "trending", limit = 10) {
         author { id full_name }
         community { slug name icon_url }
         tags { slug name }
+        media { id kind url }
       }
     }`,
     { sort, limit },

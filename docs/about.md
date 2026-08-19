@@ -69,7 +69,7 @@ Experience the creativity and storytelling of Ethiopia’s visual industry.
 Find and share opportunities within the creative industry:
 
 - Job postings
-- Freelance gigs
+- Freelance jobs
 - Collaborations
 - Grants and funding opportunities
 

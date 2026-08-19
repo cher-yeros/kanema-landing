@@ -236,7 +236,7 @@ export function PortfolioSection() {
             <div className="col-lg-7">
               <h4>Hiring a creative or listing an opportunity?</h4>
               <p>
-                Reach out to collaborate, post a gig, or feature your work with
+                Reach out to collaborate, post a job, or feature your work with
                 Canma&apos;s community of Ethiopian visual storytellers.
               </p>
             </div>

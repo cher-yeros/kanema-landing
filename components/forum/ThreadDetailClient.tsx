@@ -93,9 +93,9 @@ export function ThreadDetailClient({
   return (
     <ForumPageShell>
       <nav className="small mb-3">
-        <Link href="/forum">Forum</Link>
+        <Link href="/discussion">Discussion</Link>
         {" / "}
-        <Link href={`/forum/c/${communitySlug}`}>Community</Link>
+        <Link href={`/discussion/c/${communitySlug}`}>Community</Link>
       </nav>
 
       <article className="offering-block p-4 mb-4">
@@ -122,7 +122,7 @@ export function ThreadDetailClient({
               {thread.tags.map((t) => (
                 <Link
                   key={t.slug}
-                  href={`/forum/tags/${t.slug}`}
+                  href={`/discussion/tags/${t.slug}`}
                   className="badge forum-tag-badge text-decoration-none"
                 >
                   {t.name}

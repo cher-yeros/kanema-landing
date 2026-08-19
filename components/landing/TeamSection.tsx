@@ -1,16 +1,20 @@
 "use client";
 
+import { useQuery } from "@apollo/client/react";
+
 import { communityRoleLabel } from "@/lib/community-member-labels";
+import { sortCommunityMembersWithCurrentUserFirst } from "@/lib/community-member-sort";
+import { COMMUNITY_LIST_AUTH_QUERY } from "@/lib/graphql/community-join";
 import { memberImageSrc } from "@/lib/member-image";
 import {
   fetchCommunityMembers,
   type PublicCommunityMember,
-  type PublicTeamMember,
 } from "@/lib/public-graphql";
+import { communityMemberPath } from "@/lib/site-url";
+import { selectAuthToken, selectAuthUser } from "@/lib/store/auth-selectors";
+import { useAppSelector } from "@/lib/store/hooks";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-
-import { TeamLeadersSwiper } from "./TeamLeadersSwiper";
 
 type MemberCard = {
   key: string;
@@ -24,15 +28,20 @@ type MemberCard = {
 
 type TeamSectionProps = {
   initialMembers?: PublicCommunityMember[];
-  initialTeamMembers?: PublicTeamMember[];
-  initialFeaturedMembers?: PublicCommunityMember[];
 };
 
-export function TeamSection({
-  initialMembers,
-  initialTeamMembers,
-  initialFeaturedMembers,
-}: TeamSectionProps = {}) {
+type CommunityListAuthQuery = {
+  me: { id: string } | null;
+  myCommunityJoin: { id: string; status: string } | null;
+};
+
+export function TeamSection({ initialMembers }: TeamSectionProps = {}) {
+  const token = useAppSelector(selectAuthToken);
+  const sessionUser = useAppSelector(selectAuthUser);
+  const { data: authData } = useQuery<CommunityListAuthQuery>(
+    COMMUNITY_LIST_AUTH_QUERY,
+    { skip: !token },
+  );
   const [members, setMembers] = useState<PublicCommunityMember[] | null>(
     initialMembers ?? null,
   );
@@ -62,20 +71,26 @@ export function TeamSection({
       return [];
     }
 
-    return members.map((m, idx) => {
+    const myJoin = authData?.myCommunityJoin;
+    const ordered = sortCommunityMembersWithCurrentUserFirst(members, {
+      userId: sessionUser?.id ?? authData?.me?.id,
+      communityJoinId: myJoin?.status === "APPROVED" ? myJoin.id : null,
+    });
+
+    return ordered.map((m, idx) => {
       const roleLabel = communityRoleLabel(m.role);
       const role = m.city ? `${roleLabel} · ${m.city}` : roleLabel;
       return {
         key: m.id,
-        href: `/community/${m.id}`,
-        img: memberImageSrc(m.avatar_url, "person/person-m-2.webp"),
+        href: communityMemberPath(m.slug),
+        img: memberImageSrc(m.avatar_url),
         name: m.full_name,
         role,
         delay: 200 + idx * 50,
         portfolioUrl: m.portfolio_url,
       };
     });
-  }, [members]);
+  }, [authData?.me?.id, authData?.myCommunityJoin, members, sessionUser?.id]);
 
   return (
     <section id="team" className="team section">
@@ -89,34 +104,6 @@ export function TeamSection({
       </div>
 
       <div className="container" data-aos="fade-up" data-aos-delay="100">
-        <div className="row justify-content-center">
-          <div className="col-lg-8">
-            <div
-              className="intro-block text-center"
-              data-aos="fade-down"
-              data-aos-delay="150"
-            >
-              <div className="stats-badges">
-                <div className="badge-item">
-                  <i className="bi bi-people" />
-                  <strong>Network</strong>
-                  <span>Photographers and filmmakers</span>
-                </div>
-                <div className="badge-item">
-                  <i className="bi bi-building" />
-                  <strong>Hub</strong>
-                  <span>Showcase and opportunities</span>
-                </div>
-                <div className="badge-item">
-                  <i className="bi bi-globe2" />
-                  <strong>Ethiopia</strong>
-                  <span>Addis and regions</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {members === null ? (
           <p
             className="text-center text-secondary mt-4 mb-0"
@@ -133,8 +120,7 @@ export function TeamSection({
             data-aos="fade-up"
             data-aos-delay="180"
           >
-            Approved members will appear here after joining.{" "}
-            <a href="#join">Apply to join</a>.
+            Approved members will appear here after joining.
           </p>
         ) : null}
 
@@ -179,56 +165,15 @@ export function TeamSection({
           </div>
         ) : null}
 
-        <div className="row mt-5">
-          <div className="col-12">
-            <div
-              className="leaders-section"
-              data-aos="fade-up"
-              data-aos-delay="200"
-            >
-              <h4 className="leaders-heading">Mentors and industry voices</h4>
-              <TeamLeadersSwiper
-                initialTeamMembers={initialTeamMembers}
-                initialFeaturedMembers={initialFeaturedMembers}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="row mt-5">
-          <div className="col-lg-10 offset-lg-1">
-            <div
-              className="careers-banner"
-              data-aos="zoom-in"
-              data-aos-delay="200"
-            >
-              <div className="row align-items-center">
-                <div className="col-md-7">
-                  <div className="banner-text">
-                    <div className="banner-badge">
-                      <i className="bi bi-stars" /> Opportunities
-                    </div>
-                    <h4>List a gig, grant, or collaboration</h4>
-                    <p>
-                      Canma connects talent with demand—post roles, freelance
-                      briefs, and partnership calls so the right creatives see
-                      them first.
-                    </p>
-                  </div>
-                </div>
-                <div className="col-md-5">
-                  <div className="banner-actions">
-                    <a href="#contact" className="action-btn primary">
-                      Post an opportunity
-                    </a>
-                    <a href="#services" className="action-btn secondary">
-                      Platform overview
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+        <div
+          className="text-center mt-5"
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
+          <Link href="/community/join" className="dispatch-btn">
+            <i className="bi bi-person-plus-fill" />
+            <span>Join the community</span>
+          </Link>
         </div>
       </div>
     </section>

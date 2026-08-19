@@ -1,10 +1,12 @@
 import { MarketplaceBrowseSection } from "@/components/marketplace/MarketplaceBrowseSection";
+import { redirectIfMarketplaceProductsOnly } from "@/lib/marketplace-config";
 
 type Props = {
   searchParams?: Promise<{ q?: string; category?: string; sort?: string }>;
 };
 
 export default async function RentalsPage({ searchParams }: Props) {
+  redirectIfMarketplaceProductsOnly();
   const sp = (await searchParams) ?? {};
   return (
     <MarketplaceBrowseSection

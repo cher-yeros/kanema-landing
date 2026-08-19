@@ -30,7 +30,7 @@ export function WikiNewForm() {
       });
       const s = (data as { createWikiArticle: { slug: string } })
         .createWikiArticle.slug;
-      router.push(`/forum/wiki/${s}`);
+      router.push(`/discussion/wiki/${s}`);
     } catch (err) {
       showApolloError(err, "Failed to create article");
     }
@@ -39,7 +39,7 @@ export function WikiNewForm() {
     <ForumPageShell
       title="New wiki article"
       description="Create a community-maintained guide. Markdown is supported in the body."
-      backHref="/forum/wiki"
+      backHref="/discussion/wiki"
       backLabel="Back to wiki"
       narrow
     >

@@ -9,6 +9,7 @@ import {
   type PublicTeamMember,
 } from "@/lib/public-graphql";
 import { landingImage } from "@/lib/landing-assets";
+import { communityMemberPath } from "@/lib/site-url";
 import Link from "next/link";
 import { Autoplay, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -65,13 +66,13 @@ function mapFeaturedMember(member: PublicCommunityMember): LeaderSlide {
   const role = member.city ? `${roleLabel} · ${member.city}` : roleLabel;
   return {
     key: `community-${member.id}`,
-    img: memberImageSrc(member.avatar_url, "person/person-m-3.webp"),
+    img: memberImageSrc(member.avatar_url),
     role,
     name: member.full_name,
     text:
       member.message?.trim() ||
       "Featured Canma community member sharing craft and industry perspective.",
-    profileHref: `/community/${member.id}`,
+    profileHref: communityMemberPath(member.slug),
   };
 }
 

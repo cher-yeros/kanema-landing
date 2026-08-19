@@ -21,15 +21,15 @@ export function ForumHeroActions() {
 
   return (
     <div className="hero-actions mt-4">
-      <Link href="#forum-communities" className="btn btn-accent">
+      <Link href="#discussion-communities" className="btn btn-accent">
         <i className="bi bi-plus-circle" />
         Start a discussion
       </Link>
-      <Link href="/forum/search" className="btn btn-ghost">
+      <Link href="/discussion/search" className="btn btn-ghost">
         <i className="bi bi-search" />
         Search discussions
       </Link>
-      <Link href="/forum/wiki" className="btn btn-ghost">
+      <Link href="/discussion/wiki" className="btn btn-ghost">
         <i className="bi bi-book" />
         Browse wiki
       </Link>
@@ -38,13 +38,13 @@ export function ForumHeroActions() {
           <Link href="/profile" className="btn btn-ghost">
             {displayName ? `Hi, ${displayName.split(" ")[0]}` : "My profile"}
           </Link>
-          <Link href="/forum/notifications" className="btn btn-ghost">
+          <Link href="/discussion/notifications" className="btn btn-ghost">
             Notifications
           </Link>
         </>
       ) : (
         <Link
-          href={`/community?next=${encodeURIComponent("/forum")}`}
+          href={`/community/join?mode=signin&next=${encodeURIComponent("/discussion")}`}
           className="btn btn-ghost"
         >
           Join Canma

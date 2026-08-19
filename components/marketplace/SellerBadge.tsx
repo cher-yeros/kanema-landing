@@ -12,7 +12,7 @@ type Seller = {
 export function SellerBadge({ seller }: { seller: Seller }) {
   return (
     <span className="seller-badge">
-      <Link href={`/forum/u/${seller.id}`} className="text-decoration-none">
+      <Link href={`/discussion/u/${seller.id}`} className="text-decoration-none">
         {seller.full_name}
       </Link>
       {seller.is_verified_seller && (

@@ -10,6 +10,13 @@ import {
 } from "@/lib/forum-graphql";
 import { useAppSelector } from "@/lib/store/hooks";
 
+function discussionLinkPath(linkPath?: string | null): string {
+  if (!linkPath) return "/discussion/notifications";
+  return linkPath.startsWith("/forum")
+    ? `/discussion${linkPath.slice("/forum".length)}`
+    : linkPath;
+}
+
 export function NotificationBell() {
   const token = useAppSelector((s) => s.auth.token);
   const [open, setOpen] = useState(false);
@@ -71,7 +78,7 @@ export function NotificationBell() {
               {notifications.map((n) => (
                 <li key={n.id}>
                   <Link
-                    href={n.link_path ?? "/forum/notifications"}
+                    href={discussionLinkPath(n.link_path)}
                     className="forum-notifications-dropdown__item"
                     onClick={async () => {
                       await markRead({ variables: { id: n.id } });
@@ -87,7 +94,7 @@ export function NotificationBell() {
             </ul>
           )}
           <Link
-            href="/forum/notifications"
+            href="/discussion/notifications"
             className="forum-notifications-dropdown__footer"
             onClick={() => setOpen(false)}
           >
@@ -115,8 +122,10 @@ export function NotificationsPageClient() {
   if (!token) {
     return (
       <p className="text-muted">
-        <Link href="/community?next=/forum/notifications">Sign in</Link> to view
-        notifications.
+        <Link href="/community/join?mode=signin&next=/discussion/notifications">
+          Sign in
+        </Link>{" "}
+        to view notifications.
       </p>
     );
   }
@@ -152,7 +161,7 @@ export function NotificationsPageClient() {
                 <p className="small text-muted mb-1">{n.body}</p>
               ) : null}
               {n.link_path ? (
-                <Link href={n.link_path} className="small">
+                <Link href={discussionLinkPath(n.link_path)} className="small">
                   View
                 </Link>
               ) : null}

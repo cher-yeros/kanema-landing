@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 const HERO_BG_IMAGE = "/img/hero/hero-bg.png";
 const HERO_SHOWCASE_IMAGE = "/img/about/about-wide-2.png";
 
@@ -23,20 +25,22 @@ export function HeroSection() {
               <span className="badge-label">
                 Empowering Ethiopian Visual Storytellers
               </span>
-              <h1>Canma — the home for Ethiopia&apos;s camera creatives</h1>
+              <h1 className="fw-bold">
+                Canma — the home for Ethiopia&apos;s camera creatives
+              </h1>
               <p>
                 The official digital hub for photographers, videographers, and
                 filmmakers: connect talent, discover opportunities, and grow
                 together in one creative ecosystem.
               </p>
               <div className="hero-actions">
-                <a href="#contact" className="btn btn-accent">
+                <Link href="/community/join" className="btn btn-accent">
                   <i className="bi bi-arrow-right-circle me-2" />
                   Join the Community
-                </a>
-                <a href="#showcase" className="btn btn-ghost">
+                </Link>
+                <Link href="/community#team" className="btn btn-ghost">
                   Explore Talent
-                </a>
+                </Link>
               </div>
             </div>
           </div>

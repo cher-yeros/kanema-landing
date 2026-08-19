@@ -29,7 +29,7 @@ export function WikiHistoryClient({ slug }: { slug: string }) {
   return (
     <ForumPageShell
       title="Version history"
-      backHref={`/forum/wiki/${slug}`}
+      backHref={`/discussion/wiki/${slug}`}
       backLabel="Back to article"
       narrow
     >

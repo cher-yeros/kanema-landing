@@ -12,10 +12,7 @@ import {
   selectAuthUser,
   selectIsAuthenticated,
 } from "@/lib/store/auth-selectors";
-import {
-  clearLocalAuthSession,
-  runDeferredAuthLogoutCleanup,
-} from "@/lib/store/imperative-auth";
+import { logoutCanmaSession } from "@/lib/store/imperative-auth";
 import { setAuthUser } from "@/lib/store/auth-slice";
 import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
 
@@ -69,11 +66,8 @@ export function HeaderUserMenu() {
 
   const onLogout = useCallback(() => {
     closeMenu();
-    clearLocalAuthSession();
-    runDeferredAuthLogoutCleanup(() => {
-      client.cache.reset();
-    });
-  }, [client, closeMenu]);
+    void logoutCanmaSession({ dispatch, apolloClient: client });
+  }, [client, closeMenu, dispatch]);
 
   useEffect(() => {
     if (!open) return;
@@ -97,7 +91,7 @@ export function HeaderUserMenu() {
 
   if (!isAuthenticated) {
     return (
-      <Link className="btn-getstarted" href="/community#join">
+      <Link className="btn-getstarted" href="/community/join">
         Join the community
       </Link>
     );
@@ -117,10 +111,7 @@ export function HeaderUserMenu() {
     );
   }
 
-  const avatarSrc = memberImageSrc(
-    sessionUser.avatar_url,
-    "person/person-m-1.webp",
-  );
+  const avatarSrc = memberImageSrc(sessionUser.avatar_url);
 
   return (
     <div

@@ -6,6 +6,7 @@ import {
   BRAND_LOGO_RECTANGLE,
   BRAND_NAME,
 } from "@/lib/brand-assets";
+import { ELECTIONS_ENABLED } from "@/lib/election-config";
 import { SITE_CONTACT } from "@/lib/site-contact";
 
 import { SocialLinks } from "@/components/landing/SocialLinks";
@@ -32,23 +33,21 @@ export function SiteFooter() {
             <div className="footer-contact pt-3">
               <p>{SITE_CONTACT.location}</p>
               <p className="mt-3">
-                <strong>Phone:</strong>{" "}
-                <span>
-                  <a href={SITE_CONTACT.phone.href}>
-                    {SITE_CONTACT.phone.display}
-                  </a>
-                </span>
+                <strong>Phone:</strong>
+                <br />
+                <a href={SITE_CONTACT.phone.href}>
+                  {SITE_CONTACT.phone.display}
+                </a>
               </p>
               <p>
-                <strong>Email:</strong>{" "}
-                <span>
-                  {SITE_CONTACT.emails.map((email, index) => (
-                    <span key={email}>
-                      <a href={`mailto:${email}`}>{email}</a>
-                      {index < SITE_CONTACT.emails.length - 1 ? ", " : null}
-                    </span>
-                  ))}
-                </span>
+                <strong>Email:</strong>
+                <br />
+                {SITE_CONTACT.emails.map((email, index) => (
+                  <span key={email}>
+                    <a href={`mailto:${email}`}>{email}</a>
+                    {index < SITE_CONTACT.emails.length - 1 ? <br /> : null}
+                  </span>
+                ))}
               </p>
             </div>
             <div className="social-links d-flex mt-4">
@@ -74,11 +73,13 @@ export function SiteFooter() {
               <li>
                 <a href="#contact">Membership</a>
               </li>
+              {ELECTIONS_ENABLED ? (
+                <li>
+                  <Link href="/election">Presidential election</Link>
+                </li>
+              ) : null}
               <li>
-                <Link href="/election">Presidential election</Link>
-              </li>
-              <li>
-                <Link href="/jobs">Creative gigs</Link>
+                <Link href="/jobs">Creative Jobs</Link>
               </li>
             </ul>
           </div>
@@ -96,7 +97,7 @@ export function SiteFooter() {
                 <Link href="/events">Events and trainings</Link>
               </li>
               <li>
-                <Link href="/marketplace">Marketplace</Link>
+                <Link href="/marketplace/products">Marketplace</Link>
               </li>
               <li>
                 <a href="#why-us">Resources</a>

@@ -44,7 +44,7 @@ const authPersistFlushMiddleware: Middleware = () => (next) => (action) => {
 
   if (clearAuthSession.match(action)) {
     queueMicrotask(() => {
-      void getCanmaReduxPersistor()?.flush();
+      void getCanmaReduxPersistor()?.purge();
     });
   }
 

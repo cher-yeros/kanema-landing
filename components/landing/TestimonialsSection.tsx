@@ -13,10 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 function testimonialSlide(t: PublicTestimonial) {
   const member = t.community_member;
   const name = member?.full_name ?? t.author_name;
-  const img = memberImageSrc(
-    member?.avatar_url ?? t.avatar_url,
-    "person/person-m-9.webp",
-  );
+  const img = memberImageSrc(member?.avatar_url ?? t.avatar_url);
   const roleLabel = member
     ? communityRoleLabel(member.role)
     : (t.author_title ?? "Canma community");

@@ -374,6 +374,19 @@
   text-decoration: underline;
 }
 
+.profile-page .profile-save-notice {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 1rem 0 0;
+  font-size: 0.9rem;
+  color: color-mix(in srgb, var(--accent-color), black 10%);
+}
+
+.profile-page .profile-save-notice .bi {
+  color: var(--accent-color);
+}
+
 /* Contact-page form pattern inside profile cards */
 .profile-page .contact .form-panel--embedded {
   background: transparent;
@@ -432,6 +445,30 @@
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
   border-radius: 12px;
   background: color-mix(in srgb, var(--default-color), transparent 97%);
+}
+
+.profile-page .portfolio-editor-form__type-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.profile-page .portfolio-editor-item__thumb-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-page .portfolio-editor-item__play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--default-color), transparent 35%);
+  color: #fff;
+  font-size: 1.35rem;
+  pointer-events: none;
 }
 
 .profile-page .portfolio-editor-item__thumb {

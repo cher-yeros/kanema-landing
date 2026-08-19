@@ -9,6 +9,7 @@ export const MY_PROFILE_QUERY = gql`
     }
     myCommunityJoin {
       id
+      slug
       status
       full_name
       email
@@ -27,24 +28,30 @@ export const MY_PROFILE_QUERY = gql`
   ${USER_FIELDS}
 `;
 
-export const UPDATE_MY_IDENTITY_MUTATION = gql`
+export const UPDATE_MY_IDENTITY = gql`
   mutation UpdateMyIdentity($input: UpdateMyIdentityInput!) {
     updateMyIdentity(input: $input) {
       me {
-        id
-        full_name
-        phone
+        ...UserFields
       }
       communityJoin {
         id
-        interests
+        slug
+        status
+        full_name
+        email
+        phone
         city
         role
+        interests
         portfolio_url
         message
         avatar_url
+        is_featured
+        createdAt
         updatedAt
       }
     }
   }
+  ${USER_FIELDS}
 `;

@@ -72,7 +72,7 @@ export function ServicesSection() {
                   <a href="#contact">Opportunities</a>
                 </h4>
                 <p>
-                  Job postings, freelance gigs, collaborations, and grants—one
+                  Job postings, freelance jobs, collaborations, and grants—one
                   place to connect talent with demand across Ethiopia&apos;s
                   creative economy.
                 </p>

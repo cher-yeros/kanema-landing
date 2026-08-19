@@ -297,7 +297,7 @@ function ElectionPageInner() {
                 <h3>A centralized, trustworthy vote</h3>
                 <p className="lead">
                   Many talented creatives already trust Canma for portfolios and
-                  gigs. Voting uses the same discipline: verified membership,
+                  jobs. Voting uses the same discipline: verified membership,
                   clear deadlines, and tallies you can follow live—no shadow
                   spreadsheets.
                 </p>

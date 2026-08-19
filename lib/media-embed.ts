@@ -1,18 +1,33 @@
-export function toYouTubeEmbed(url: string): string | null {
+export function parseYouTubeVideoId(url: string): string | null {
   try {
-    const u = new URL(url);
+    const u = new URL(url.trim());
     if (u.hostname.includes("youtu.be")) {
-      const id = u.pathname.replace("/", "");
-      return id ? `https://www.youtube.com/embed/${id}` : null;
+      const id = u.pathname.replace(/^\//, "").split("/")[0];
+      return id || null;
     }
     if (u.hostname.includes("youtube.com")) {
       const v = u.searchParams.get("v");
-      return v ? `https://www.youtube.com/embed/${v}` : null;
+      if (v) return v;
+      const parts = u.pathname.split("/").filter(Boolean);
+      const embedIdx = parts.indexOf("embed");
+      if (embedIdx >= 0 && parts[embedIdx + 1]) return parts[embedIdx + 1];
+      const shortsIdx = parts.indexOf("shorts");
+      if (shortsIdx >= 0 && parts[shortsIdx + 1]) return parts[shortsIdx + 1];
     }
   } catch {
     return null;
   }
   return null;
+}
+
+export function toYouTubeEmbed(url: string): string | null {
+  const id = parseYouTubeVideoId(url);
+  return id ? `https://www.youtube.com/embed/${id}` : null;
+}
+
+export function toYouTubeThumbnail(url: string): string | null {
+  const id = parseYouTubeVideoId(url);
+  return id ? `https://img.youtube.com/vi/${id}/hqdefault.jpg` : null;
 }
 
 export function toVimeoEmbed(url: string): string | null {

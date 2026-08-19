@@ -51,6 +51,11 @@ export const FORUM_THREAD_FIELDS = gql`
       name
       icon_url
     }
+    media {
+      id
+      kind
+      url
+    }
   }
 `;
 
@@ -524,6 +529,7 @@ export const UPSERT_PORTFOLIO_MUTATION = gql`
       title
       description
       cover_url
+      media_json
       display_order
     }
   }
