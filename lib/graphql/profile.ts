@@ -26,3 +26,25 @@ export const MY_PROFILE_QUERY = gql`
   }
   ${USER_FIELDS}
 `;
+
+export const UPDATE_MY_IDENTITY_MUTATION = gql`
+  mutation UpdateMyIdentity($input: UpdateMyIdentityInput!) {
+    updateMyIdentity(input: $input) {
+      me {
+        id
+        full_name
+        phone
+      }
+      communityJoin {
+        id
+        interests
+        city
+        role
+        portfolio_url
+        message
+        avatar_url
+        updatedAt
+      }
+    }
+  }
+`;

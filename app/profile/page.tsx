@@ -6,6 +6,7 @@ import { useQuery } from "@apollo/client/react";
 import { useEffect } from "react";
 
 import { COMMUNITY_JOIN_INTEREST_OPTIONS } from "@/components/community/join-community-form-schema";
+import { CommunityInterestsEditor } from "@/components/community/CommunityInterestsEditor";
 import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
@@ -355,7 +356,14 @@ export default function ProfilePage() {
             data-aos="fade-up"
             data-aos-delay="150"
           >
-            <ProfileEditorSection communityMemberId={communityMemberId} />
+            <div className="profile-editor-stack">
+              {communityJoin ? (
+                <CommunityInterestsEditor
+                  initialInterests={communityJoin.interests}
+                />
+              ) : null}
+              <ProfileEditorSection communityMemberId={communityMemberId} />
+            </div>
           </div>
         </div>
       </div>
