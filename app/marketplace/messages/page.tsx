@@ -14,7 +14,7 @@ import {
   REPLY_MARKETPLACE_INQUIRY_MUTATION,
 } from "@/lib/marketplace-graphql";
 
-export default function InquiriesPage() {
+export default function MessagesPage() {
   const router = useRouter();
   const { data: meData, loading: meLoading } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
@@ -54,22 +54,22 @@ export default function InquiriesPage() {
   useEffect(() => {
     if (!meLoading && !me) {
       router.replace(
-        `/election/login?next=${encodeURIComponent("/marketplace/inquiries")}`,
+        `/election/login?next=${encodeURIComponent("/marketplace/messages")}`,
       );
     }
   }, [me, meLoading, router]);
 
   if (meLoading || loading) {
     return (
-      <MarketplacePageShell title="Inquiries">
+      <MarketplacePageShell title="Messages">
         <p className="py-3">Loading…</p>
       </MarketplacePageShell>
     );
   }
   if (!me) return null;
 
-  const inquiries = data?.myMarketplaceInquiries ?? [];
-  const selected = inquiries.find((i) => i.id === selectedId) ?? inquiries[0];
+  const threads = data?.myMarketplaceInquiries ?? [];
+  const selected = threads.find((t) => t.id === selectedId) ?? threads[0];
   const isSeller = selected && selected.listing.seller_user_id === me.id;
 
   async function sendReply() {
@@ -91,26 +91,28 @@ export default function InquiriesPage() {
 
   return (
     <MarketplacePageShell
-      title="Inquiries"
+      title="Messages"
       description="Buyer and seller messages for your marketplace listings."
     >
-      {inquiries.length === 0 ? (
-        <p className="text-muted">No inquiries yet.</p>
+      {threads.length === 0 ? (
+        <p className="text-muted">No messages yet.</p>
       ) : (
         <div className="row gy-4">
           <div className="col-md-4">
             <ul className="list-group">
-              {inquiries.map((inq) => (
-                <li key={inq.id} className="list-group-item p-0">
+              {threads.map((thread) => (
+                <li key={thread.id} className="list-group-item p-0">
                   <button
                     type="button"
                     className={`btn w-100 text-start p-3 border-0 rounded-0${
-                      selected?.id === inq.id ? " active" : ""
+                      selected?.id === thread.id ? " active" : ""
                     }`}
-                    onClick={() => setSelectedId(inq.id)}
+                    onClick={() => setSelectedId(thread.id)}
                   >
-                    <div className="fw-semibold small">{inq.listing.title}</div>
-                    <div className="text-muted small">{inq.status}</div>
+                    <div className="fw-semibold small">
+                      {thread.listing.title}
+                    </div>
+                    <div className="text-muted small">{thread.status}</div>
                   </button>
                 </li>
               ))}
@@ -155,11 +157,11 @@ export default function InquiriesPage() {
                   </div>
                 )}
 
-                <div className="inquiry-thread border rounded p-3 mb-3">
+                <div className="message-thread border rounded p-3 mb-3">
                   {selected.messages.map((m) => (
                     <div
                       key={m.id}
-                      className={`inquiry-bubble${
+                      className={`message-bubble${
                         m.sender_user_id === me.id ? " is-mine" : " is-theirs"
                       }`}
                     >

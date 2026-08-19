@@ -20,6 +20,11 @@ const nextConfig: NextConfig = {
         destination: "/discussion/:path*",
         permanent: true,
       },
+      {
+        source: "/marketplace/inquiries",
+        destination: "/marketplace/messages",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {

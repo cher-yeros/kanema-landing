@@ -230,7 +230,7 @@ Any authenticated member can `reportMarketplaceListing` with a reason. Admins re
 | `/marketplace/stores/[slug]` | Store profile + listings                     | Public                      |
 | `/marketplace/new`           | Create listing                               | Login + approved member     |
 | `/marketplace/mine`          | Manage own listings                          | Login                       |
-| `/marketplace/inquiries`     | Buyer/seller message threads                 | Login                       |
+| `/marketplace/messages`      | Buyer/seller message threads                 | Login                       |
 | `/marketplace/stores/new`    | Create/edit store                            | Login                       |
 
 Browse pages support query params: `q` (search), `category`, `sort` (`newest`, `popular`, `price_asc`, `price_desc`).

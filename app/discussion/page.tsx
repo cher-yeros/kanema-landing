@@ -2,7 +2,6 @@ import Link from "next/link";
 import { fetchForumCommunities, fetchTrendingFeed } from "@/lib/forum-public";
 import { CommunityGrid } from "@/components/forum/CommunityCard";
 import { ThreadList } from "@/components/forum/ThreadCard";
-import { ForumHeroActions } from "@/components/forum/ForumHeroActions";
 
 export default async function ForumHomePage() {
   let communities: Awaited<ReturnType<typeof fetchForumCommunities>> = [];
@@ -18,27 +17,8 @@ export default async function ForumHomePage() {
 
   return (
     <>
-      <section className="hero section">
-        <div className="container">
-          <div className="row align-items-center gy-4">
-            <div className="col-lg-8" data-aos="fade-up">
-              <div className="hero-heading">
-                <span className="badge-label">Canma Discussion</span>
-                <h1>Where creatives learn, share, and grow</h1>
-                <p className="lead">
-                  Join discipline-specific communities, ask gear questions,
-                  share workflows, and build reputation through helpful
-                  contributions.
-                </p>
-                <ForumHeroActions />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
+      <section id="discussion-feed" className="services section">
+        <div className="container" data-aos="fade-up" data-aos-delay="100">
           <div className="row g-4">
             <div className="col-lg-8">
               <div className="d-flex justify-content-between align-items-center mb-3">

@@ -85,11 +85,11 @@ export function MarketplaceHeroActions() {
             My listings
           </Link>
           <Link
-            href="/marketplace/inquiries"
-            className={navClass(pathname, "/marketplace/inquiries")}
+            href="/marketplace/messages"
+            className={navClass(pathname, "/marketplace/messages")}
           >
             <i className="bi bi-chat-dots" aria-hidden />
-            Inquiries
+            Messages
           </Link>
         </>
       ) : (

@@ -390,7 +390,7 @@
   color: var(--accent-color);
 }
 
-.marketplace-page .inquiry-thread {
+.marketplace-page .message-thread {
   max-height: 360px;
   overflow-y: auto;
   background: var(--background-color);
@@ -401,19 +401,19 @@
   ) !important;
 }
 
-.marketplace-page .inquiry-bubble {
+.marketplace-page .message-bubble {
   border-radius: 12px;
   padding: 0.75rem 1rem;
   margin-bottom: 0.5rem;
   max-width: 85%;
 }
 
-.marketplace-page .inquiry-bubble.is-mine {
+.marketplace-page .message-bubble.is-mine {
   margin-left: auto;
   background: color-mix(in srgb, var(--accent-color), transparent 88%);
 }
 
-.marketplace-page .inquiry-bubble.is-theirs {
+.marketplace-page .message-bubble.is-theirs {
   background: color-mix(in srgb, var(--default-color), transparent 92%);
 }
 

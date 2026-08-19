@@ -83,11 +83,11 @@ export function ListingActionsPanel({ listing }: { listing: Listing }) {
           },
         },
       });
-      setSuccess("Inquiry sent! Check your inbox.");
+      setSuccess("Message sent! Check your inbox.");
       setMessage("");
-      router.push("/marketplace/inquiries");
+      router.push("/marketplace/messages");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send inquiry");
+      setError(err instanceof Error ? err.message : "Failed to send message");
     }
   }
 
@@ -240,7 +240,7 @@ export function ListingActionsPanel({ listing }: { listing: Listing }) {
             className="btn btn-accent w-100"
             disabled={inquiring}
           >
-            {inquiring ? "Sending…" : "Send inquiry"}
+            {inquiring ? "Sending…" : "Send message"}
           </button>
         </form>
       )}

@@ -4,6 +4,7 @@ import { useQuery } from "@apollo/client/react";
 
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import { sortCommunityMembersWithCurrentUserFirst } from "@/lib/community-member-sort";
+import { filterCommunityMembers } from "@/lib/community-member-utils";
 import { COMMUNITY_LIST_AUTH_QUERY } from "@/lib/graphql/community-join";
 import { memberImageSrc } from "@/lib/member-image";
 import {
@@ -45,6 +46,7 @@ export function TeamSection({ initialMembers }: TeamSectionProps = {}) {
   const [members, setMembers] = useState<PublicCommunityMember[] | null>(
     initialMembers ?? null,
   );
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (initialMembers !== undefined) return;
@@ -63,16 +65,18 @@ export function TeamSection({ initialMembers }: TeamSectionProps = {}) {
     };
   }, [initialMembers]);
 
+  const filteredMembers = useMemo(() => {
+    if (members == null) return null;
+    return filterCommunityMembers(members, search);
+  }, [members, search]);
+
   const memberCards = useMemo((): MemberCard[] => {
-    if (members == null) {
-      return [];
-    }
-    if (members.length === 0) {
+    if (filteredMembers == null || filteredMembers.length === 0) {
       return [];
     }
 
     const myJoin = authData?.myCommunityJoin;
-    const ordered = sortCommunityMembersWithCurrentUserFirst(members, {
+    const ordered = sortCommunityMembersWithCurrentUserFirst(filteredMembers, {
       userId: sessionUser?.id ?? authData?.me?.id,
       communityJoinId: myJoin?.status === "APPROVED" ? myJoin.id : null,
     });
@@ -90,7 +94,14 @@ export function TeamSection({ initialMembers }: TeamSectionProps = {}) {
         portfolioUrl: m.portfolio_url,
       };
     });
-  }, [authData?.me?.id, authData?.myCommunityJoin, members, sessionUser?.id]);
+  }, [
+    authData?.me?.id,
+    authData?.myCommunityJoin,
+    filteredMembers,
+    sessionUser?.id,
+  ]);
+
+  const hasActiveSearch = search.trim().length > 0;
 
   return (
     <section id="team" className="team section">
@@ -104,6 +115,48 @@ export function TeamSection({ initialMembers }: TeamSectionProps = {}) {
       </div>
 
       <div className="container" data-aos="fade-up" data-aos-delay="100">
+        {members != null && members.length > 0 ? (
+          <div className="community-search-toolbar">
+            <form
+              className="community-search"
+              onSubmit={(event) => event.preventDefault()}
+            >
+              <label className="visually-hidden" htmlFor="community-search">
+                Search community members
+              </label>
+              <input
+                id="community-search"
+                type="search"
+                className="form-control"
+                placeholder="Search by name, role, city, or interests…"
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+              <button
+                type="submit"
+                className="btn btn-accent btn-sm"
+                aria-label="Search community members"
+              >
+                <i className="bi bi-search" aria-hidden />
+              </button>
+            </form>
+            <p className="community-search__count">
+              {filteredMembers?.length ?? 0}{" "}
+              {(filteredMembers?.length ?? 0) === 1 ? "member" : "members"}{" "}
+              found
+            </p>
+            {hasActiveSearch ? (
+              <button
+                type="button"
+                className="community-search__clear btn btn-ghost btn-sm"
+                onClick={() => setSearch("")}
+              >
+                Clear search
+              </button>
+            ) : null}
+          </div>
+        ) : null}
+
         {members === null ? (
           <p
             className="text-center text-secondary mt-4 mb-0"
@@ -122,6 +175,28 @@ export function TeamSection({ initialMembers }: TeamSectionProps = {}) {
           >
             Approved members will appear here after joining.
           </p>
+        ) : null}
+
+        {members != null &&
+        members.length > 0 &&
+        filteredMembers?.length === 0 ? (
+          <div
+            className="community-search__empty info-box text-center py-5 mt-4"
+            data-aos="fade-up"
+            data-aos-delay="180"
+          >
+            <p className="lead mb-2">No members match your search.</p>
+            <p className="text-muted mb-3">
+              Try a different name, role, city, or interest.
+            </p>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => setSearch("")}
+            >
+              Clear search
+            </button>
+          </div>
         ) : null}
 
         {memberCards.length > 0 ? (

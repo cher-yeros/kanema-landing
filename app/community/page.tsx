@@ -7,6 +7,8 @@ import {
 import { ScrollTop } from "@/components/landing/ScrollTop";
 import { loadLandingPublicData } from "@/lib/load-landing-data";
 
+import "./community-member.css";
+
 export const dynamic = "force-dynamic";
 
 export default async function CommunityPage() {
