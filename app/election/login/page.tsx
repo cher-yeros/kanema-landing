@@ -64,9 +64,9 @@ function ElectionLoginInner() {
       <div className="container section-title" data-aos="fade-up">
         <h1>Member login</h1>
         <p>
-          Sign in with the phone or email on your Canma account. New members can{" "}
+          Sign in with your phone and password. New members can{" "}
           <Link href={registerHref} className="link-body-emphasis">
-            register with phone only
+            create an account
           </Link>
           , then complete{" "}
           <Link href="/election/verify" className="link-body-emphasis">
@@ -177,6 +177,10 @@ function ElectionLoginInner() {
                   <span>{loading ? "Signing in…" : "Sign in"}</span>
                 </button>
                 <p className="small text-muted mt-3 mb-0">
+                  <Link href="/community/forgot-password?next=/election">
+                    Forgot password?
+                  </Link>
+                  {" · "}
                   No account yet?{" "}
                   <Link href={registerHref}>Create one with your phone</Link>.
                 </p>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMutation } from "@apollo/client/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -112,6 +113,17 @@ export function CommunityMemberSignIn({ nextUrl }: { nextUrl?: string }) {
         <i className="bi bi-arrow-right-circle-fill" />
         <span>{loading ? "Signing in…" : "Sign in"}</span>
       </button>
+      <p className="small text-muted mt-3 mb-0">
+        <Link
+          href={
+            nextUrl
+              ? `/community/forgot-password?next=${encodeURIComponent(nextUrl)}`
+              : "/community/forgot-password"
+          }
+        >
+          Forgot password?
+        </Link>
+      </p>
     </form>
   );
 }

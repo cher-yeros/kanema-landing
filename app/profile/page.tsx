@@ -7,6 +7,7 @@ import { useEffect, useMemo } from "react";
 
 import { communityMemberPath } from "@/lib/site-url";
 import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
+import { ChangePasswordForm } from "@/components/profile/ChangePasswordForm";
 import { ProfileIdentityEditor } from "@/components/profile/ProfileIdentityEditor";
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import {
@@ -383,6 +384,9 @@ export default function ProfilePage() {
                 me={me}
                 communityJoin={communityJoin ?? null}
               />
+              <div className="form-panel">
+                <ChangePasswordForm />
+              </div>
               <ProfileEditorSection communityMemberSlug={communityMemberSlug} />
             </div>
           </div>
