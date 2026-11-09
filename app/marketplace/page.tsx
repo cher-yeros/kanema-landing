@@ -1,29 +1,30 @@
-import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
   fetchMarketplaceListings,
   fetchMarketplaceStores,
 } from "@/lib/marketplace-public";
-import {
-  MARKETPLACE_PRIMARY_PATH,
-  MARKETPLACE_PRODUCTS_ONLY,
-} from "@/lib/marketplace-config";
-import { MarketplaceListingCard } from "@/components/marketplace/MarketplaceListingCard";
-import { MarketplaceModuleCard } from "@/components/marketplace/MarketplaceModuleCard";
 import { MarketplaceHeroActions } from "@/components/marketplace/MarketplaceHeroActions";
+import { MarketplaceHubBrowse } from "@/components/marketplace/MarketplaceHubBrowse";
 
 export default async function MarketplaceHubPage() {
-  if (MARKETPLACE_PRODUCTS_ONLY) {
-    redirect(MARKETPLACE_PRIMARY_PATH);
-  }
-
   let featured: Awaited<ReturnType<typeof fetchMarketplaceListings>> = [];
   let stores: Awaited<ReturnType<typeof fetchMarketplaceStores>> = [];
   try {
-    [featured, stores] = await Promise.all([
-      fetchMarketplaceListings({ limit: 6, sort: "popular" }),
+    const [products, digital, storeRows] = await Promise.all([
+      fetchMarketplaceListings({
+        limit: 48,
+        sort: "popular",
+        listing_type: "PRODUCT",
+      }),
+      fetchMarketplaceListings({
+        limit: 48,
+        sort: "popular",
+        listing_type: "DIGITAL",
+      }),
       fetchMarketplaceStores({ limit: 4 }),
     ]);
+    featured = [...products, ...digital];
+    stores = storeRows;
   } catch {
     featured = [];
     stores = [];
@@ -37,18 +38,17 @@ export default async function MarketplaceHubPage() {
             <div className="col-lg-7" data-aos="fade-up" data-aos-delay="100">
               <div className="hero-heading">
                 <span className="badge-label">
-                  Equipment · Digital · Services
+                  Products · Digital downloads
                 </span>
                 <div className="d-flex flex-wrap gap-2 mt-3 mb-2">
                   <span className="featured-tag">Verified sellers</span>
-                  <span className="featured-tag">Ethiopian creatives</span>
+                  <span className="featured-tag">Chapa checkout</span>
                 </div>
                 <h1>Canma Marketplace</h1>
                 <p>
-                  A trusted marketplace where Ethiopian creatives can buy, sell,
-                  rent, and discover creative equipment, digital assets, and
-                  professional services—all integrated with Canma member
-                  profiles.
+                  Buy and sell creative gear, and sell digital assets like LUTs,
+                  presets, and templates. Uploading digital products is free —
+                  buyers pay via Chapa with a platform commission on each sale.
                 </p>
                 <MarketplaceHeroActions />
               </div>
@@ -66,76 +66,7 @@ export default async function MarketplaceHubPage() {
         </div>
       </section>
 
-      <section
-        id="browse-modules"
-        className="services section"
-        aria-labelledby="modulesHeading"
-      >
-        <div className="container section-title" data-aos="fade-up">
-          <h2 id="modulesHeading">Marketplace modules</h2>
-          <p>
-            Physical gear, rentals, digital assets, freelance services, wanted
-            posts, and auctions—one hub for the creative economy.
-          </p>
-        </div>
-        <div className="container">
-          <div className="row gy-4">
-            <MarketplaceModuleCard
-              title="Physical products"
-              description="Cameras, lenses, lighting, audio, drones, and production accessories."
-              icon="📷"
-              href="/marketplace/products"
-            />
-            <MarketplaceModuleCard
-              title="Equipment rental"
-              description="Rent cinema cameras, gimbals, lights, and drones without the upfront cost."
-              icon="🎥"
-              href="/marketplace/rentals"
-            />
-            <MarketplaceModuleCard
-              title="Digital marketplace"
-              description="LUT packs, presets, templates, motion graphics, music, and SFX."
-              icon="💾"
-              href="/marketplace/digital"
-            />
-            <MarketplaceModuleCard
-              title="Creative services"
-              description="Photography, videography, editing, color grading, and design—like local Fiverr."
-              icon="🎨"
-              href="/marketplace/services"
-            />
-            <MarketplaceModuleCard
-              title="Wanted listings"
-              description="Post what you need; sellers respond with offers."
-              icon="🔍"
-              href="/marketplace/wanted"
-            />
-            <MarketplaceModuleCard
-              title="Auctions"
-              description="Bid on second-hand gear with transparent end times."
-              icon="🔨"
-              href="/marketplace/auctions"
-            />
-          </div>
-        </div>
-      </section>
-
-      {featured.length > 0 && (
-        <section className="services section" aria-labelledby="featuredHeading">
-          <div className="container section-title" data-aos="fade-up">
-            <h2 id="featuredHeading">Popular listings</h2>
-          </div>
-          <div className="container" data-aos="fade-up">
-            <div className="row gy-4">
-              {featured.map((listing) => (
-                <div className="col-lg-4 col-md-6" key={listing.id}>
-                  <MarketplaceListingCard listing={listing} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <MarketplaceHubBrowse listings={featured} />
 
       {stores.length > 0 && (
         <section className="services section" aria-labelledby="storesHeading">

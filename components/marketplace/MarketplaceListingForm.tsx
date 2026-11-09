@@ -8,23 +8,15 @@ import { useEffect, useState } from "react";
 import { ME_QUERY } from "@/lib/election-graphql";
 import type { MeQuery } from "@/types/election-apollo";
 import { marketplaceMediaUploadUrl } from "@/lib/graphql-env";
-import {
-  MARKETPLACE_LISTING_TYPE,
-  MARKETPLACE_PRODUCTS_ONLY,
-  type MarketplaceListingType,
-} from "@/lib/marketplace-config";
+import { type MarketplaceListingType } from "@/lib/marketplace-config";
 import {
   CREATE_MARKETPLACE_LISTING_MUTATION,
   PUBLISH_MARKETPLACE_LISTING_MUTATION,
 } from "@/lib/marketplace-graphql";
 
 const LISTING_TYPES: { value: MarketplaceListingType; label: string }[] = [
-  { value: "PRODUCT", label: "Physical product" },
-  { value: "RENTAL", label: "Equipment rental" },
-  { value: "DIGITAL", label: "Digital asset" },
-  { value: "SERVICE", label: "Creative service" },
-  { value: "WANTED", label: "Wanted listing" },
-  { value: "AUCTION", label: "Auction" },
+  { value: "PRODUCT", label: "Product (physical)" },
+  { value: "DIGITAL", label: "Digital Product" },
 ];
 
 export function MarketplaceListingForm() {
@@ -32,9 +24,8 @@ export function MarketplaceListingForm() {
   const { data: meData, loading: meLoading } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
 
-  const [listingType, setListingType] = useState<MarketplaceListingType>(
-    MARKETPLACE_PRODUCTS_ONLY ? MARKETPLACE_LISTING_TYPE : "PRODUCT",
-  );
+  const [listingType, setListingType] =
+    useState<MarketplaceListingType>("PRODUCT");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -161,24 +152,28 @@ export function MarketplaceListingForm() {
             e.preventDefault();
           }}
         >
-          {!MARKETPLACE_PRODUCTS_ONLY && (
-            <div className="mb-3">
-              <label className="form-label">Listing type</label>
-              <select
-                className="form-select"
-                value={listingType}
-                onChange={(e) =>
-                  setListingType(e.target.value as MarketplaceListingType)
-                }
-              >
-                {LISTING_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
+          <div className="mb-3">
+            <label className="form-label">Listing type</label>
+            <select
+              className="form-select"
+              value={listingType}
+              onChange={(e) =>
+                setListingType(e.target.value as MarketplaceListingType)
+              }
+            >
+              {LISTING_TYPES.map((t) => (
+                <option key={t.value} value={t.value}>
+                  {t.label}
+                </option>
+              ))}
+            </select>
+            {listingType === "DIGITAL" ? (
+              <p className="form-text mb-0">
+                Listing is free. Buyers pay your price via Chapa; Canma takes a
+                commission on each sale.
+              </p>
+            ) : null}
+          </div>
 
           <div className="mb-3">
             <label className="form-label">Title</label>
@@ -264,13 +259,14 @@ export function MarketplaceListingForm() {
           {listingType === "DIGITAL" && (
             <div className="mb-3">
               <label className="form-label">
-                Delivery URL (hidden until confirmed)
+                Delivery URL (shown to buyer after payment)
               </label>
               <input
                 className="form-control"
                 value={digitalUrl}
                 onChange={(e) => setDigitalUrl(e.target.value)}
                 placeholder="https://…"
+                required
               />
             </div>
           )}

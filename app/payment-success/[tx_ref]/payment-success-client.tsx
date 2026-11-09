@@ -9,13 +9,23 @@ import {
   MY_EMPLOYER_JOB_PAYMENT_BY_TX_REF_QUERY,
   MY_PRODUCTION_JOB_BY_TX_REF_QUERY,
 } from "@/lib/jobs-graphql";
-import { MY_MARKETPLACE_PAYMENT_BY_TX_REF_QUERY } from "@/lib/marketplace-graphql";
+import { MY_ELEARN_ENROLLMENT_BY_TX_REF_QUERY } from "@/lib/learn-graphql";
+import {
+  MY_DIGITAL_PURCHASE_BY_TX_REF_QUERY,
+  MY_MARKETPLACE_PAYMENT_BY_TX_REF_QUERY,
+} from "@/lib/marketplace-graphql";
 
 type VerifyResponse = {
   status: "success" | "error";
   message?: string;
   payment_status?: "FREE" | "PENDING" | "CONFIRMED";
-  payment_kind?: "event" | "job" | "marketplace" | "employer_job";
+  payment_kind?:
+    | "event"
+    | "job"
+    | "marketplace"
+    | "employer_job"
+    | "course"
+    | "digital_purchase";
   event?: { slug: string; title: string } | null;
   job?: { id: string; title: string } | null;
   marketplace?: {
@@ -24,6 +34,14 @@ type VerifyResponse = {
     currency: string;
     product_type: string;
   } | null;
+  digital_purchase?: {
+    id: string;
+    listing_id: string;
+    amount: string;
+    currency: string;
+    commission_percent: string;
+    payment_status: string;
+  } | null;
   employer_job?: {
     label: string;
     amount: string;
@@ -31,6 +49,7 @@ type VerifyResponse = {
     product_type: string;
     product_id: string;
   } | null;
+  course?: { id: string; slug: string; title: string } | null;
 };
 
 type PageState = "loading" | "success" | "pending" | "error";
@@ -93,6 +112,35 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
     skip: !txRef,
   });
 
+  const { data: courseData, refetch: refetchCourse } = useQuery<{
+    myELearnEnrollmentByTxRef: {
+      id: string;
+      payment_status: "FREE" | "PENDING" | "CONFIRMED";
+      course: { id: string; slug: string; title: string } | null;
+    } | null;
+  }>(MY_ELEARN_ENROLLMENT_BY_TX_REF_QUERY, {
+    variables: { tx_ref: txRef },
+    fetchPolicy: "network-only",
+    skip: !txRef,
+  });
+
+  const { data: digitalPurchaseData, refetch: refetchDigitalPurchase } =
+    useQuery<{
+      myDigitalPurchaseByTxRef: {
+        id: string;
+        payment_status: "FREE" | "PENDING" | "CONFIRMED";
+        amount: string;
+        currency: string;
+        commission_percent: string;
+        digital_delivery_url: string | null;
+        listing: { id: string; slug: string; title: string } | null;
+      } | null;
+    }>(MY_DIGITAL_PURCHASE_BY_TX_REF_QUERY, {
+      variables: { tx_ref: txRef },
+      fetchPolicy: "network-only",
+      skip: !txRef,
+    });
+
   const runVerify = useCallback(async () => {
     if (!txRef) return null;
     try {
@@ -129,6 +177,8 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
         void refetchJob();
         void refetchMarketplace();
         void refetchEmployerJob();
+        void refetchCourse();
+        void refetchDigitalPurchase();
         return;
       }
 
@@ -148,6 +198,8 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
       void refetchJob();
       void refetchMarketplace();
       void refetchEmployerJob();
+      void refetchCourse();
+      void refetchDigitalPurchase();
     }
 
     void confirm();
@@ -155,23 +207,37 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
     return () => {
       cancelled = true;
     };
-  }, [runVerify, refetchEvent, refetchJob, refetchMarketplace, refetchEmployerJob]);
+  }, [
+    runVerify,
+    refetchEvent,
+    refetchJob,
+    refetchMarketplace,
+    refetchEmployerJob,
+    refetchCourse,
+    refetchDigitalPurchase,
+  ]);
 
   const registration = regData?.myEventRegistrationByTxRef;
   const jobPosting = jobData?.myProductionJobByTxRef;
   const marketplacePayment = marketplaceData?.myMarketplacePaymentByTxRef;
   const employerJobPayment = employerJobData?.myEmployerJobPaymentByTxRef;
+  const courseEnrollment = courseData?.myELearnEnrollmentByTxRef;
+  const digitalPurchase = digitalPurchaseData?.myDigitalPurchaseByTxRef;
   const paymentKind =
     verifyData?.payment_kind ??
-    (employerJobPayment
-      ? "employer_job"
-      : marketplacePayment
-        ? "marketplace"
-        : jobPosting
-          ? "job"
-          : registration
-            ? "event"
-            : null);
+    (digitalPurchase
+      ? "digital_purchase"
+      : courseEnrollment
+        ? "course"
+        : employerJobPayment
+          ? "employer_job"
+          : marketplacePayment
+            ? "marketplace"
+            : jobPosting
+              ? "job"
+              : registration
+                ? "event"
+                : null);
   const event = verifyData?.event ?? registration?.event ?? null;
   const job =
     verifyData?.job ??
@@ -197,13 +263,25 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
           product_id: employerJobPayment.product_id,
         }
       : null);
+  const course =
+    verifyData?.course ??
+    (courseEnrollment?.course
+      ? {
+          id: courseEnrollment.course.id,
+          slug: courseEnrollment.course.slug,
+          title: courseEnrollment.course.title,
+        }
+      : null);
   const confirmed =
     pageState === "success" ||
     verifyData?.payment_status === "CONFIRMED" ||
     registration?.payment_status === "CONFIRMED" ||
     jobPosting?.posting_payment_status === "CONFIRMED" ||
     marketplacePayment?.payment_status === "CONFIRMED" ||
-    employerJobPayment?.payment_status === "CONFIRMED";
+    employerJobPayment?.payment_status === "CONFIRMED" ||
+    courseEnrollment?.payment_status === "CONFIRMED" ||
+    digitalPurchase?.payment_status === "CONFIRMED" ||
+    digitalPurchase?.payment_status === "FREE";
   const pending = pageState === "pending" && !confirmed;
   const failed = pageState === "error";
 
@@ -221,27 +299,36 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
       ? "payment-status-card__icon--pending"
       : "payment-status-card__icon--error";
 
+  const digitalTitle = digitalPurchase?.listing?.title;
   const successMessage =
-    paymentKind === "employer_job" && employerJob
-      ? employerJob.product_type === "SUBSCRIPTION"
-        ? `Thank you — your ${employerJob.label} is active. Included job posts apply automatically when you publish roles.`
-        : `Thank you — payment for ${employerJob.label} is confirmed.`
-      : paymentKind === "marketplace" && marketplace
-      ? `Thank you — payment for ${marketplace.label} is confirmed. You can start using your marketplace benefits right away.`
-      : paymentKind === "job" && job
-        ? `Thank you — payment for "${job.title}" is confirmed. Your role is now live on the job board.`
-        : event
-          ? `Thank you — you are confirmed for ${event.title}. We will be in touch with any event updates.`
-          : "Thank you for your payment. Your transaction is confirmed.";
+    paymentKind === "digital_purchase"
+      ? `Thank you — your digital product${digitalTitle ? ` "${digitalTitle}"` : ""} is unlocked. Download is ready below.`
+      : paymentKind === "course" && course
+        ? `Thank you — you now have lifetime access to "${course.title}". Open the course to start learning.`
+        : paymentKind === "employer_job" && employerJob
+          ? employerJob.product_type === "SUBSCRIPTION"
+            ? `Thank you — your ${employerJob.label} is active. Included job posts apply automatically when you publish roles.`
+            : `Thank you — payment for ${employerJob.label} is confirmed.`
+          : paymentKind === "marketplace" && marketplace
+            ? `Thank you — payment for ${marketplace.label} is confirmed. You can start using your marketplace benefits right away.`
+            : paymentKind === "job" && job
+              ? `Thank you — payment for "${job.title}" is confirmed. Your role is now live on the job board.`
+              : event
+                ? `Thank you — you are confirmed for ${event.title}. We will be in touch with any event updates.`
+                : "Thank you for your payment. Your transaction is confirmed.";
 
   const errorMessage =
-    paymentKind === "employer_job"
-      ? "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to employer pricing and try again."
-      : paymentKind === "marketplace"
-      ? "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to seller pricing and try again."
-      : paymentKind === "job"
-        ? "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to your job dashboard and try again."
-        : "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to the event and try again.";
+    paymentKind === "digital_purchase"
+      ? "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to the listing and try again."
+      : paymentKind === "course"
+        ? "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to the course and try again."
+        : paymentKind === "employer_job"
+          ? "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to employer pricing and try again."
+          : paymentKind === "marketplace"
+            ? "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to seller pricing and try again."
+            : paymentKind === "job"
+              ? "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to your job dashboard and try again."
+              : "If you completed payment on Chapa, wait a moment and refresh. Otherwise return to the event and try again.";
 
   return (
     <section className="services section payment-success-screen">
@@ -249,15 +336,21 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
         <div className="row justify-content-center">
           <div className="col-lg-6 col-md-8">
             <div className={`payment-status-card ${cardClass}`}>
-              {pageState === "loading" && !verifyData ? (
+              {pageState === "loading" ? (
                 <>
                   <i
                     className={`bi bi-arrow-repeat payment-status-card__icon payment-status-card__icon--loading`}
                     aria-hidden
                   />
-                  <h1>Confirming your payment</h1>
+                  <h1>
+                    {verifyData || verifyError
+                      ? "Checking payment again"
+                      : "Confirming your payment"}
+                  </h1>
                   <p>
-                    Please wait while we verify your transaction with Chapa.
+                    {verifyData || verifyError
+                      ? "Please wait while we re-check this transaction with Chapa."
+                      : "Please wait while we verify your transaction with Chapa."}
                   </p>
                 </>
               ) : confirmed ? (
@@ -295,7 +388,10 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
                   ) : null}
                   {paymentKind === "employer_job" ? (
                     <p className="mt-3 mb-0">
-                      <Link href="/jobs/new" className="btn btn-accent me-2 mb-2">
+                      <Link
+                        href="/jobs/new"
+                        className="btn btn-accent me-2 mb-2"
+                      >
                         Post a role
                       </Link>
                       <Link
@@ -319,6 +415,45 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
                         className="btn btn-outline-secondary mb-2"
                       >
                         My listings
+                      </Link>
+                    </p>
+                  ) : null}
+                  {paymentKind === "digital_purchase" ? (
+                    <p className="mt-3 mb-0">
+                      {digitalPurchase?.digital_delivery_url ? (
+                        <a
+                          href={digitalPurchase.digital_delivery_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn btn-accent me-2 mb-2"
+                        >
+                          Open download
+                        </a>
+                      ) : null}
+                      {digitalPurchase?.listing?.slug ? (
+                        <Link
+                          href={`/marketplace/l/${digitalPurchase.listing.slug}`}
+                          className="btn btn-outline-secondary mb-2"
+                        >
+                          View listing
+                        </Link>
+                      ) : (
+                        <Link
+                          href="/marketplace/digital"
+                          className="btn btn-outline-secondary mb-2"
+                        >
+                          Digital Products
+                        </Link>
+                      )}
+                    </p>
+                  ) : null}
+                  {paymentKind === "course" && course ? (
+                    <p className="mt-3 mb-0">
+                      <Link
+                        href={`/learn/${course.slug}`}
+                        className="btn btn-accent"
+                      >
+                        Open course
                       </Link>
                     </p>
                   ) : null}
@@ -365,11 +500,21 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
                     Job posting
                   </Link>
                 ) : null}
+                {confirmed && course ? (
+                  <Link
+                    href={`/learn/${course.slug}`}
+                    className="btn btn-outline-secondary"
+                  >
+                    Course details
+                  </Link>
+                ) : null}
                 {pending || failed ? (
                   <button
                     type="button"
                     className="btn btn-outline-secondary"
+                    disabled={pageState === "loading"}
                     onClick={() => {
+                      setVerifyError(null);
                       setPageState("loading");
                       void runVerify().then((r) => {
                         if (r?.payment_status === "CONFIRMED") {
@@ -378,6 +523,8 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
                           void refetchJob();
                           void refetchMarketplace();
                           void refetchEmployerJob();
+                          void refetchCourse();
+                          void refetchDigitalPurchase();
                         } else if (r) {
                           setPageState("pending");
                         } else {
@@ -386,15 +533,29 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
                       });
                     }}
                   >
-                    Check again
+                    {pageState === "loading" ? "Checking…" : "Check again"}
                   </button>
                 ) : null}
-                {paymentKind === "job" ? (
+                {paymentKind === "digital_purchase" ? (
+                  <Link
+                    href="/marketplace/digital"
+                    className="btn btn-outline-secondary"
+                  >
+                    Digital Products
+                  </Link>
+                ) : paymentKind === "course" ? (
+                  <Link href="/learn" className="btn btn-outline-secondary">
+                    All courses
+                  </Link>
+                ) : paymentKind === "job" ? (
                   <Link href="/jobs/mine" className="btn btn-outline-secondary">
                     Job dashboard
                   </Link>
                 ) : paymentKind === "employer_job" ? (
-                  <Link href="/jobs/pricing" className="btn btn-outline-secondary">
+                  <Link
+                    href="/jobs/pricing"
+                    className="btn btn-outline-secondary"
+                  >
                     Employer pricing
                   </Link>
                 ) : paymentKind === "marketplace" ? (

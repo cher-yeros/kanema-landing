@@ -9,8 +9,8 @@ import { ME_QUERY } from "@/lib/election-graphql";
 import type { MeQuery } from "@/types/election-apollo";
 import {
   CREATE_MARKETPLACE_INQUIRY_MUTATION,
-  CREATE_WANTED_OFFER_MUTATION,
-  PLACE_AUCTION_BID_MUTATION,
+  MY_DIGITAL_PURCHASE_BY_LISTING_QUERY,
+  PURCHASE_DIGITAL_PRODUCT_MUTATION,
   REPORT_MARKETPLACE_LISTING_MUTATION,
 } from "@/lib/marketplace-graphql";
 
@@ -32,31 +32,44 @@ export function ListingActionsPanel({ listing }: { listing: Listing }) {
   const [mounted, setMounted] = useState(false);
   const { data: meData, loading: meLoading } = useQuery<MeQuery>(ME_QUERY);
   const me = meData?.me;
+  const isDigital = listing.listing_type === "DIGITAL";
+  const isOwner = Boolean(me?.id && me.id === listing.seller.id);
 
   const [message, setMessage] = useState("");
-  const [rentalStart, setRentalStart] = useState("");
-  const [rentalEnd, setRentalEnd] = useState("");
-  const [bidAmount, setBidAmount] = useState("");
-  const [offerPrice, setOfferPrice] = useState("");
-  const [offerMessage, setOfferMessage] = useState("");
   const [reportReason, setReportReason] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [deliveryUrl, setDeliveryUrl] = useState<string | null>(null);
+
+  const { data: purchaseData, refetch: refetchPurchase } = useQuery<{
+    myDigitalPurchaseByListing: {
+      id: string;
+      payment_status: string;
+      digital_delivery_url: string | null;
+    } | null;
+  }>(MY_DIGITAL_PURCHASE_BY_LISTING_QUERY, {
+    variables: { listing_id: listing.id },
+    skip: !me || !isDigital || isOwner,
+    fetchPolicy: "network-only",
+  });
 
   const [createInquiry, { loading: inquiring }] = useMutation(
     CREATE_MARKETPLACE_INQUIRY_MUTATION,
   );
-  const [createOffer, { loading: offering }] = useMutation(
-    CREATE_WANTED_OFFER_MUTATION,
-  );
-  const [placeBid, { loading: bidding }] = useMutation(
-    PLACE_AUCTION_BID_MUTATION,
+  const [purchaseDigital, { loading: purchasing }] = useMutation(
+    PURCHASE_DIGITAL_PRODUCT_MUTATION,
   );
   const [reportListing, { loading: reporting }] = useMutation(
     REPORT_MARKETPLACE_LISTING_MUTATION,
   );
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const url =
+      purchaseData?.myDigitalPurchaseByListing?.digital_delivery_url ?? null;
+    if (url) setDeliveryUrl(url);
+  }, [purchaseData]);
 
   function requireLogin(): boolean {
     if (!meLoading && !me) {
@@ -78,8 +91,6 @@ export function ListingActionsPanel({ listing }: { listing: Listing }) {
           input: {
             listing_id: listing.id,
             message: message.trim(),
-            rental_start_date: rentalStart || null,
-            rental_end_date: rentalEnd || null,
           },
         },
       });
@@ -91,43 +102,38 @@ export function ListingActionsPanel({ listing }: { listing: Listing }) {
     }
   }
 
-  async function onOffer(e: React.FormEvent) {
+  async function onBuyDigital(e: React.FormEvent) {
     e.preventDefault();
     if (!requireLogin()) return;
     setError(null);
+    setSuccess(null);
     try {
-      await createOffer({
-        variables: {
-          input: {
-            wanted_listing_id: listing.id,
-            offered_price: offerPrice || null,
-            message: offerMessage.trim() || null,
-          },
-        },
+      const res = await purchaseDigital({
+        variables: { listing_id: listing.id },
       });
-      setSuccess("Offer submitted!");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to submit offer");
-    }
-  }
+      const payload = (
+        res.data as {
+          purchaseDigitalProduct: {
+            message: string;
+            checkout_url: string | null;
+            digital_delivery_url: string | null;
+          };
+        }
+      )?.purchaseDigitalProduct;
+      if (!payload) throw new Error("Purchase failed");
 
-  async function onBid(e: React.FormEvent) {
-    e.preventDefault();
-    if (!requireLogin()) return;
-    setError(null);
-    try {
-      await placeBid({
-        variables: {
-          input: {
-            auction_listing_id: listing.id,
-            amount: bidAmount.trim(),
-          },
-        },
-      });
-      setSuccess("Bid placed!");
-      router.refresh();
+      if (payload.checkout_url) {
+        window.location.href = payload.checkout_url;
+        return;
+      }
+
+      if (payload.digital_delivery_url) {
+        setDeliveryUrl(payload.digital_delivery_url);
+      }
+      setSuccess(payload.message);
+      await refetchPurchase();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to place bid");
+      setError(err instanceof Error ? err.message : "Purchase failed");
     }
   }
 
@@ -148,6 +154,12 @@ export function ListingActionsPanel({ listing }: { listing: Listing }) {
     }
   }
 
+  const ownedPurchase = purchaseData?.myDigitalPurchaseByListing;
+  const alreadyUnlocked =
+    Boolean(deliveryUrl) ||
+    ownedPurchase?.payment_status === "CONFIRMED" ||
+    ownedPurchase?.payment_status === "FREE";
+
   const panel = (
     <div className="form-panel form-panel--compact">
       {error && <div className="alert alert-danger small py-2">{error}</div>}
@@ -155,78 +167,54 @@ export function ListingActionsPanel({ listing }: { listing: Listing }) {
         <div className="alert alert-success small py-2">{success}</div>
       )}
 
-      {listing.listing_type === "WANTED" ? (
-        <form onSubmit={onOffer} className="php-email-form">
-          <h3 className="h6">Submit an offer</h3>
-          <input
-            type="text"
-            className="form-control form-control-sm mb-2"
-            placeholder="Your price (ETB)"
-            value={offerPrice}
-            onChange={(e) => setOfferPrice(e.target.value)}
-          />
-          <textarea
-            className="form-control form-control-sm mb-2"
-            rows={3}
-            placeholder="Message to buyer"
-            value={offerMessage}
-            onChange={(e) => setOfferMessage(e.target.value)}
-          />
-          <button
-            type="submit"
-            className="btn btn-accent w-100"
-            disabled={offering}
-          >
-            {offering ? "Sending…" : "Submit offer"}
-          </button>
-        </form>
-      ) : listing.listing_type === "AUCTION" ? (
-        <form onSubmit={onBid} className="php-email-form">
-          <h3 className="h6">Place a bid</h3>
+      {isDigital ? (
+        <form onSubmit={onBuyDigital} className="php-email-form">
+          <h3 className="h6">Buy digital product</h3>
           <p className="small text-muted">
-            Min increment: {listing.min_bid_increment ?? "1"} {listing.currency}
+            {Number(listing.price) > 0
+              ? `Pay ${listing.price} ${listing.currency} with Chapa. Instant download after payment.`
+              : "This digital product is free. Claim it to unlock the download."}
           </p>
-          <input
-            type="text"
-            className="form-control form-control-sm mb-2"
-            placeholder="Bid amount"
-            value={bidAmount}
-            onChange={(e) => setBidAmount(e.target.value)}
-            required
-          />
-          <button
-            type="submit"
-            className="btn btn-accent w-100"
-            disabled={bidding}
-          >
-            {bidding ? "Placing…" : "Place bid"}
-          </button>
+          {isOwner ? (
+            <p className="small text-muted mb-0">
+              This is your listing. Buyers pay via Chapa; Canma applies a
+              commission on each sale.
+            </p>
+          ) : alreadyUnlocked ? (
+            <div>
+              <p className="small text-success mb-2">Download unlocked.</p>
+              {deliveryUrl ? (
+                <a
+                  href={deliveryUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="btn btn-accent w-100"
+                >
+                  Open download
+                </a>
+              ) : (
+                <p className="small text-muted mb-0">
+                  Refresh after payment confirmation to see your file link.
+                </p>
+              )}
+            </div>
+          ) : (
+            <button
+              type="submit"
+              className="btn btn-accent w-100"
+              disabled={purchasing}
+            >
+              {purchasing
+                ? "Starting…"
+                : Number(listing.price) > 0
+                  ? "Buy with Chapa"
+                  : "Get free download"}
+            </button>
+          )}
         </form>
       ) : (
         <form onSubmit={onContact} className="php-email-form">
           <h3 className="h6">Contact seller</h3>
-          {listing.listing_type === "RENTAL" && (
-            <div className="row g-2 mb-2">
-              <div className="col-6">
-                <input
-                  type="date"
-                  className="form-control form-control-sm"
-                  value={rentalStart}
-                  onChange={(e) => setRentalStart(e.target.value)}
-                  aria-label="Rental start"
-                />
-              </div>
-              <div className="col-6">
-                <input
-                  type="date"
-                  className="form-control form-control-sm"
-                  value={rentalEnd}
-                  onChange={(e) => setRentalEnd(e.target.value)}
-                  aria-label="Rental end"
-                />
-              </div>
-            </div>
-          )}
           <textarea
             className="form-control form-control-sm mb-2"
             rows={4}

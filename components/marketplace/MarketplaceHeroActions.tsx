@@ -6,32 +6,9 @@ import { useQuery } from "@apollo/client/react";
 
 import { ME_QUERY } from "@/lib/election-graphql";
 import type { MeQuery } from "@/types/election-apollo";
-import {
-  MARKETPLACE_PRIMARY_PATH,
-  MARKETPLACE_PRODUCTS_ONLY,
-} from "@/lib/marketplace-config";
+import { MARKETPLACE_PRIMARY_PATH } from "@/lib/marketplace-config";
 import { selectAuthToken } from "@/lib/store/auth-selectors";
 import { useAppSelector } from "@/lib/store/hooks";
-
-const BROWSE_LINKS = MARKETPLACE_PRODUCTS_ONLY
-  ? [{ href: MARKETPLACE_PRIMARY_PATH, label: "Browse", icon: "bi-camera" }]
-  : ([
-      { href: "/marketplace", label: "Hub", icon: "bi-shop" },
-      { href: "/marketplace/products", label: "Products", icon: "bi-camera" },
-      {
-        href: "/marketplace/rentals",
-        label: "Rentals",
-        icon: "bi-camera-reels",
-      },
-      {
-        href: "/marketplace/digital",
-        label: "Digital",
-        icon: "bi-file-earmark",
-      },
-      { href: "/marketplace/services", label: "Services", icon: "bi-palette" },
-      { href: "/marketplace/wanted", label: "Wanted", icon: "bi-search" },
-      { href: "/marketplace/auctions", label: "Auctions", icon: "bi-hammer" },
-    ] as const);
 
 function navClass(pathname: string, href: string): string {
   const isActive =
@@ -47,30 +24,13 @@ export function MarketplaceHeroActions() {
     fetchPolicy: "cache-first",
   });
   const isLoggedIn = Boolean(token && meData?.me);
-  const loginNext = MARKETPLACE_PRODUCTS_ONLY
-    ? MARKETPLACE_PRIMARY_PATH
-    : "/marketplace";
 
   return (
     <div className="hero-actions marketplace-hero-actions mt-4">
-      {BROWSE_LINKS.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className={navClass(pathname, link.href)}
-          aria-current={pathname === link.href ? "page" : undefined}
-        >
-          <i className={`bi ${link.icon}`} aria-hidden />
-          {link.label}
-        </Link>
-      ))}
-      <Link
-        href="/marketplace/pricing"
-        className={navClass(pathname, "/marketplace/pricing")}
-      >
-        <i className="bi bi-tags" aria-hidden />
-        Seller pricing
-      </Link>
+      <a href="#marketplace-listings" className="btn btn-ghost">
+        <i className="bi bi-funnel" aria-hidden />
+        Browse listings
+      </a>
       <Link href="/marketplace/new" className="btn btn-accent">
         <i className="bi bi-plus-circle" aria-hidden />
         Sell
@@ -94,7 +54,7 @@ export function MarketplaceHeroActions() {
         </>
       ) : (
         <Link
-          href={`/election/login?next=${encodeURIComponent(loginNext)}`}
+          href={`/election/login?next=${encodeURIComponent(MARKETPLACE_PRIMARY_PATH)}`}
           className="btn btn-ghost"
         >
           Sign in to sell

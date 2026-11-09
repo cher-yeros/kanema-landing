@@ -285,3 +285,52 @@ export const INITIATE_MARKETPLACE_PAYMENT_MUTATION = gql`
     }
   }
 `;
+
+export const PURCHASE_DIGITAL_PRODUCT_MUTATION = gql`
+  mutation PurchaseDigitalProduct($listing_id: ID!) {
+    purchaseDigitalProduct(listing_id: $listing_id) {
+      status
+      message
+      checkout_url
+      tx_ref
+      digital_delivery_url
+      purchase {
+        id
+        payment_status
+        amount
+        currency
+        commission_percent
+      }
+    }
+  }
+`;
+
+export const MY_DIGITAL_PURCHASE_BY_LISTING_QUERY = gql`
+  query MyDigitalPurchaseByListing($listing_id: ID!) {
+    myDigitalPurchaseByListing(listing_id: $listing_id) {
+      id
+      payment_status
+      amount
+      currency
+      digital_delivery_url
+    }
+  }
+`;
+
+export const MY_DIGITAL_PURCHASE_BY_TX_REF_QUERY = gql`
+  query MyDigitalPurchaseByTxRef($tx_ref: String!) {
+    myDigitalPurchaseByTxRef(tx_ref: $tx_ref) {
+      id
+      payment_status
+      amount
+      currency
+      commission_percent
+      digital_delivery_url
+      listing {
+        id
+        slug
+        title
+      }
+    }
+  }
+`;

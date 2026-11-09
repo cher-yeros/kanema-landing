@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { PublicMarketplaceListing } from "@/lib/marketplace-public";
+import { resolveCanmaMediaUrl } from "@/lib/graphql-env";
 
 function formatPrice(listing: PublicMarketplaceListing): string {
   if (listing.listing_type === "WANTED") {
@@ -30,9 +31,11 @@ function typeLabel(type: string): string {
 }
 
 function listingImageUrl(listing: PublicMarketplaceListing): string | null {
-  if (listing.cover_url) return listing.cover_url;
-  const firstImage = listing.media?.find((m) => m.kind === "image");
-  return firstImage?.url ?? null;
+  const raw = listing.cover_url
+    ? listing.cover_url
+    : (listing.media?.find((m) => m.kind === "image")?.url ?? null);
+  const resolved = resolveCanmaMediaUrl(raw);
+  return resolved || null;
 }
 
 export function MarketplaceListingCard({

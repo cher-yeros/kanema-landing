@@ -8,6 +8,7 @@ import { ME_QUERY } from "@/lib/election-graphql";
 import type { MeQuery } from "@/types/election-apollo";
 import {
   ENROLL_ELEARN_COURSE_MUTATION,
+  INITIATE_ELEARN_PAYMENT_MUTATION,
   MY_ELEARN_ENROLLMENTS_QUERY,
   PUBLISHED_CURRICULUM_QUERY,
   SUBMIT_ELEARN_REVIEW_MUTATION,
@@ -84,8 +85,28 @@ type CurriculumData = {
 };
 
 type EnrollData = {
-  myEnrollments: { id: string; course_id: string; status: string }[];
+  myEnrollments: {
+    id: string;
+    course_id: string;
+    status: string;
+    payment_status: "FREE" | "PENDING" | "CONFIRMED";
+  }[];
 };
+
+type ChapaCheckoutResponse = {
+  status?: string;
+  checkout_url?: string | null;
+  message?: string;
+};
+
+function redirectToChapaCheckout(data: ChapaCheckoutResponse | undefined) {
+  const url = data?.checkout_url?.trim();
+  if (url) {
+    window.location.assign(url);
+    return true;
+  }
+  return false;
+}
 
 function CoursePreviewMedia({ course }: { course: PublicPublishedCourse }) {
   const previewUrl = course.preview_video_url?.trim() ?? "";
@@ -206,6 +227,9 @@ export function LearnCourseDetailClient({
   const [enroll, { loading: enrolling }] = useMutation(
     ENROLL_ELEARN_COURSE_MUTATION,
   );
+  const [initiatePayment, { loading: paying }] = useMutation(
+    INITIATE_ELEARN_PAYMENT_MUTATION,
+  );
   const [submitReview, { loading: reviewing }] = useMutation<{
     submitELearnCourseReview: {
       id: string;
@@ -221,15 +245,24 @@ export function LearnCourseDetailClient({
   const [reviewComment, setReviewComment] = useState("");
   const [reviews, setReviews] = useState(initialReviews);
 
-  const enrolled = useMemo(() => {
-    return Boolean(
-      enrollData?.myEnrollments?.some(
-        (e) =>
-          e.course_id === course.id &&
-          (e.status === "ACTIVE" || e.status === "COMPLETED"),
-      ),
+  const enrollment = useMemo(() => {
+    return (
+      enrollData?.myEnrollments?.find((e) => e.course_id === course.id) ?? null
     );
   }, [enrollData, course.id]);
+
+  const enrolled = useMemo(() => {
+    if (!enrollment) return false;
+    if (enrollment.status !== "ACTIVE" && enrollment.status !== "COMPLETED") {
+      return false;
+    }
+    return (
+      enrollment.payment_status === "FREE" ||
+      enrollment.payment_status === "CONFIRMED"
+    );
+  }, [enrollment]);
+
+  const awaitingPayment = enrollment?.payment_status === "PENDING";
 
   const sections = useMemo(() => {
     const raw = currData?.publishedCourseCurriculum ?? [];
@@ -249,13 +282,45 @@ export function LearnCourseDetailClient({
     return Math.round((sum / reviews.length) * 10) / 10;
   }, [reviews]);
 
+  async function startChapaCheckout() {
+    setMsg(null);
+    try {
+      const { data } = await initiatePayment({
+        variables: { course_id: course.id },
+      });
+      const payload = (
+        data as { initiateELearnPayment?: ChapaCheckoutResponse } | undefined
+      )?.initiateELearnPayment;
+      if (!redirectToChapaCheckout(payload)) {
+        throw new Error(payload?.message || "Could not start checkout.");
+      }
+    } catch (e: unknown) {
+      setMsg(apolloErrorMessage(e, "Could not start payment."));
+    }
+  }
+
   async function onEnroll() {
     setMsg(null);
     try {
-      await enroll({ variables: { course_id: course.id } });
+      const { data } = await enroll({ variables: { course_id: course.id } });
+      const payload = (
+        data as { enrollInELearnCourse?: ChapaCheckoutResponse } | undefined
+      )?.enrollInELearnCourse;
+
+      if (payload?.status && payload.status !== "success") {
+        throw new Error(payload.message || "Enrollment failed.");
+      }
+
+      if (redirectToChapaCheckout(payload)) {
+        return;
+      }
+
       await refetchCurr();
       await refetchEnroll();
-      setMsg("You are enrolled. Open any lesson below to start learning.");
+      setMsg(
+        payload?.message ||
+          "You are enrolled. Open any lesson below to start learning.",
+      );
     } catch (e: unknown) {
       setMsg(apolloErrorMessage(e, "Could not enroll."));
     }
@@ -358,10 +423,6 @@ export function LearnCourseDetailClient({
             <p className="text-muted mb-0">
               Verify your account (OTP) before you can enroll in courses.
             </p>
-          ) : !isFree ? (
-            <p className="text-muted mb-0">
-              Paid courses are not available yet.
-            </p>
           ) : enrolled ? (
             <p className="mb-0">
               <span className="badge text-bg-success me-2">Enrolled</span>
@@ -370,14 +431,35 @@ export function LearnCourseDetailClient({
                 other lessons unlock when you are enrolled.
               </span>
             </p>
+          ) : awaitingPayment ? (
+            <div>
+              <p className="text-muted mb-3">
+                Payment pending. Complete checkout to unlock the full course
+                (lifetime access).
+              </p>
+              <button
+                type="button"
+                className="btn btn-accent"
+                disabled={paying || enrolling}
+                onClick={() => void startChapaCheckout()}
+              >
+                {paying ? "Starting checkout…" : "Pay with Chapa"}
+              </button>
+            </div>
           ) : (
             <button
               type="button"
               className="btn btn-accent"
-              disabled={enrolling}
+              disabled={enrolling || paying}
               onClick={() => void onEnroll()}
             >
-              {enrolling ? "Enrolling…" : "Enroll for free"}
+              {enrolling
+                ? isFree
+                  ? "Enrolling…"
+                  : "Starting checkout…"
+                : isFree
+                  ? "Enroll for free"
+                  : `Buy for ${course.price} ${course.currency}`}
             </button>
           )}
         </div>

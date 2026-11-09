@@ -1,9 +1,6 @@
 import { notFound } from "next/navigation";
 import { fetchMarketplaceListingBySlug } from "@/lib/marketplace-public";
-import {
-  MARKETPLACE_LISTING_TYPE,
-  MARKETPLACE_PRODUCTS_ONLY,
-} from "@/lib/marketplace-config";
+import { isMarketplaceAllowedType } from "@/lib/marketplace-config";
 import { ListingDetailView } from "@/components/marketplace/ListingDetailView";
 import { ListingActionsPanel } from "@/components/marketplace/ListingActionsPanel";
 
@@ -18,10 +15,7 @@ export default async function ListingDetailPage({ params }: Props) {
     listing = null;
   }
   if (!listing) notFound();
-  if (
-    MARKETPLACE_PRODUCTS_ONLY &&
-    listing.listing_type !== MARKETPLACE_LISTING_TYPE
-  ) {
+  if (!isMarketplaceAllowedType(listing.listing_type)) {
     notFound();
   }
 

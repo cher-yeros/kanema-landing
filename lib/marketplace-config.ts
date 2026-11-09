@@ -1,8 +1,5 @@
 import { redirect } from "next/navigation";
 
-/** When true, only physical product buy/sell is exposed in the landing app. */
-export const MARKETPLACE_PRODUCTS_ONLY = true;
-
 export type MarketplaceListingType =
   | "PRODUCT"
   | "RENTAL"
@@ -11,13 +8,36 @@ export type MarketplaceListingType =
   | "WANTED"
   | "AUCTION";
 
-export const MARKETPLACE_PRIMARY_PATH = "/marketplace/products";
+/** Public marketplace modules currently available. */
+export const MARKETPLACE_ALLOWED_TYPES = ["PRODUCT", "DIGITAL"] as const;
+
+export type MarketplaceAllowedListingType =
+  (typeof MARKETPLACE_ALLOWED_TYPES)[number];
+
+/** @deprecated Prefer MARKETPLACE_ALLOWED_TYPES — kept for older call sites. */
+export const MARKETPLACE_PRODUCTS_ONLY = false;
+
+export const MARKETPLACE_PRIMARY_PATH = "/marketplace";
 
 export const MARKETPLACE_LISTING_TYPE: MarketplaceListingType = "PRODUCT";
 
-/** Redirect disabled marketplace modules to the primary products browse page. */
+export function isMarketplaceAllowedType(
+  type: string | null | undefined,
+): type is MarketplaceAllowedListingType {
+  return (
+    !!type && (MARKETPLACE_ALLOWED_TYPES as readonly string[]).includes(type)
+  );
+}
+
+/** Redirect disabled marketplace modules to the hub. */
 export function redirectIfMarketplaceProductsOnly(): void {
-  if (MARKETPLACE_PRODUCTS_ONLY) {
+  redirect(MARKETPLACE_PRIMARY_PATH);
+}
+
+export function redirectIfMarketplaceTypeDisabled(
+  listingType: MarketplaceListingType,
+): void {
+  if (!isMarketplaceAllowedType(listingType)) {
     redirect(MARKETPLACE_PRIMARY_PATH);
   }
 }

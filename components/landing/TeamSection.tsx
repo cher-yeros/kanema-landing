@@ -2,6 +2,7 @@
 
 import { useQuery } from "@apollo/client/react";
 
+import { formatReputationTier } from "@/components/forum/forum-utils";
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import { sortCommunityMembersWithCurrentUserFirst } from "@/lib/community-member-sort";
 import { filterCommunityMembers } from "@/lib/community-member-utils";
@@ -23,6 +24,8 @@ type MemberCard = {
   img: string;
   name: string;
   role: string;
+  standingPoints: number;
+  standingTier: string;
   delay: number;
   portfolioUrl?: string | null;
 };
@@ -90,6 +93,8 @@ export function TeamSection({ initialMembers }: TeamSectionProps = {}) {
         img: memberImageSrc(m.avatar_url),
         name: m.full_name,
         role,
+        standingPoints: m.reputation_points ?? 0,
+        standingTier: m.reputation_tier ?? "new_member",
         delay: 200 + idx * 50,
         portfolioUrl: m.portfolio_url,
       };
@@ -232,6 +237,22 @@ export function TeamSection({ initialMembers }: TeamSectionProps = {}) {
                   </div>
                   <div className="member-details">
                     <h5>{m.name}</h5>
+                    <div
+                      className="member-standing"
+                      title={`${m.standingPoints} Standing · ${formatReputationTier(m.standingTier)}`}
+                    >
+                      <span className="member-standing__score">
+                        {m.standingPoints >= 1000
+                          ? `${(m.standingPoints / 1000).toFixed(m.standingPoints % 1000 === 0 ? 0 : 1)}k`
+                          : m.standingPoints}
+                      </span>
+                      <span className="member-standing__meta">
+                        <span className="member-standing__label">Standing</span>
+                        <span className="member-standing__tier">
+                          {formatReputationTier(m.standingTier)}
+                        </span>
+                      </span>
+                    </div>
                     <span>{m.role}</span>
                   </div>
                 </Link>

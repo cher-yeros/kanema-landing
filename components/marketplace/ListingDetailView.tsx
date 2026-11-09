@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { SellerBadge } from "./SellerBadge";
 import { MARKETPLACE_PRIMARY_PATH } from "@/lib/marketplace-config";
+import { resolveCanmaMediaUrl } from "@/lib/graphql-env";
 
 type Listing = {
   id: string;
@@ -114,11 +115,12 @@ export function StoreHeader({
 }
 
 export function ListingDetailView({ listing }: { listing: Listing }) {
-  const images =
+  const images = (
     listing.media?.filter((m) => m.kind === "image") ??
     (listing.cover_url
       ? [{ id: "cover", kind: "image", url: listing.cover_url }]
-      : []);
+      : [])
+  ).map((m) => ({ ...m, url: resolveCanmaMediaUrl(m.url) }));
 
   return (
     <div className="container py-4">

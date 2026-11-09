@@ -32,6 +32,27 @@ export const MY_ELEARN_ENROLLMENTS_QUERY = gql`
       id
       course_id
       status
+      payment_status
+      fee_amount
+      fee_currency
+      course {
+        id
+        slug
+        title
+      }
+    }
+  }
+`;
+
+export const MY_ELEARN_ENROLLMENT_BY_TX_REF_QUERY = gql`
+  query MyELearnEnrollmentByTxRef($tx_ref: String!) {
+    myELearnEnrollmentByTxRef(tx_ref: $tx_ref) {
+      id
+      course_id
+      status
+      payment_status
+      fee_amount
+      fee_currency
       course {
         id
         slug
@@ -44,9 +65,27 @@ export const MY_ELEARN_ENROLLMENTS_QUERY = gql`
 export const ENROLL_ELEARN_COURSE_MUTATION = gql`
   mutation EnrollELearn($course_id: ID!) {
     enrollInELearnCourse(course_id: $course_id) {
-      id
-      course_id
       status
+      message
+      checkout_url
+      tx_ref
+      enrollment {
+        id
+        course_id
+        status
+        payment_status
+      }
+    }
+  }
+`;
+
+export const INITIATE_ELEARN_PAYMENT_MUTATION = gql`
+  mutation InitiateELearnPayment($course_id: ID!) {
+    initiateELearnPayment(course_id: $course_id) {
+      status
+      message
+      checkout_url
+      tx_ref
     }
   }
 `;

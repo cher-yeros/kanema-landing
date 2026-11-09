@@ -1,3 +1,5 @@
+import { canmaApiBaseUrl } from "@/lib/graphql-env";
+
 /** Public site origin for absolute URLs (OG tags, canonical links). */
 export function siteOrigin(): string {
   const explicit =
@@ -24,6 +26,10 @@ export function absoluteMediaUrl(url: string): string {
     trimmed.startsWith("//")
   ) {
     return trimmed.startsWith("//") ? `https:${trimmed}` : trimmed;
+  }
+  // Uploaded avatars/media live on the Canma API host, not the marketing site.
+  if (/^\/uploads\//i.test(trimmed)) {
+    return `${canmaApiBaseUrl()}${trimmed}`;
   }
   return absoluteSiteUrl(trimmed);
 }

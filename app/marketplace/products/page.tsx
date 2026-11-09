@@ -10,7 +10,7 @@ export default async function ProductsPage({ searchParams }: Props) {
     <MarketplaceBrowseSection
       listingType="PRODUCT"
       basePath="/marketplace/products"
-      title="Physical products"
+      title="Products"
       subtitle="Cameras, lenses, lighting, audio, drones, and production gear from Canma members."
       badge="Buy & sell equipment"
       searchParams={sp}

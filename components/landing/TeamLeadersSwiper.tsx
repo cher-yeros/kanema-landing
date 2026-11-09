@@ -63,11 +63,16 @@ function mapAdvisor(member: PublicTeamMember): LeaderSlide {
 
 function mapFeaturedMember(member: PublicCommunityMember): LeaderSlide {
   const roleLabel = communityRoleLabel(member.role);
-  const role = member.city ? `${roleLabel} · ${member.city}` : roleLabel;
+  const standing = `${member.reputation_points ?? 0} Standing`;
+  const roleParts = [
+    standing,
+    roleLabel,
+    member.city?.trim() || null,
+  ].filter(Boolean);
   return {
     key: `community-${member.id}`,
     img: memberImageSrc(member.avatar_url),
-    role,
+    role: roleParts.join(" · "),
     name: member.full_name,
     text:
       member.message?.trim() ||

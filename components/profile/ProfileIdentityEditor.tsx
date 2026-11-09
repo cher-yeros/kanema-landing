@@ -138,6 +138,31 @@ export function ProfileIdentityEditor({
     reset(buildDefaultValues(me, communityJoin));
   }, [me, communityJoin, reset]);
 
+  function applySavedIdentity(
+    payload: UpdateMyIdentityMutation["updateMyIdentity"],
+  ) {
+    dispatch(
+      setAuthUser({
+        id: payload.me.id,
+        full_name: payload.me.full_name,
+        avatar_url: payload.communityJoin?.avatar_url ?? null,
+      }),
+    );
+    setSaved(true);
+    onSaved?.();
+  }
+
+  async function persistAvatarUrl(url: string) {
+    const result = await updateIdentity({
+      variables: {
+        input: { avatar_url: url },
+      },
+    });
+    const payload = result.data?.updateMyIdentity;
+    if (!payload) return;
+    applySavedIdentity(payload);
+  }
+
   async function onSubmit(values: ProfileIdentityEditorValues) {
     setSaved(false);
 
@@ -173,16 +198,7 @@ export function ProfileIdentityEditor({
     const payload = result.data?.updateMyIdentity;
     if (!payload) return;
 
-    dispatch(
-      setAuthUser({
-        id: payload.me.id,
-        full_name: payload.me.full_name,
-        avatar_url: payload.communityJoin?.avatar_url ?? null,
-      }),
-    );
-
-    setSaved(true);
-    onSaved?.();
+    applySavedIdentity(payload);
   }
 
   return (
@@ -212,7 +228,13 @@ export function ProfileIdentityEditor({
                   render={({ field }) => (
                     <ProfilePictureUpload
                       value={field.value || null}
-                      onChange={(url) => field.onChange(url ?? "")}
+                      onChange={(url) => {
+                        const next = url ?? "";
+                        field.onChange(next);
+                        if (next.trim()) {
+                          void persistAvatarUrl(next.trim());
+                        }
+                      }}
                       disabled={loading}
                       error={errors.avatarUrl?.message ?? null}
                     />

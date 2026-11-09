@@ -2,8 +2,11 @@
 
 import { DEFAULT_AVATAR_SRC } from "@/lib/member-image";
 import { cropImageToSquareFile } from "@/lib/crop-image";
-import { communityAvatarUploadUrl } from "@/lib/graphql-env";
-import { useId, useRef, useState } from "react";
+import {
+  communityAvatarUploadUrl,
+  resolveCanmaMediaUrl,
+} from "@/lib/graphql-env";
+import { useEffect, useId, useRef, useState } from "react";
 import type { Area } from "react-easy-crop";
 
 import { SquarePhotoCropModal } from "./SquarePhotoCropModal";
@@ -17,6 +20,12 @@ type ProfilePictureUploadProps = {
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
+function displayAvatarUrl(url: string | null | undefined): string | null {
+  if (!url?.trim()) return null;
+  if (url.startsWith("blob:")) return url;
+  return resolveCanmaMediaUrl(url) || url;
+}
+
 export function ProfilePictureUpload({
   value,
   onChange,
@@ -27,7 +36,13 @@ export function ProfilePictureUpload({
   const fileRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-  const [preview, setPreview] = useState<string | null>(value);
+  const [preview, setPreview] = useState<string | null>(
+    displayAvatarUrl(value),
+  );
+
+  useEffect(() => {
+    setPreview(displayAvatarUrl(value));
+  }, [value]);
   const [cropSource, setCropSource] = useState<string | null>(null);
   const [pendingFile, setPendingFile] = useState<File | null>(null);
 
@@ -95,7 +110,7 @@ export function ProfilePictureUpload({
         throw new Error(json.error ?? "Upload failed");
       }
       if (localPreview.startsWith("blob:")) URL.revokeObjectURL(localPreview);
-      setPreview(json.url);
+      setPreview(displayAvatarUrl(json.url));
       onChange(json.url);
     } catch (err) {
       if (localPreview.startsWith("blob:")) URL.revokeObjectURL(localPreview);

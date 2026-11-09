@@ -48,6 +48,19 @@ export function canmaApiBaseUrl(): string {
   return graphqlHttpUrl().replace(/\/graphql\/?$/i, "");
 }
 
+/** Resolve marketplace/forum media paths against the Canma API host. */
+export function resolveCanmaMediaUrl(url: string | null | undefined): string {
+  if (!url?.trim()) return "";
+  let value = url.trim();
+  value = value.replace(
+    /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?/i,
+    canmaApiBaseUrl(),
+  );
+  if (/^https?:\/\//i.test(value) || value.startsWith("data:")) return value;
+  const base = canmaApiBaseUrl();
+  return value.startsWith("/") ? `${base}${value}` : `${base}/${value}`;
+}
+
 /** Community join profile photo upload (multipart). */
 export function communityAvatarUploadUrl(): string {
   return `${canmaApiBaseUrl()}/api/community-avatar`;

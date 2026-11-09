@@ -128,6 +128,8 @@ export type PublicCommunityMember = {
   portfolio_url: string | null;
   interests: string[];
   is_featured: boolean;
+  reputation_points: number;
+  reputation_tier: string;
   createdAt: string;
   member_since: string | null;
 };
@@ -161,6 +163,8 @@ const COMMUNITY_MEMBER_FIELDS = `
   portfolio_url
   interests
   is_featured
+  reputation_points
+  reputation_tier
   createdAt
   member_since
 `;

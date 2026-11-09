@@ -1,20 +1,18 @@
 import { MarketplaceBrowseSection } from "@/components/marketplace/MarketplaceBrowseSection";
-import { redirectIfMarketplaceProductsOnly } from "@/lib/marketplace-config";
 
 type Props = {
   searchParams?: Promise<{ q?: string; category?: string; sort?: string }>;
 };
 
 export default async function DigitalPage({ searchParams }: Props) {
-  redirectIfMarketplaceProductsOnly();
   const sp = (await searchParams) ?? {};
   return (
     <MarketplaceBrowseSection
       listingType="DIGITAL"
       basePath="/marketplace/digital"
-      title="Digital marketplace"
-      subtitle="LUT packs, presets, templates, motion graphics, music, and SFX."
-      badge="Instant delivery after confirm"
+      title="Digital Products"
+      subtitle="LUT packs, presets, templates, motion graphics, music, and SFX. Upload for free — buyers pay with Chapa."
+      badge="Instant delivery after payment"
       searchParams={sp}
     />
   );

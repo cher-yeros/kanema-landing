@@ -11,6 +11,7 @@ import {
   communityJoinInterestLabelMap,
   type CommunityJoinInterestsQuery,
 } from "@/lib/graphql/community-join-interests";
+import { formatReputationTier } from "@/components/forum/forum-utils";
 import { MY_PROFILE_QUERY } from "@/lib/graphql/profile";
 import { memberImageSrc } from "@/lib/member-image";
 import { portfolioYoutubeEmbed } from "@/lib/portfolio-media";
@@ -112,6 +113,22 @@ export function CommunityMemberProfileClient({
           {roleLabel}
           {displayCity ? ` · ${displayCity}` : ""}
         </p>
+        <div
+          className="member-standing member-standing--profile mt-3"
+          title={`${member.reputation_points ?? 0} Standing`}
+        >
+          <span className="member-standing__score">
+            {(member.reputation_points ?? 0) >= 1000
+              ? `${((member.reputation_points ?? 0) / 1000).toFixed((member.reputation_points ?? 0) % 1000 === 0 ? 0 : 1)}k`
+              : (member.reputation_points ?? 0)}
+          </span>
+          <span className="member-standing__meta">
+            <span className="member-standing__label">Standing</span>
+            <span className="member-standing__tier">
+              {formatReputationTier(member.reputation_tier ?? "new_member")}
+            </span>
+          </span>
+        </div>
       </div>
 
       <div className="container pb-5">
