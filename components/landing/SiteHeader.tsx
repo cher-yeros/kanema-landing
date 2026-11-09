@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { BRAND_ALT, BRAND_LOGO_RECTANGLE } from "@/lib/brand-assets";
 import { ELECTIONS_ENABLED } from "@/lib/election-config";
 import { HeaderUserMenu } from "@/components/landing/HeaderUserMenu";
+import { ThemeToggle } from "@/components/landing/ThemeToggle";
 import {
   useCallback,
   useEffect,
@@ -232,6 +233,9 @@ export function SiteHeader() {
                 Jobs
               </Link>
             </li>
+            <li className="d-xl-none">
+              <ThemeToggle />
+            </li>
           </ul>
           <i
             className={`mobile-nav-toggle d-xl-none bi ${mobileNavActive ? "bi-x" : "bi-list"}`}
@@ -248,6 +252,9 @@ export function SiteHeader() {
           />
         </nav>
 
+        <div className="d-none d-xl-flex align-items-center">
+          <ThemeToggle />
+        </div>
         <HeaderUserMenu />
       </div>
     </header>

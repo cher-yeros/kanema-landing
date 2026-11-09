@@ -9,6 +9,7 @@ import {
   FORUM_REPLY_SUBSCRIPTION,
 } from "@/lib/forum-graphql";
 import { VoteButton } from "@/components/forum/VoteButton";
+import { AppreciateButton } from "@/components/forum/AppreciateButton";
 import { MarkdownRenderer } from "@/components/forum/MarkdownRenderer";
 import { ReplyTree, ThreadReplyForm } from "@/components/forum/ReplyTree";
 import { timeAgo } from "@/components/forum/forum-utils";
@@ -128,6 +129,9 @@ export function ThreadDetailClient({
                   {t.name}
                 </Link>
               ))}
+            </div>
+            <div className="mt-2">
+              <AppreciateButton targetType="thread" targetId={thread.id} />
             </div>
           </div>
         </div>

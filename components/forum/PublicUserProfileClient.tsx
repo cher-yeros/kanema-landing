@@ -30,6 +30,9 @@ export function PublicUserProfileClient({ userId }: { userId: string }) {
       website_url: string | null;
       reputation_points: number;
       reputation_tier: string;
+      standing_next_min?: number | null;
+      standing_next_tier?: string | null;
+      standing_progress?: number;
       badges: Array<{ slug: string; name: string; icon: string | null }>;
       user: { full_name: string };
     };
@@ -63,8 +66,32 @@ export function PublicUserProfileClient({ userId }: { userId: string }) {
               {formatReputationTier(p.reputation_tier)}
             </span>
             <span className="small text-muted ms-2">
-              {p.reputation_points} reputation
+              {p.reputation_points} Standing
             </span>
+            {typeof p.standing_progress === "number" ? (
+              <div className="mt-2" style={{ maxWidth: 220 }}>
+                <div
+                  className="progress"
+                  role="progressbar"
+                  aria-valuenow={Math.round(p.standing_progress * 100)}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  style={{ height: 6 }}
+                >
+                  <div
+                    className="progress-bar bg-warning"
+                    style={{
+                      width: `${Math.min(100, Math.round(p.standing_progress * 100))}%`,
+                    }}
+                  />
+                </div>
+                <div className="small text-muted mt-1">
+                  {p.standing_next_tier && p.standing_next_min != null
+                    ? `${p.standing_next_min - p.reputation_points} to ${formatReputationTier(p.standing_next_tier)}`
+                    : "Legend Standing"}
+                </div>
+              </div>
+            ) : null}
             {p.creative_role ? (
               <div className="small text-muted mt-1">{p.creative_role}</div>
             ) : null}

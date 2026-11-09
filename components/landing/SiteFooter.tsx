@@ -133,10 +133,16 @@ export function SiteFooter() {
             <h4>Legal</h4>
             <ul>
               <li>
-                <a href="#">Terms of service</a>
+                <Link href="/terms">Terms of Use</Link>
               </li>
               <li>
-                <a href="#">Privacy policy</a>
+                <Link href="/privacy">Privacy Policy</Link>
+              </li>
+              <li>
+                <Link href="/community-guidelines">Community Guidelines</Link>
+              </li>
+              <li>
+                <Link href="/account-deletion">Account Deletion</Link>
               </li>
             </ul>
           </div>

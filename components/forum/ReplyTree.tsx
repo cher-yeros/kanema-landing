@@ -7,6 +7,7 @@ import {
   ACCEPT_REPLY_MUTATION,
 } from "@/lib/forum-graphql";
 import { VoteButton } from "./VoteButton";
+import { AppreciateButton } from "./AppreciateButton";
 import { MarkdownRenderer } from "./MarkdownRenderer";
 import { timeAgo, formatReputationTier, tierBadgeClass } from "./forum-utils";
 import { useForumToast } from "@/components/forum/ForumToast";
@@ -127,7 +128,7 @@ function ReplyItem({
             ) : null}
           </div>
           <MarkdownRenderer content={reply.body_md} className="mb-2" />
-          <div className="d-flex gap-2">
+          <div className="d-flex gap-2 flex-wrap">
             <button
               type="button"
               className="btn btn-link btn-sm p-0"
@@ -135,6 +136,7 @@ function ReplyItem({
             >
               Reply
             </button>
+            <AppreciateButton targetType="reply" targetId={reply.id} />
             {threadAuthorId !== reply.author.id && !isAccepted ? (
               <button
                 type="button"

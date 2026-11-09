@@ -28,7 +28,8 @@
 }
 
 /* Global Colors - The following color variables are used throughout the website. Updating them here will change the color scheme of the entire website */
-:root {
+:root,
+html[data-theme="dark"] {
   --background-color: var(
     --brand-navy
   ); /* Dominant navy backdrop across sections */
@@ -43,10 +44,13 @@
     --brand-navy-deep
   ); /* Cards, nav shells, and elevated surfaces */
   --contrast-color: var(--brand-navy); /* Text on yellow accent surfaces */
+  --muted-color: color-mix(in srgb, var(--brand-white), transparent 38%);
+  --border-color: color-mix(in srgb, var(--brand-white), transparent 88%);
 }
 
 /* Nav Menu Colors - The following color variables are used specifically for the navigation menu. They are separate from the global colors to allow for more customization options */
-:root {
+:root,
+html[data-theme="dark"] {
   --nav-color: var(--brand-white); /* Default navigation link color */
   --nav-hover-color: var(
     --brand-yellow
@@ -61,6 +65,25 @@
   --nav-dropdown-hover-color: var(--brand-yellow); /* Hovered dropdown links */
 }
 
+/* Light theme — cool navy-tinted surfaces (aligned with Flutter app) */
+html[data-theme="light"] {
+  --background-color: #f3f6fa;
+  --default-color: var(--brand-navy);
+  --heading-color: var(--brand-navy);
+  --accent-color: var(--brand-yellow);
+  --surface-color: var(--brand-white);
+  --contrast-color: var(--brand-navy);
+  --muted-color: #5a6b7d;
+  --border-color: color-mix(in srgb, var(--brand-navy), transparent 88%);
+
+  --nav-color: var(--brand-navy);
+  --nav-hover-color: var(--brand-yellow-deep);
+  --nav-mobile-background-color: var(--brand-white);
+  --nav-dropdown-background-color: var(--brand-white);
+  --nav-dropdown-color: var(--brand-navy);
+  --nav-dropdown-hover-color: var(--brand-yellow-deep);
+}
+
 /* Color Presets - These classes override global colors when applied to any section or element, providing reuse of the sam color scheme. */
 
 .light-background {
@@ -72,17 +95,37 @@
   );
 }
 
+html[data-theme="light"] .light-background {
+  --background-color: #e8eef5;
+  --default-color: var(--brand-navy);
+  --heading-color: var(--brand-navy);
+  --surface-color: var(--brand-white);
+  --contrast-color: var(--brand-navy);
+}
+
 .dark-background {
   --background-color: var(--brand-navy);
   --default-color: var(--brand-white);
   --heading-color: var(--brand-white);
   --surface-color: var(--brand-navy-deep);
   --contrast-color: var(--brand-white);
+  --nav-color: var(--brand-white);
+  --muted-color: color-mix(in srgb, var(--brand-white), transparent 38%);
+  --border-color: color-mix(in srgb, var(--brand-white), transparent 88%);
 }
 
 /* Smooth scroll */
 :root {
   scroll-behavior: smooth;
+}
+
+:root,
+html[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 /*--------------------------------------------------------------
@@ -96,7 +139,7 @@ body {
 
 /* Bootstrap .text-muted targets light backgrounds; tie it to theme text instead */
 .text-muted {
-  color: color-mix(in srgb, var(--default-color), transparent 38%) !important;
+  color: var(--muted-color) !important;
 }
 
 /* Default Bootstrap modals use a light panel; keep muted text dark-on-light */
@@ -182,13 +225,72 @@ h6 {
 # Global Header
 --------------------------------------------------------------*/
 .header {
+  /* Keep header chrome navy in both themes so the wordmark stays readable */
   --background-color: rgba(255, 255, 255, 0);
   --surface-color: var(--brand-navy-deep);
+  --default-color: var(--brand-white);
+  --heading-color: var(--brand-white);
+  --nav-color: var(--brand-white);
+  --nav-hover-color: var(--brand-yellow);
+  --nav-mobile-background-color: var(--brand-navy-deep);
+  --nav-dropdown-background-color: var(--brand-navy-deep);
+  --nav-dropdown-color: var(--brand-white);
+  --nav-dropdown-hover-color: var(--brand-yellow);
   color: var(--default-color);
   background-color: var(--background-color);
   padding: 20px 0;
   transition: all 0.5s;
   z-index: 997;
+}
+
+.theme-toggle-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  margin-right: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand-white), transparent 92%);
+  border: 1px solid color-mix(in srgb, var(--brand-white), transparent 82%);
+}
+
+.theme-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: color-mix(in srgb, var(--brand-white), transparent 28%);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
+}
+
+.theme-toggle-btn i {
+  font-size: 0.9rem;
+}
+
+.theme-toggle-btn:hover,
+.theme-toggle-btn:focus-visible {
+  color: var(--brand-white);
+  outline: none;
+}
+
+.theme-toggle-btn.is-active {
+  background: color-mix(in srgb, var(--brand-yellow), transparent 78%);
+  color: var(--brand-yellow);
+}
+
+@media (max-width: 1199px) {
+  .theme-toggle-group {
+    margin: 12px 0 4px;
+  }
 }
 
 .header .header-container {
@@ -1090,6 +1192,10 @@ section,
   isolation: isolate;
   /* Override .section so the clip isn’t stacked under this solid fill (GPU/tint parity) */
   background-color: transparent;
+  /* Hero media stays dark; keep light copy in both themes */
+  --default-color: var(--brand-white);
+  --heading-color: var(--brand-white);
+  --muted-color: color-mix(in srgb, var(--brand-white), transparent 38%);
 }
 
 .hero::after {
@@ -4960,6 +5066,57 @@ section,
 }
 
 .privacy .privacy-contact .contact-details p strong {
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+.legal-doc .legal-doc-nav {
+  max-width: 800px;
+  margin: 0 auto 40px;
+}
+
+.legal-doc .legal-doc-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+}
+
+.legal-doc .legal-doc-nav a {
+  display: inline-block;
+  padding: 8px 14px;
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
+  border-radius: 8px;
+  color: color-mix(in srgb, var(--default-color), transparent 15%);
+  text-decoration: none;
+  font-size: 0.92rem;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.legal-doc .legal-doc-nav a:hover {
+  border-color: color-mix(in srgb, var(--accent-color), transparent 40%);
+  color: var(--heading-color);
+}
+
+.legal-doc .legal-doc-nav a.is-active {
+  background-color: color-mix(in srgb, var(--accent-color), transparent 88%);
+  border-color: color-mix(in srgb, var(--accent-color), transparent 55%);
+  color: var(--heading-color);
+  font-weight: 600;
+}
+
+.legal-doc .privacy-content a {
+  color: var(--accent-color);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.legal-doc .privacy-content strong {
   color: var(--heading-color);
   font-weight: 600;
 }

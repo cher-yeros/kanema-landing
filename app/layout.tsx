@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { CanmaAppProviders } from "@/components/providers/CanmaAppProviders";
+import { ThemeProvider } from "@/components/theme-provider";
 import { BRAND_ALT, BRAND_LOGO_SQUARE } from "@/lib/brand-assets";
 import { siteOrigin } from "@/lib/site-url";
 
@@ -46,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
@@ -57,7 +58,14 @@ export default function RootLayout({
         <link href={GOOGLE_FONTS_URL} rel="stylesheet" />
       </head>
       <body className="index-page">
-        <CanmaAppProviders>{children}</CanmaAppProviders>
+        <ThemeProvider
+          attribute="data-theme"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <CanmaAppProviders>{children}</CanmaAppProviders>
+        </ThemeProvider>
       </body>
     </html>
   );

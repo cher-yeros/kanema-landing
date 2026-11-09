@@ -88,7 +88,7 @@ export function ProfileEditorSection({
                 {formatReputationTier(profile.reputation_tier)}
               </span>
               <span className="profile-reputation__points">
-                {profile.reputation_points} reputation
+                {profile.reputation_points} Standing
               </span>
             </div>
           ) : null}

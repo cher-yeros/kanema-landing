@@ -9,10 +9,7 @@ import {
   formatEthiopiaPhoneForApi,
   isValidEthiopiaLocalPhone,
 } from "@/lib/ethiopia-phone";
-import {
-  REQUEST_PASSWORD_RESET,
-  RESET_PASSWORD,
-} from "@/lib/graphql/password";
+import { REQUEST_PASSWORD_RESET, RESET_PASSWORD } from "@/lib/graphql/password";
 import { setAuthSession } from "@/lib/store/auth-slice";
 import { useAppDispatch } from "@/lib/store/hooks";
 
@@ -44,7 +41,7 @@ export function ForgotPasswordForm({
 }) {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [channel, setChannel] = useState<Channel>("PHONE");
+  const [channel, setChannel] = useState<Channel>("EMAIL");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -55,8 +52,9 @@ export function ForgotPasswordForm({
   const [info, setInfo] = useState<string | null>(null);
   const [devCode, setDevCode] = useState<string | null>(null);
 
-  const [requestReset, { loading: requesting }] =
-    useMutation<RequestData>(REQUEST_PASSWORD_RESET);
+  const [requestReset, { loading: requesting }] = useMutation<RequestData>(
+    REQUEST_PASSWORD_RESET,
+  );
   const [resetPassword, { loading: resetting }] =
     useMutation<ResetData>(RESET_PASSWORD);
 
@@ -148,7 +146,9 @@ export function ForgotPasswordForm({
       );
       router.push(nextUrl);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Could not reset password.");
+      setError(
+        err instanceof Error ? err.message : "Could not reset password.",
+      );
     }
   }
 
@@ -162,7 +162,7 @@ export function ForgotPasswordForm({
         <h3 className="h5 mb-1">Reset password</h3>
         <p className="mb-0 small text-muted">
           {step === "request"
-            ? "Enter the phone or email on your Canma account. We’ll send a one-time code."
+            ? "Enter the email on your Canma account. We’ll send a one-time code."
             : "Enter the code and choose a new password."}
         </p>
       </div>
@@ -173,19 +173,19 @@ export function ForgotPasswordForm({
           <div className="d-flex gap-2">
             <button
               type="button"
-              className={`btn btn-sm ${channel === "PHONE" ? "btn-accent" : "btn-ghost"}`}
-              onClick={() => setChannel("PHONE")}
-              disabled={step === "reset"}
-            >
-              Phone
-            </button>
-            <button
-              type="button"
               className={`btn btn-sm ${channel === "EMAIL" ? "btn-accent" : "btn-ghost"}`}
               onClick={() => setChannel("EMAIL")}
               disabled={step === "reset"}
             >
               Email
+            </button>
+            <button
+              type="button"
+              className={`btn btn-sm ${channel === "PHONE" ? "btn-accent" : "btn-ghost"}`}
+              onClick={() => setChannel("PHONE")}
+              disabled={step === "reset"}
+            >
+              Phone
             </button>
           </div>
         </div>

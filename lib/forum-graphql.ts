@@ -307,12 +307,16 @@ export const MY_PROFILE_QUERY = gql`
       social_links_json
       reputation_points
       reputation_tier
+      standing_next_min
+      standing_next_tier
+      standing_progress
       badges {
         id
         slug
         name
         icon
         description
+        category
       }
     }
   }
@@ -330,11 +334,15 @@ export const USER_PROFILE_QUERY = gql`
       website_url
       reputation_points
       reputation_tier
+      standing_next_min
+      standing_next_tier
+      standing_progress
       badges {
         id
         slug
         name
         icon
+        category
       }
       user {
         id

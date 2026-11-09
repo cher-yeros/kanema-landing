@@ -36,7 +36,8 @@ export async function MarketplaceBrowseSection({
         category_slug: searchParams?.category,
         search: searchParams?.q,
         sort: searchParams?.sort ?? "newest",
-        limit: 48,
+        // API max is 100; 48 was truncating the Telegram-imported catalog.
+        limit: 100,
       }),
       fetchMarketplaceCategories(listingType),
     ]);
