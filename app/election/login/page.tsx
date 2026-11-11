@@ -70,7 +70,7 @@ function ElectionLoginInner() {
           </Link>
           , then complete{" "}
           <Link href="/election/verify" className="link-body-emphasis">
-            OTP verification
+            SMS verification
           </Link>
           . The same account works for votes, production job applications, and
           postings.
@@ -101,7 +101,7 @@ function ElectionLoginInner() {
                     </div>
                     <div className="col-4">
                       <div className="single-stat">
-                        <strong>OTP</strong>
+                        <strong>SMS</strong>
                         <span>Verify</span>
                       </div>
                     </div>

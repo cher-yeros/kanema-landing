@@ -9,6 +9,7 @@ import { communityMemberPath } from "@/lib/site-url";
 import { ProfileEditorSection } from "@/components/forum/ProfileEditorSection";
 import { ChangePasswordForm } from "@/components/profile/ChangePasswordForm";
 import { ProfileIdentityEditor } from "@/components/profile/ProfileIdentityEditor";
+import { ProfileVerifySmsSection } from "@/components/profile/ProfileVerifySmsSection";
 import { communityRoleLabel } from "@/lib/community-member-labels";
 import {
   COMMUNITY_JOIN_INTERESTS_QUERY,
@@ -196,7 +197,7 @@ export default function ProfilePage() {
                   ) : (
                     <span className="profile-badge profile-badge--pending">
                       <i className="bi bi-shield-exclamation" aria-hidden />
-                      Not verified
+                      Not verified — use SMS below
                     </span>
                   )}
                   {communityJoin ? (
@@ -256,6 +257,11 @@ export default function ProfilePage() {
                 />
               </dl>
             </div>
+
+            <ProfileVerifySmsSection
+              phone={me.phone ?? ""}
+              isVerified={Boolean(me.is_verified)}
+            />
 
             <div className="profile-card">
               <div className="profile-card__head">

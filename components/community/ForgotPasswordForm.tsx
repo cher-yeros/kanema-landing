@@ -41,7 +41,7 @@ export function ForgotPasswordForm({
 }) {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const [channel, setChannel] = useState<Channel>("EMAIL");
+  const [channel, setChannel] = useState<Channel>("PHONE");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
@@ -86,14 +86,17 @@ export function ForgotPasswordForm({
         variables: { input: { identifier, channel } },
       });
       const payload = res.data?.requestPasswordReset;
-      setInfo(payload?.message ?? "If an account exists, a code was sent.");
+      setInfo(
+        payload?.message ??
+          "If an account exists, a reset code has been sent by SMS.",
+      );
       if (payload?.dev_code) {
         setDevCode(payload.dev_code);
         setCode(payload.dev_code);
       }
       setStep("reset");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Could not send code.");
+      setError(err instanceof Error ? err.message : "Could not send SMS code.");
     }
   }
 
@@ -107,7 +110,7 @@ export function ForgotPasswordForm({
       return;
     }
     if (code.trim().length < 4) {
-      setError("Enter the reset code you received.");
+      setError("Enter the SMS code you received.");
       return;
     }
     if (password.length < 8) {
@@ -162,15 +165,25 @@ export function ForgotPasswordForm({
         <h3 className="h5 mb-1">Reset password</h3>
         <p className="mb-0 small text-muted">
           {step === "request"
-            ? "Enter the email on your Canma account. We’ll send a one-time code."
-            : "Enter the code and choose a new password."}
+            ? channel === "PHONE"
+              ? "Enter the phone number on your Canma account. We’ll send a one-time code by SMS."
+              : "Enter the email on your Canma account. We’ll still send the reset code by SMS to your registered phone."
+            : "Enter the SMS code and choose a new password."}
         </p>
       </div>
 
       <div className="row g-3">
         <div className="col-12">
-          <label className="form-label">Send code via</label>
+          <label className="form-label">Account</label>
           <div className="d-flex gap-2">
+            <button
+              type="button"
+              className={`btn btn-sm ${channel === "PHONE" ? "btn-accent" : "btn-ghost"}`}
+              onClick={() => setChannel("PHONE")}
+              disabled={step === "reset"}
+            >
+              Phone (SMS)
+            </button>
             <button
               type="button"
               className={`btn btn-sm ${channel === "EMAIL" ? "btn-accent" : "btn-ghost"}`}
@@ -178,14 +191,6 @@ export function ForgotPasswordForm({
               disabled={step === "reset"}
             >
               Email
-            </button>
-            <button
-              type="button"
-              className={`btn btn-sm ${channel === "PHONE" ? "btn-accent" : "btn-ghost"}`}
-              onClick={() => setChannel("PHONE")}
-              disabled={step === "reset"}
-            >
-              Phone
             </button>
           </div>
         </div>
@@ -224,7 +229,7 @@ export function ForgotPasswordForm({
           <>
             <div className="col-12">
               <label htmlFor="forgot-code" className="form-label">
-                Reset code
+                SMS code
               </label>
               <input
                 id="forgot-code"
@@ -288,7 +293,7 @@ export function ForgotPasswordForm({
           {step === "request"
             ? requesting
               ? "Sending…"
-              : "Send reset code"
+              : "Send SMS code"
             : resetting
               ? "Updating…"
               : "Update password"}
@@ -310,7 +315,7 @@ export function ForgotPasswordForm({
               setDevCode(null);
             }}
           >
-            Request a new code
+            Request a new SMS code
           </button>
         ) : null}
         <Link href="/community/join?mode=signin">Back to sign in</Link>

@@ -421,7 +421,8 @@ export function LearnCourseDetailClient({
             </p>
           ) : !me.is_verified ? (
             <p className="text-muted mb-0">
-              Verify your account (OTP) before you can enroll in courses.
+              Verify your account via SMS before you can enroll in courses.{" "}
+              <Link href="/profile">Verify on your profile</Link>.
             </p>
           ) : enrolled ? (
             <p className="mb-0">

@@ -132,7 +132,7 @@ function ElectionPageInner() {
     : !me
       ? "Sign in with a verified member account to vote."
       : !me.is_verified
-        ? "Your account is signed in but not verified for voting yet (complete email or phone OTP on the account you used to register)."
+        ? "Your account is signed in but not verified for voting yet (complete SMS verification on the phone you used to register)."
         : requireAdminApproval && !me.admin_approved
           ? "An administrator still needs to approve your account for this ballot."
           : null;
@@ -214,7 +214,9 @@ function ElectionPageInner() {
                   {me?.is_verified ? (
                     <span className="featured-tag">Verified member</span>
                   ) : me ? (
-                    <span className="featured-tag">Complete OTP to vote</span>
+                    <span className="featured-tag">
+                      Complete SMS verify to vote
+                    </span>
                   ) : null}
                 </div>
                 <h1>Canma Presidential Election 2026</h1>
@@ -307,7 +309,7 @@ function ElectionPageInner() {
                     <div>
                       <h5>Verified members</h5>
                       <p>
-                        Complete email or phone OTP on the{" "}
+                        Complete SMS verification on the{" "}
                         <Link href="/election/verify">verification page</Link>{" "}
                         so we know you are a real member of the community—not a
                         throwaway account.
