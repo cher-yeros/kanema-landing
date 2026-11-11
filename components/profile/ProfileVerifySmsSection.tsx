@@ -31,7 +31,9 @@ export function ProfileVerifySmsSection({
   const [justVerified, setJustVerified] = useState(false);
 
   const [requestOtp, { loading: requesting }] =
-    useMutation<RequestVerificationOtpMutation>(REQUEST_VERIFICATION_OTP_MUTATION);
+    useMutation<RequestVerificationOtpMutation>(
+      REQUEST_VERIFICATION_OTP_MUTATION,
+    );
   const [verifyOtp, { loading: verifying }] =
     useMutation<VerifyOtpMutation>(VERIFY_OTP_MUTATION);
 
@@ -75,11 +77,15 @@ export function ProfileVerifySmsSection({
         },
       });
       const payload = res.data?.requestVerificationOtp;
-      setInfo(
-        payload?.message ??
-          "If an account exists, a verification code has been sent by SMS.",
-      );
-      if (payload?.dev_code) {
+      if (!payload?.success) {
+        setError(
+          payload?.message ??
+            "Phone number not found. Check the number or register first.",
+        );
+        return;
+      }
+      setInfo(payload.message ?? "Verification code sent by SMS.");
+      if (payload.dev_code) {
         setDevCode(payload.dev_code);
         setCode(payload.dev_code);
       }

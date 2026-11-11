@@ -512,7 +512,6 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
                   <button
                     type="button"
                     className="btn btn-outline-secondary"
-                    disabled={pageState === "loading"}
                     onClick={() => {
                       setVerifyError(null);
                       setPageState("loading");
@@ -533,7 +532,7 @@ export function PaymentSuccessClient({ txRef }: { txRef: string }) {
                       });
                     }}
                   >
-                    {pageState === "loading" ? "Checking…" : "Check again"}
+                    Check again
                   </button>
                 ) : null}
                 {paymentKind === "digital_purchase" ? (

@@ -86,11 +86,15 @@ export function ForgotPasswordForm({
         variables: { input: { identifier, channel } },
       });
       const payload = res.data?.requestPasswordReset;
-      setInfo(
-        payload?.message ??
-          "If an account exists, a reset code has been sent by SMS.",
-      );
-      if (payload?.dev_code) {
+      if (!payload?.success) {
+        setError(
+          payload?.message ??
+            "Phone number not found. Check the number or register first.",
+        );
+        return;
+      }
+      setInfo(payload.message ?? "Password reset code sent by SMS.");
+      if (payload.dev_code) {
         setDevCode(payload.dev_code);
         setCode(payload.dev_code);
       }

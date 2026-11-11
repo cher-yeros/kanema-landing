@@ -70,11 +70,15 @@ export default function ElectionVerifyPage() {
         },
       });
       const p = res.data?.requestVerificationOtp;
-      setInfo(
-        p?.message ??
-          "If an account exists, a verification code has been sent by SMS.",
-      );
-      if (p?.dev_code) setDevCode(p.dev_code);
+      if (!p?.success) {
+        setError(
+          p?.message ??
+            "Phone number not found. Check the number or register first.",
+        );
+        return;
+      }
+      setInfo(p.message ?? "Verification code sent by SMS.");
+      if (p.dev_code) setDevCode(p.dev_code);
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Could not send SMS code.");
     }
